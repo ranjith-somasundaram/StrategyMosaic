@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Strategy Mosaic vs Denodo — Competitive Intelligence</title>
+<style>
+  :root {
+    --orange: #FA660F;
+    --orange-light: rgba(250,102,15,0.08);
+    --orange-mid: rgba(250,102,15,0.14);
+    --orange-border: rgba(250,102,15,0.28);
+    --black: #0a0a0a;
+    --dark: #1a1a1a;
+    --grey-text: #4a4a5a;
+    --grey-muted: #6a6a7a;
+    --grey-faint: #9a9aaa;
+    --border: #d8d8e8;
+    --border-soft: #ebebf5;
+    --bg: #ffffff;
+    --bg-section: #f7f7fb;
+    --bg-card: #ffffff;
+    --green: #0a7a52;
+    --green-light: rgba(10,122,82,0.07);
+    --green-border: rgba(10,122,82,0.22);
+    --amber: #a05800;
+    --amber-light: rgba(160,88,0,0.07);
+    --amber-border: rgba(160,88,0,0.22);
+    --red: #b02020;
+    --red-light: rgba(176,32,32,0.06);
+    --red-border: rgba(176,32,32,0.2);
+    --blue: #1848c8;
+    --blue-light: rgba(24,72,200,0.07);
+    --blue-border: rgba(24,72,200,0.2);
+    --purple: #5e35b1;
+    --purple-light: rgba(94,53,177,0.07);
+    --font: 'Segoe UI', -apple-system, system-ui, sans-serif;
+    --font-mono: 'Cascadia Code', 'SF Mono', ui-monospace, monospace;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .navbar-logo { height: 28px; display: block; }
+  .navbar-tag {
+    font-size: 11.5px;
+    color: var(--grey-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.07em;
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 44px 64px 36px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 14px;
+    font-family: var(--font-mono);
+  }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--black);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+  }
+  .hero h1 em { color: var(--orange); font-style: normal; }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--grey-text);
+    max-width: 620px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--grey-faint);
+    font-family: var(--font-mono);
+  }
+  .dot-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--border); display: inline-block; }
+
+  /* ── MAIN ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 0 0 80px; overflow: hidden; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 14.3px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 20px;
+    margin-top: 52px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--font-mono);
+    position: relative;
+  }
+  .section-label .sl-accent {
+    width: 4px; height: 22px;
+    background: var(--orange);
+    border-radius: 2px;
+    flex-shrink: 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  }
+  .section-label.visible .sl-accent { transform: scaleY(1); }
+  .section-label .sl-text {
+    position: relative;
+    overflow: hidden;
+  }
+  .section-label .sl-text::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0;
+    width: 100%; height: 2px;
+    background: var(--orange);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s;
+  }
+  .section-label.visible .sl-text::after { transform: scaleX(1); }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s;
+  }
+  .section-label.visible::after { transform: scaleX(1); }
+
+  /* ── SECTION ZONES ── */
+  .section-zone {
+    padding: 48px 68px;
+    border-top: 1px solid var(--border);
+  }
+  .section-zone.alt { background: var(--bg-section); }
+  .section-zone .section-label { margin-top: 0; }
+
+  /* ── SNAPSHOT CARDS ── */
+  .snapshot {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 0;
+  }
+  .snap-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+  }
+  .snap-label { font-size: 12px; color: var(--grey-muted); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+  .snap-value { font-size: 20px; font-weight: 800; color: var(--black); letter-spacing: -0.02em; }
+  .snap-sub { font-size: 14.95px; color: var(--grey-text); margin-top: 4px; line-height: 1.5; }
+
+  /* ── KEY DIFFERENTIATOR BANNER ── */
+  .differentiator-banner {
+    background: linear-gradient(135deg, #fff9f5 0%, #fff5ee 100%);
+    border: 1.5px solid var(--orange-border);
+    border-radius: var(--radius-lg);
+    padding: 22px 26px;
+    margin-bottom: 0;
+  }
+  .diff-eyebrow {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+  }
+  .diff-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .diff-sub { font-size: 15.5px; color: var(--grey-text); line-height: 1.6; margin-bottom: 22px; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .diff-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .diff-box-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .diff-box-label.denodo { color: var(--blue); }
+  .diff-box-label.mosaic { color: var(--orange); }
+  .diff-body { font-size: 16.7px; color: var(--dark); line-height: 1.66; }
+  .diff-body strong { font-weight: 600; }
+
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 0; }
+  .col-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 26px;
+    box-shadow: var(--shadow-sm);
+  }
+  .col-card-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-card-title::before { content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .col-card-title.green { color: var(--green); }
+  .col-card-title.green::before { background: var(--green); }
+  .col-card-title.amber { color: var(--amber); }
+  .col-card-title.amber::before { background: var(--amber); }
+  .col-card-title.red { color: var(--red); }
+  .col-card-title.red::before { background: var(--red); }
+
+  .point {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .point:last-child { border-bottom: none; padding-bottom: 0; }
+  .point-icon {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+  .icon-green { background: var(--green-light); color: var(--green); }
+  .icon-amber { background: var(--amber-light); color: var(--amber); }
+  .icon-red { background: var(--red-light); color: var(--red); }
+  .point-text { font-size: 17.25px; color: var(--dark); line-height: 1.62; }
+
+  /* ── HEAD TO HEAD TABLE ── */
+  .hth-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .hth-table { width: 100%; border-collapse: collapse; }
+  .hth-table thead { background: var(--bg-section); }
+  .hth-table thead th {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--grey-muted);
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+  }
+  .hth-table thead th.col-d { color: var(--blue); }
+  .hth-table thead th.col-m { color: var(--orange); }
+  .hth-table tbody tr { border-bottom: 1px solid var(--border-soft); transition: background 0.1s; }
+  .hth-table tbody tr:last-child { border-bottom: none; }
+  .hth-table tbody tr:hover { background: var(--bg-section); }
+  .hth-table tbody td { padding: 14px 18px; vertical-align: top; font-size: 16.7px; line-height: 1.62; }
+  .hth-table tbody td ul { margin: 4px 0 0 16px; padding: 0; list-style: disc; font-size: 15.5px; line-height: 1.72; color: inherit; }
+  .hth-table tbody td ul li { margin-bottom: 2px; }
+  .hth-table tbody td strong { font-size: 16.2px; }
+  .td-dim {
+    font-size: 11px; font-weight: 700; color: var(--grey-muted);
+    letter-spacing: 0.07em; text-transform: uppercase; width: 13%;
+    font-family: var(--font-mono);
+  }
+  .td-d { color: var(--dark); width: 40%; }
+  .td-m { color: var(--dark); width: 40%; }
+  .win { color: var(--green); font-weight: 600; }
+  .neut { color: var(--grey-text); }
+  .adv {
+    display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px;
+    font-family: var(--font-mono); letter-spacing: 0.04em;
+    margin-left: 5px; vertical-align: middle; font-weight: 700;
+  }
+  .adv-m { background: var(--orange-light); color: var(--orange); border: 1px solid var(--orange-border); }
+  .adv-d { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+
+  /* ── PRICING CALLOUT ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 0;
+  }
+  .pricing-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .pricing-card.highlight {
+    border-color: var(--orange-border);
+    background: #fff9f5;
+  }
+  .pricing-card-title {
+    font-size: 13px; font-weight: 700; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.09em;
+  }
+  .pricing-card-title.blue { color: var(--blue); }
+  .pricing-card-title.orange { color: var(--orange); }
+  .tier-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 9px 0; border-bottom: 1px solid var(--border-soft);
+    font-size: 15.6px;
+  }
+  .tier-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .tier-name { font-weight: 600; color: var(--dark); }
+  .tier-detail { color: var(--grey-text); font-size: 14.4px; text-align: right; max-width: 60%; }
+  .tier-row.free .tier-name { color: var(--green); }
+  .pricing-note {
+    background: var(--bg-section); border-radius: var(--radius);
+    padding: 10px 14px; margin-top: 12px;
+    font-size: 15.6px; color: var(--grey-text); line-height: 1.5;
+  }
+  .pricing-note strong { color: var(--dark); }
+
+  /* ── FIT GUIDE ── */
+  .when-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .when-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .when-card.highlight-m { border-color: var(--orange-border); background: #fff9f5; }
+  .when-title {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border); font-family: var(--font-mono);
+  }
+  .when-title.blue { color: var(--blue); }
+  .when-title.orange { color: var(--orange); }
+  .pill-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pill { font-size: 15.6px; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-weight: 500; line-height: 1.4; }
+  .pill-blue { background: var(--blue-light); color: var(--blue); border-color: var(--blue-border); }
+  .pill-orange { background: var(--orange-light); color: var(--orange); border-color: var(--orange-border); }
+
+  /* ── FLAGS SECTION ── */
+  .flags-card {
+    background: var(--bg-card);
+    border: 1px solid #f0c4a0;
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin-bottom: 0;
+  }
+  .flags-title {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--amber); margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid #f5d8b8;
+    font-family: var(--font-mono);
+  }
+  .flag-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border-soft);
+    font-size: 16.8px; color: var(--grey-text); line-height: 1.55;
+  }
+  .flag-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .flag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; margin-top: 6px; }
+  .flag-row strong { color: var(--dark); font-weight: 600; }
+
+  /* ── FOOTER ── */
+
+
+  /* ── SITE FOOTER ── */
+  .site-footer {
+    background: var(--black); color: rgba(255,255,255,0.45);
+    padding: 28px 64px; font-size: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 60px;
+  }
+  .site-footer img { height: 22px; display: block; }
+
+  @media print {
+    .navbar { position: static; }
+    .snap-card, .col-card, .hth-wrap, .when-card, .pricing-card, .flags-card, .differentiator-banner { break-inside: avoid; }
+    .hth-table tbody tr:hover { background: transparent; }
+  }
+
+  /* ══════ ANIMATION SYSTEM ══════ */
+
+  /* Progress bar */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--orange), #ff9a5c);
+    z-index: 9999; width: 0%; transition: width 0.1s linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Back to top */
+  #back-to-top {
+    position: fixed; bottom: 32px; right: 32px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--orange); color: #fff; border: none;
+    cursor: pointer; font-size: 18px; line-height: 1;
+    box-shadow: 0 4px 16px rgba(250,102,15,0.35);
+    opacity: 0; transform: translateY(12px) scale(0.85);
+    transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.2s;
+    z-index: 999; display: flex; align-items: center; justify-content: center;
+  }
+  #back-to-top.visible { opacity: 1; transform: translateY(0) scale(1); }
+  #back-to-top:hover { box-shadow: 0 6px 22px rgba(250,102,15,0.5); transform: translateY(-2px) scale(1.06); }
+  #back-to-top svg { width: 18px; height: 18px; }
+
+  /* Scroll-reveal base */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+                transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.08s; }
+  .reveal-delay-2 { transition-delay: 0.16s; }
+  .reveal-delay-3 { transition-delay: 0.24s; }
+  .reveal-delay-4 { transition-delay: 0.32s; }
+
+  /* Snapshot cards */
+  .snap-card {
+    cursor: default;
+    transition: transform 0.22s ease, box-shadow 0.22s ease,
+                border-color 0.22s ease;
+    border-left: 3px solid transparent;
+  }
+  .snap-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    border-left-color: var(--orange);
+  }
+  .snap-card:hover .snap-value {
+    transform: scale(1.04);
+    color: var(--orange);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .snap-value { transition: transform 0.2s ease, color 0.2s ease; display: block; }
+
+  /* Diff banner border draw animation */
+  @keyframes borderDraw {
+    from { clip-path: inset(0 0 100% 0); }
+    to   { clip-path: inset(0 0 0% 0); }
+  }
+  .differentiator-banner {
+    position: relative;
+    overflow: hidden;
+  }
+  .differentiator-banner::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--orange);
+    animation: borderDraw 0.7s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+  }
+
+  /* Diff boxes stagger */
+  .diff-box {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .diff-box:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+  .diff-box.denodo-box { animation: fadeSlideUp 0.5s ease 0.5s both; }
+  .diff-box.mosaic-box { animation: fadeSlideUp 0.5s ease 0.65s both; }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Table row hover accent bars */
+  .hth-table tbody tr {
+    transition: background 0.15s ease;
+    position: relative;
+  }
+  .hth-table tbody tr td.td-d {
+    transition: border-left-color 0.15s ease;
+    border-left: 3px solid transparent;
+  }
+  .hth-table tbody tr td.td-m {
+    transition: border-left-color 0.15s ease;
+    border-left: 3px solid transparent;
+  }
+  .hth-table tbody tr:hover { background: #f7f7fb; }
+  .hth-table tbody tr:hover td.td-d { border-left-color: var(--blue); }
+  .hth-table tbody tr:hover td.td-m { border-left-color: var(--orange); }
+
+  /* Adv badges — pulse once on load, hover scale */
+  @keyframes badgePulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(250,102,15,0.15); }
+    100% { transform: scale(1); box-shadow: none; }
+  }
+  @keyframes badgePulseBlue {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(24,72,200,0.15); }
+    100% { transform: scale(1); box-shadow: none; }
+  }
+  .adv-m { animation: badgePulse 0.7s ease 1.2s both; cursor: default; }
+  .adv-d { animation: badgePulseBlue 0.7s ease 1.2s both; cursor: default; }
+  .adv-m:hover { transform: scale(1.08); transition: transform 0.15s ease; }
+  .adv-d:hover { transform: scale(1.08); transition: transform 0.15s ease; }
+
+  /* Pricing tier bar fill */
+  .tier-fill-wrap {
+    height: 3px; background: var(--border-soft);
+    border-radius: 2px; margin-top: 6px; overflow: hidden;
+  }
+  .tier-fill-bar {
+    height: 100%; border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+  .tier-fill-bar.filled { transform: scaleX(1); }
+  .tier-fill-bar.blue-bar { background: var(--blue); }
+  .tier-fill-bar.orange-bar { background: var(--orange); }
+
+  /* Source tooltip expansion */
+  .src-item {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 15.6px; color: var(--grey-text);
+    padding: 5px 0; border-bottom: 1px solid var(--border-soft);
+    cursor: default; transition: background 0.15s;
+    border-radius: 4px; padding-left: 6px; margin-left: -6px;
+  }
+  .src-item:last-child { border-bottom: none; }
+  .src-item:hover { background: var(--orange-light); }
+  .src-num {
+    color: var(--orange); font-weight: 700; flex-shrink: 0;
+    font-size: 11px; font-family: var(--font-mono); min-width: 22px;
+  }
+  .src-text { line-height: 1.5; }
+
+  /* Point reveal stagger */
+  .point {
+    opacity: 0; transform: translateX(-8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .point.point-visible { opacity: 1; transform: translateX(0); }
+
+  /* Hero entrance */
+  .hero-eyebrow { animation: heroFade 0.5s ease 0.1s both; }
+  .hero h1       { animation: heroFade 0.5s ease 0.2s both; }
+  .hero-sub      { animation: heroFade 0.5s ease 0.3s both; }
+  .hero-meta     { animation: heroFade 0.5s ease 0.4s both; }
+  @keyframes heroFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Pill hover */
+  .pill {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+  }
+  .pill:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+
+  /* Col-card hover */
+  .col-card {
+    transition: box-shadow 0.2s ease;
+  }
+  .col-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); }
+
+
+  /* ══════════════════════════════════════
+     ENHANCEMENT v8 — 8 NEW FEATURES
+  ══════════════════════════════════════ */
+
+  /* ── 1. SECTION IDENTITY COLOURS ── */
+  .section-zone[data-theme="orange"] { border-left: 4px solid var(--orange); }
+  .section-zone[data-theme="blue"]   { border-left: 4px solid var(--blue); }
+  .section-zone[data-theme="green"]  { border-left: 4px solid var(--green); }
+  .section-zone[data-theme="amber"]  { border-left: 4px solid var(--amber); }
+  .section-zone[data-theme="purple"] { border-left: 4px solid var(--purple); }
+
+  /* ── 2. SECTION COUNTER 01/02/03 ── */
+  .sl-counter {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s;
+    flex-shrink: 0;
+  }
+  .section-label.visible .sl-counter { opacity: 1; transform: translateX(0); }
+
+  /* ── 3. FACE-OFF ANIMATION (differentiator) ── */
+  .diff-box.denodo-box {
+    animation: none !important;
+    opacity: 0;
+    transform: translateX(-28px);
+    transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+                transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  }
+  .diff-box.mosaic-box {
+    animation: none !important;
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1) 0.1s,
+                transform 0.55s cubic-bezier(0.22,1,0.36,1) 0.1s;
+  }
+  .diff-box.denodo-box.face-in,
+  .diff-box.mosaic-box.face-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  /* Denodo box: blue left accent, Mosaic: orange */
+  .diff-box.denodo-box { border-left: 3px solid var(--blue) !important; }
+  .diff-box.mosaic-box { border-left: 3px solid var(--orange) !important; }
+
+  /* ── 4. H2H TABLE — ROW SEQUENTIAL REVEAL ── */
+  .hth-table tbody tr.hth-row {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease,
+                background 0.15s ease;
+  }
+  .hth-table tbody tr.hth-row.row-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Winner cell glow */
+  .hth-table tbody td.td-m.win {
+    transition: background 0.2s ease, box-shadow 0.2s ease, border-left-color 0.15s ease;
+  }
+  .hth-table tbody tr:hover td.td-m.win {
+    background: rgba(10,122,82,0.06);
+    box-shadow: inset 0 0 0 1px rgba(10,122,82,0.18);
+  }
+  .hth-table tbody tr:hover td.td-d.win {
+    background: rgba(24,72,200,0.06);
+    box-shadow: inset 0 0 0 1px rgba(24,72,200,0.18);
+  }
+
+
+  /* ── H2H subtle winner tint (Denodo-leading rows only) ── */
+  .hth-table tbody tr.denodo-win td.td-d {
+    background: rgba(24,72,200,0.045);
+    box-shadow: inset 3px 0 0 rgba(24,72,200,0.24);
+  }
+  .hth-table tbody tr.denodo-win:hover td.td-d {
+    background: rgba(24,72,200,0.08);
+    box-shadow: inset 3px 0 0 rgba(24,72,200,0.34);
+  }
+
+  /* ── H2H subtle winner tint (Mosaic-leading rows) ── */
+  .hth-table tbody tr.mosaic-win td.td-m {
+    background: rgba(250,102,15,0.05);
+    box-shadow: inset 3px 0 0 rgba(250,102,15,0.28);
+  }
+  .hth-table tbody tr.mosaic-win:hover td.td-m {
+    background: rgba(250,102,15,0.09);
+    box-shadow: inset 3px 0 0 rgba(250,102,15,0.38);
+  }
+
+  /* ── 5. COUNT-UP VALUES ── */
+  .snap-value[data-countup] { min-height: 1.2em; }
+
+  /* ── 6. PRICING BAR BOUNCE EASING + TOOLTIP ── */
+  .tier-fill-bar {
+    height: 100%; border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .tier-fill-bar.filled { transform: scaleX(1); }
+  .tier-row { position: relative; }
+  .tier-tooltip {
+    position: absolute;
+    right: 0; top: -34px;
+    background: var(--dark);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 10;
+    font-family: var(--font-mono);
+  }
+  .tier-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; right: 16px;
+    border: 5px solid transparent;
+    border-top-color: var(--dark);
+    border-bottom: none;
+  }
+  .tier-row:hover .tier-tooltip { opacity: 1; transform: translateY(0); }
+
+  /* ── 7. STICKY DOT NAVIGATION ── */
+  #dot-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 200;
+  }
+  .dot-nav-item {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease;
+    position: relative;
+  }
+  .dot-nav-item:hover { transform: scale(1.4); background: var(--orange); }
+  .dot-nav-item.active { background: var(--orange); transform: scale(1.2); }
+  .dot-nav-item .dot-label {
+    position: absolute;
+    right: 16px; top: 50%;
+    transform: translateY(-50%);
+    background: var(--dark);
+    color: #fff;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    font-family: var(--font-mono);
+  }
+  .dot-nav-item:hover .dot-label { opacity: 1; }
+
+  /* ── 8. FLAG ITEMS SLIDE REVEAL + AMBER GLOW ── */
+  .flags-card {
+    box-shadow: -4px 0 0 var(--amber), var(--shadow-sm) !important;
+    border-left: 3px solid var(--amber) !important;
+  }
+  .flag-row {
+    opacity: 0;
+    transform: translateX(-14px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .flag-row.flag-visible { opacity: 1; transform: translateX(0); }
+
+
+  /* ── HOW WE WIN SECTION ── */
+  .win-intro {
+    font-size: 15px;
+    color: var(--grey-text);
+    margin-bottom: 20px;
+    line-height: 1.65;
+    max-width: 820px;
+  }
+  .win-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .win-card {
+    background: linear-gradient(180deg, #ffffff 0%, #fff8f2 100%);
+    border: 1px solid var(--orange-border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.42s ease, transform 0.42s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .win-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--orange) 0%, #ff9a5c 100%);
+  }
+  .win-card.win-visible { opacity: 1; transform: translateY(0); }
+  .win-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+  .win-num {
+    font-size: 11px;
+    color: var(--orange);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .win-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--black);
+    margin-bottom: 14px;
+  }
+  .win-mini-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .win-mini {
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius);
+    padding: 14px 15px;
+  }
+  .win-mini-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-family: var(--font-mono);
+    margin-bottom: 6px;
+  }
+  .win-mini-label.denodo { color: var(--blue); }
+  .win-mini-label.mosaic { color: var(--orange); }
+  .win-mini-text {
+    font-size: 15.525px;
+    line-height: 1.62;
+    color: var(--dark);
+  }
+  .win-why {
+    background: rgba(250,102,15,0.08);
+    border: 1px solid var(--orange-border);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+  }
+  .win-why-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-family: var(--font-mono);
+    color: var(--orange);
+    margin-bottom: 5px;
+  }
+  .win-why-text {
+    font-size: 15.525px;
+    line-height: 1.66;
+    color: var(--dark);
+  }
+
+  /* ── OVERLAP SECTION: subtle card treatment ── */
+  .overlap-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+  }
+  .overlap-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.38s ease, transform 0.38s ease,
+                box-shadow 0.2s ease;
+  }
+  .overlap-item.overlap-visible { opacity: 1; transform: translateY(0); }
+  .overlap-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+  .overlap-eq {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--amber-light);
+    color: var(--amber);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+
+
+/* Premium readability polish */
+.hero-sub { max-width: 760px; }
+.win-intro { font-size: 15.5px; line-height: 1.72; }
+.diff-sub { line-height: 1.68; }
+@media (min-width: 1440px) {
+  .main, .hero { max-width: 1260px; }
+}
+
+</style>
+</head>
+<body>
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
+<!-- BACK TO TOP -->
+<button aria-label="Back to top" id="back-to-top">
+<svg fill="none" viewbox="0 0 18 18"><path d="M9 14V4M4 9l5-5 5 5" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg>
+</button>
+<!-- DOT NAVIGATION -->
+<nav aria-label="Section navigation" id="dot-nav">
+<div class="dot-nav-item active" data-target="0"><span class="dot-label">Denodo at a glance</span></div>
+<div class="dot-nav-item" data-target="1"><span class="dot-label">Where they overlap</span></div>
+<div class="dot-nav-item" data-target="2"><span class="dot-label">How we win</span></div>
+<div class="dot-nav-item" data-target="3"><span class="dot-label">Head-to-head</span></div>
+</nav>
+<!-- NAVBAR -->
+<nav class="navbar">
+<img alt="Strategy" class="navbar-logo" onerror="this.style.display='none'" src="https://images.contentstack.io/v3/assets/bltf8d808d9b8cebd37/bltb585439c8353e389/67905f9d58fb6d4dd481146e/strategy_logo_black.svg"/>
+<span class="navbar-tag">Competitive Intelligence  ·  2026</span>
+</nav>
+<!-- HERO -->
+<div class="hero">
+<div class="hero-eyebrow">Competitive Intelligence  /  Semantic Layer</div>
+<h1>Mosaic vs <em>Denodo</em></h1>
+<p class="hero-sub">What both platforms solve, where they overlap — and where Mosaic clearly leads.</p>
+<div class="hero-meta">
+<span>2026</span>
+<span class="dot-sep"></span>
+<span class="src-text">Strategy — Competitive Intelligence</span></div>
+</div>
+<!-- MAIN -->
+<div class="main">
+<!-- SECTION 1: SNAPSHOT -->
+<div class="section-zone" data-section="0" data-theme="blue" style="border-top:none;">
+<div class="section-label reveal"><span class="sl-counter">01</span><span class="sl-accent"></span><span class="sl-text">Denodo at a glance</span></div>
+<div class="snapshot">
+<div class="snap-card reveal">
+<div class="snap-label">Gartner MQ 2025</div>
+<div class="snap-value">Leader</div>
+<div class="snap-sub">Data Integration Tools — <span class="count-inline" data-countup="6" data-suffix=" consecutive years">6</span></div>
+</div>
+<div class="snap-card reveal reveal-delay-1">
+<div class="snap-label">Gartner Peer Insights</div>
+<div class="snap-value" data-countup="4.6" data-decimals="1" data-suffix=" / 5">4.6 / 5</div>
+<div class="snap-sub">Customers' Choice — 5th consecutive year (49 reviews, Mar 2025)</div>
+</div>
+<div class="snap-card reveal reveal-delay-2">
+<div class="snap-label">Core identity</div>
+<div class="snap-value">Data virtualization</div>
+<div class="snap-sub">Logical data management — live queries, no replication</div>
+</div>
+<div class="snap-card reveal reveal-delay-3">
+<div class="snap-label">Latest release</div>
+<div class="snap-value">Platform 9.4</div>
+<div class="snap-sub">Embedded MCP + vector DB + Velox MPP — prior: 9.3 (Sept 2025), 9.2 (Apr 2025)</div>
+</div>
+</div>
+</div><!-- /zone1 -->
+<!-- SECTION 3: OVERLAP — BE HONEST -->
+<div class="section-zone" data-section="1" data-theme="amber">
+<div class="section-label reveal"><span class="sl-counter">02</span><span class="sl-accent"></span><span class="sl-text">Where they genuinely overlap — acknowledge this</span></div>
+<p style="font-size:18px;color:var(--grey-text);margin-bottom:18px;line-height:1.6;">A direct feature-by-feature comparison will produce apparent overlap. Acknowledging this builds credibility before the real differentiation is made.</p>
+<div class="overlap-grid" id="overlap-grid">
+<div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both connect to <strong>200+ data sources</strong> across cloud, on-prem, and hybrid environments</div></div>
+<div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both provide a <strong>semantic / business layer</strong> that abstracts raw data with business meaning</div></div>
+<div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both support <strong>MCP</strong> for AI agent integration — MCP alone is not a differentiator</div></div>
+<div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both offer <strong>caching</strong> — Denodo via external JDBC database; Mosaic via in-memory models</div></div>
+<div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both expose <strong>REST and JDBC/ODBC</strong> interfaces. Mosaic additionally documents DAX/XMLA and Python; Denodo documents GraphQL support</div></div>
+<div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both enforce <strong>row-level security, RBAC</strong>, and audit logging centrally</div></div>
+</div>
+</div><!-- /zone3 -->
+<!-- SECTION 3: HOW WE WIN -->
+<div class="section-zone alt" data-section="2" data-theme="purple">
+<div class="section-label reveal"><span class="sl-counter">03</span><span class="sl-accent"></span><span class="sl-text">How We Win vs Denodo — 4 key differentiators</span></div>
+<p class="win-intro reveal">These are the four messages to lead with when Denodo is already in the conversation. The goal is to shift the discussion from data access to semantic control, trusted AI, stack simplification, and execution efficiency.</p>
+<div class="win-grid" id="win-grid">
+<div class="win-card">
+<div class="win-num">01 / Core Architecture</div>
+<div class="win-card-title">Consistent Meaning vs. Disciplined SQL</div>
+<div class="win-mini-grid">
+<div class="win-mini">
+<div class="win-mini-label denodo">Denodo</div>
+<div class="win-mini-text">Governs access through SQL views. “Net Revenue” lives as code inside views and consistency depends on teams reusing the same logic.</div>
+</div>
+<div class="win-mini">
+<div class="win-mini-label mosaic">Mosaic</div>
+<div class="win-mini-text">Governs meaning through certified semantic objects. The same definition is reused across dashboards, applications, and AI agents.</div>
+</div>
+</div>
+<div class="win-why">
+<div class="win-why-label">Why we win</div>
+<div class="win-why-text">We turn metric consistency into architecture. Denodo relies on discipline and governance meetings. Mosaic makes the same business definition travel everywhere by design.</div>
+</div>
+</div>
+<div class="win-card">
+<div class="win-num">02 / AI Trust</div>
+<div class="win-card-title">AI Hallucination Protection at the Source</div>
+<div class="win-mini-grid">
+<div class="win-mini">
+<div class="win-mini-label denodo">Denodo</div>
+<div class="win-mini-text">AI agents reason over schemas and views. Reliability depends on whether the right views are modeled and selected.</div>
+</div>
+<div class="win-mini">
+<div class="win-mini-label mosaic">Mosaic</div>
+<div class="win-mini-text">AI operates on governed semantic definitions in the Universal Semantic Layer, not raw tables or loosely governed SQL artifacts.</div>
+</div>
+</div>
+<div class="win-why">
+<div class="win-why-label">Why we win</div>
+<div class="win-why-text">Denodo gives AI a pipe to data. Mosaic gives AI governed business meaning. That is the difference between querying data and delivering trusted answers.</div>
+</div>
+</div>
+<div class="win-card">
+<div class="win-num">03 / Stack Simplification</div>
+<div class="win-card-title">The Complete “Last Mile”</div>
+<div class="win-mini-grid">
+<div class="win-mini">
+<div class="win-mini-label denodo">Denodo</div>
+<div class="win-mini-text">Stops at the data layer. Reporting and dashboards still require separate BI products, integration work, and another governance surface.</div>
+</div>
+<div class="win-mini">
+<div class="win-mini-label mosaic">Mosaic</div>
+<div class="win-mini-text">Extends from semantic layer to native BI and AI through Strategy One, while still supporting external BI tools when needed.</div>
+</div>
+</div>
+<div class="win-why">
+<div class="win-why-label">Why we win</div>
+<div class="win-why-text">We reduce tool sprawl and close the last mile. One platform governs the path from source data to dashboard to AI interaction.</div>
+</div>
+</div>
+<div class="win-card">
+<div class="win-num">04 / Performance &amp; Cost</div>
+<div class="win-card-title">Execution Efficiency vs. Source Dependency</div>
+<div class="win-mini-grid">
+<div class="win-mini">
+<div class="win-mini-label denodo">Denodo</div>
+<div class="win-mini-text">Pushdown-heavy architecture means performance and cost remain tied to source systems, with external caching layered on top.</div>
+</div>
+<div class="win-mini">
+<div class="win-mini-label mosaic">Mosaic</div>
+<div class="win-mini-text">Hybrid execution combines pushdown with an in-memory engine that absorbs repeated and high-concurrency workloads without re-triggering source compute.</div>
+</div>
+</div>
+<div class="win-why">
+<div class="win-why-label">Why we win</div>
+<div class="win-why-text">We decouple usage from warehouse pain. Repeated BI and AI workloads can be served from memory, improving stability while protecting Snowflake and Databricks spend.</div>
+</div>
+</div>
+</div>
+</div><!-- /zone3b -->
+<!-- SECTION 4: HEAD-TO-HEAD -->
+<div class="section-zone" data-section="3" data-theme="orange">
+<div class="section-label reveal"><span class="sl-counter">04</span><span class="sl-accent"></span><span class="sl-text">Head-to-head — 15 dimensions that matter</span></div>
+<div class="hth-wrap reveal">
+<table class="hth-table">
+<thead><tr>
+<th>Dimension</th>
+<th class="col-d">Denodo</th>
+<th class="col-m">Strategy Mosaic</th>
+</tr></thead>
+<tbody>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Semantic layer architecture</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>View-centric logical access layer</li><li>Business logic expressed as SQL-based derived views</li><li>Live federated queries pushed down to source systems — no data movement</li><li>KPIs exist inside views; consistency relies on discipline outside the platform</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Object-centric universal semantic layer</li><li>Metrics are first-class certified objects — independent of any tool, view, or BI layer</li><li>Business definitions, lineage, and security travel with the semantic model, not the consumer</li><li>Same governed definitions consumed by BI tools, applications, and AI agents simultaneously</li></ul></td>
+</tr>
+<tr class="hth-row denodo-win">
+<td class="td-dim">Execution &amp; processing model</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Core differentiator — industry-leading data virtualization engine</li><li>Advanced federated push-down, cross-source joins, and query optimizer tuned for heterogeneous environments</li><li>20+ years of engineering — the gold standard for real-time distributed query optimization</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Hybrid execution model combining pushdown with an in-memory engine</li><li>In-memory Query Acceleration Engine handles cross-source joins, aggregations, and reuse without re-triggering source compute</li><li>Dynamic execution engine selects pushdown vs in-memory paths based on workload and cost</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">AI-powered data modeling</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Denodo Assistant — AI-guided view creation, join recommendations, and conversational data access</li><li>AI accelerates modeling within Denodo’s view-centric paradigm</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Mosaic Studio — end-to-end AI modeling from raw source to published semantic model; vendor-stated faster time-to-model</li><li>Auto-profiling, relationship detection, attribute/hierarchy generation, and Python query creation via AI assistant</li><li>Model linking across disparate Mosaic models with AI-suggested join relationships</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Conversational AI &amp; agents</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>DeepQuery — multi-step analytical reasoning across live governed views</li><li>Agents query Denodo’s SQL view layer; context limited to what views expose</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Auto AI Suite — AI Agents, Auto Dashboards, Auto Answers, Auto Expert</li><li>Agents grounded in certified Mosaic metrics</li><li>Answer caching, unstructured file support, and Key Driver Analysis built in</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">MCP integration</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>MCP embedded in the platform — governed data accessible from MCP-compatible agents</li><li>Agents resolve queries against virtual data views</li><li>Vector DB integration adds unstructured data access</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Strategy AI Agents accessible via MCP</li><li>Mosaic models can be accessed directly or via agents depending on architecture</li><li>Agents resolve against certified metric definitions, not raw views . Semantic layer acts as a governed context layer between AI and data, ensuring consistent and explainable outputs</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">LLM support &amp; BYOE</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Supports major LLMs for DeepQuery and AI Assistant functionality</li><li>Specific BYOE / model-switching flexibility not prominently documented</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Azure OpenAI, Gemini BYOE, GPT-OSS, LLAMA, and offline air-gapped model support</li><li>BYOE lets enterprises swap LLMs without changing the semantic layer or governance model</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Governance &amp; observability</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Policy-based access control, row-level security, and data masking on virtual views</li><li>Audit logging and catalog lineage available</li><li>Governance is enforced at the access layer — upstream source definitions may diverge</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Mosaic Sentinel — governance intelligence platform with Risk Management, Audit &amp; Compliance, and Usage Insights</li><li>Complete trail of who accessed what data and when</li><li>Semantic layer utilization monitoring, model performance optimization, and compliance monitoring</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Security model</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Row-level security, column masking, and policy-based access applied at the virtual view layer</li><li>Security follows the view — teams must replicate policy across views to maintain consistency</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Row-level and object-level security enforced at the semantic layer — travels with the model to all consumers</li><li>LLM shielding: semantic layer prevents AI agents from accessing data outside the user’s permission scope</li><li>Sensitive / PII data detection and tracking through Mosaic governance capabilities</li><li>LLMs interact only with metadata, object definitions, and governed context — not full datasets</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Native BI platform</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>No native BI layer — data access and governance only</li><li>Requires a separate BI tool for end-user consumption</li><li>Adds integration complexity and additional licensing cost</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Supports both external BI tools and native BI via Strategy One</li><li>Pixel-perfect enterprise reporting, dashboards, mobile, embedded analytics</li><li>Auto-generated dashboards from natural language</li></ul></td>
+</tr>
+<tr class="hth-row denodo-win">
+<td class="td-dim">BI tool connectivity</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Enterprise-wide logical data layer — connects BI tools, operational applications, APIs, and custom scripts</li><li>Designed as the data access layer across complex and legacy environments</li><li>Broad connectivity footprint beyond analytics into operational integration use cases</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Connects to Tableau, Power BI, Excel, and other tools via standard interfaces including JDBC/ODBC</li><li>Semantic definitions are consistently applied across all connected tools</li><li>Also provides a native BI consumption layer, with open access via SQL, REST, Python, and DAX/XMLA</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Cloud cost control</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Live federation eliminates data movement costs — data stays at source</li><li>Smart Query Acceleration and external cache reduce repeat source queries</li><li>No data replication pipeline costs</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>In-memory caching absorbs repeated queries and reduces warehouse compute load significantly</li><li>High-concurrency workloads served from memory instead of re-triggering source compute</li><li>Reduces ETL, data movement, and egress costs while enabling cost optimization across platforms</li><li>User-based model ensures no incremental platform cost from repeated queries or AI usage</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Deployment &amp; multi-cloud</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>On-prem, cloud SaaS, and hybrid deployment</li><li>AWS, Azure, GCP supported; HA and Business Critical tiers available</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>On-prem, cloud, hybrid, and fully managed via Strategy Cloud</li><li>Flexible deployment aligned to enterprise security and data residency requirements</li><li>Supports scaling semantic layer across distributed data environments. Works with existing data stack without requiring re-architecture or data migration</li></ul></td>
+</tr>
+<tr class="hth-row denodo-win">
+<td class="td-dim">Analyst recognition</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Gartner MQ Leader — Data Integration Tools for 6 consecutive years</li><li>Recognized leader in the data integration and data virtualization category</li><li>Strong validation for enterprise data access and integration architectures</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Gartner Magic Quadrant for Analytics and BI Platforms — Challenger</li><li>BARC Score — Market Leader in BI &amp; Analytics</li><li>Strong positioning in semantic layer + BI + AI convergence</li></ul></td>
+</tr>
+<tr class="hth-row mosaic-win">
+<td class="td-dim">Pricing model</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Usage-based — volume of data processed plus data products queried</li><li>Costs scale with workload and query volume</li><li>Free tier available</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>User-based licensing — predictable spend regardless of query or AI agent volume</li><li>No additional AI cost at the platform level as queries execute within Mosaic models, including in-memory execution paths</li><li>No free tier</li></ul></td>
+</tr>
+<tr class="hth-row denodo-win">
+<td class="td-dim">Entry point &amp; free tier</td>
+<td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>Denodo Express — free download for non-production use</li><li>Developer tier — free SaaS entry point for experimentation</li><li>Lower barrier to entry for small teams and rapid prototyping</li></ul></td>
+<td class="td-m neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:16.2px;line-height:1.65;"><li>No public free tier — enterprise commercial model</li><li>Typically adopted as part of broader Strategy platform</li></ul></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><!-- /zone5 -->
+<!-- SITE FOOTER -->
+<footer class="site-footer">
+<img alt="Strategy" onerror="this.style.display='none'" src="https://images.contentstack.io/v3/assets/bltf8d808d9b8cebd37/blt5cca227e8107e8d3/67905f9d4a7803b31b6c109f/strategy_logo_white.svg"/>
+<span>© 2026 Strategy. Competitive Intelligence — internal use. .</span>
+</footer>
+<script>
+// ══════════════════════════════════════════════
+// COMPLETE INTERACTION ENGINE v8
+// ══════════════════════════════════════════════
+
+const progressBar = document.getElementById('progress-bar');
+const backTop     = document.getElementById('back-to-top');
+const dotNav      = document.getElementById('dot-nav');
+const dotItems    = dotNav ? Array.from(dotNav.querySelectorAll('.dot-nav-item')) : [];
+const sectionZones = Array.from(document.querySelectorAll('.section-zone[data-section]'));
+
+// ─── Progress bar + back to top ───
+function updateScroll() {
+  const sy = window.scrollY;
+  const dh = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (dh > 0 ? (sy/dh)*100 : 0) + '%';
+  backTop.classList.toggle('visible', sy > 400);
+
+  // Active dot nav
+  let activeIdx = 0;
+  sectionZones.forEach((zone, i) => {
+    const top = zone.getBoundingClientRect().top;
+    if (top <= window.innerHeight * 0.45) activeIdx = i;
+  });
+  dotItems.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+}
+window.addEventListener('scroll', updateScroll, { passive: true });
+updateScroll();
+
+backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ─── Dot nav click ───
+dotItems.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const idx = parseInt(dot.dataset.target);
+    const zone = sectionZones[idx];
+    if (zone) zone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ─── General reveal observer ───
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ─── Staggered point reveals inside col-cards ───
+const pointObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.point').forEach((pt, i) =>
+        setTimeout(() => pt.classList.add('point-visible'), i * 60)
+      );
+      pointObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.col-card').forEach(el => pointObs.observe(el));
+
+// ─── Face-off animation (differentiator boxes) ───
+const diffGrid = document.getElementById('diff-grid');
+if (diffGrid) {
+  const faceObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.querySelectorAll('.diff-box').forEach(b => b.classList.add('face-in')), 100);
+        faceObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  faceObs.observe(diffGrid);
+}
+
+
+// ─── How We Win cards stagger ───
+const winGrid = document.getElementById('win-grid');
+if (winGrid) {
+  const winObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.win-card').forEach((card, i) =>
+          setTimeout(() => card.classList.add('win-visible'), i * 90)
+        );
+        winObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  winObs.observe(winGrid);
+}
+
+// ─── H2H row sequential reveal ───
+const hthWrap = document.querySelector('.hth-wrap');
+if (hthWrap) {
+  const hthObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.hth-row').forEach((row, i) =>
+          setTimeout(() => row.classList.add('row-visible'), i * 55)
+        );
+        hthObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  hthObs.observe(hthWrap);
+}
+
+// ─── Count-up animation ───
+function animateCount(el) {
+  const target   = parseFloat(el.dataset.countup);
+  const suffix   = el.dataset.suffix || '';
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const dur      = 1200;
+  const start    = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / dur, 1);
+    const ease     = 1 - Math.pow(1 - progress, 3);
+    const val      = (target * ease).toFixed(decimals);
+    el.textContent = val + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = target.toFixed(decimals) + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+const countObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.dataset.countup) {
+      animateCount(e.target);
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-countup]').forEach(el => countObs.observe(el));
+
+// ─── Pricing bar fill with bounce easing ───
+const fillObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.tier-fill-bar').forEach((bar, i) => {
+        const w = bar.dataset.width || 50;
+        setTimeout(() => { bar.style.width = w + '%'; bar.classList.add('filled'); }, i * 130);
+      });
+      fillObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.pricing-card').forEach(el => fillObs.observe(el));
+
+// ─── Overlap cards stagger ───
+const overlapGrid = document.getElementById('overlap-grid');
+if (overlapGrid) {
+  const ovObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.overlap-item').forEach((item, i) =>
+          setTimeout(() => item.classList.add('overlap-visible'), i * 80)
+        );
+        ovObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  ovObs.observe(overlapGrid);
+}
+
+// ─── Flag items slide reveal ───
+const flagsCard = document.querySelector('.flags-card');
+if (flagsCard) {
+  const flagObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.flag-row').forEach((row, i) =>
+          setTimeout(() => row.classList.add('flag-visible'), i * 90)
+        );
+        flagObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  flagObs.observe(flagsCard);
+}
+</script>
+</div></body>
+</html>
