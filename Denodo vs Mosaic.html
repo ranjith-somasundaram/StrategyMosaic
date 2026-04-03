@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategy Mosaic vs Denodo — Competitive Intelligence</title>
+<style>
+  :root {
+    --orange: #FA660F;
+    --orange-light: rgba(250,102,15,0.08);
+    --orange-mid: rgba(250,102,15,0.14);
+    --orange-border: rgba(250,102,15,0.28);
+    --black: #0a0a0a;
+    --dark: #1a1a1a;
+    --grey-text: #4a4a5a;
+    --grey-muted: #6a6a7a;
+    --grey-faint: #9a9aaa;
+    --border: #d8d8e8;
+    --border-soft: #ebebf5;
+    --bg: #ffffff;
+    --bg-section: #f7f7fb;
+    --bg-card: #ffffff;
+    --green: #0a7a52;
+    --green-light: rgba(10,122,82,0.07);
+    --green-border: rgba(10,122,82,0.22);
+    --amber: #a05800;
+    --amber-light: rgba(160,88,0,0.07);
+    --amber-border: rgba(160,88,0,0.22);
+    --red: #b02020;
+    --red-light: rgba(176,32,32,0.06);
+    --red-border: rgba(176,32,32,0.2);
+    --blue: #1848c8;
+    --blue-light: rgba(24,72,200,0.07);
+    --blue-border: rgba(24,72,200,0.2);
+    --purple: #5e35b1;
+    --purple-light: rgba(94,53,177,0.07);
+    --font: 'Segoe UI', -apple-system, system-ui, sans-serif;
+    --font-mono: 'Cascadia Code', 'SF Mono', ui-monospace, monospace;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 0 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .navbar-logo { height: 28px; display: block; }
+  .navbar-tag {
+    font-size: 11.5px;
+    color: var(--grey-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.07em;
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 44px 64px 36px;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 14px;
+    font-family: var(--font-mono);
+  }
+  .hero h1 {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--black);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+  }
+  .hero h1 em { color: var(--orange); font-style: normal; }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--grey-text);
+    max-width: 620px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--grey-faint);
+    font-family: var(--font-mono);
+  }
+  .dot-sep { width: 4px; height: 4px; border-radius: 50%; background: var(--border); display: inline-block; }
+
+  /* ── MAIN ── */
+  .main { max-width: 1200px; margin: 0 auto; padding: 0 0 80px; overflow: hidden; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 20px;
+    margin-top: 52px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--font-mono);
+    position: relative;
+  }
+  .section-label .sl-accent {
+    width: 4px; height: 22px;
+    background: var(--orange);
+    border-radius: 2px;
+    flex-shrink: 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  }
+  .section-label.visible .sl-accent { transform: scaleY(1); }
+  .section-label .sl-text {
+    position: relative;
+    overflow: hidden;
+  }
+  .section-label .sl-text::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0;
+    width: 100%; height: 2px;
+    background: var(--orange);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s;
+  }
+  .section-label.visible .sl-text::after { transform: scaleX(1); }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.2s;
+  }
+  .section-label.visible::after { transform: scaleX(1); }
+
+  /* ── SECTION ZONES ── */
+  .section-zone {
+    padding: 44px 64px;
+    border-top: 1px solid var(--border);
+  }
+  .section-zone.alt { background: var(--bg-section); }
+  .section-zone .section-label { margin-top: 0; }
+
+  /* ── SNAPSHOT CARDS ── */
+  .snapshot {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 0;
+  }
+  .snap-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+  }
+  .snap-label { font-size: 12px; color: var(--grey-muted); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+  .snap-value { font-size: 20px; font-weight: 800; color: var(--black); letter-spacing: -0.02em; }
+  .snap-sub { font-size: 13px; color: var(--grey-text); margin-top: 4px; line-height: 1.4; }
+
+  /* ── KEY DIFFERENTIATOR BANNER ── */
+  .differentiator-banner {
+    background: linear-gradient(135deg, #fff9f5 0%, #fff5ee 100%);
+    border: 1.5px solid var(--orange-border);
+    border-radius: var(--radius-lg);
+    padding: 22px 26px;
+    margin-bottom: 0;
+  }
+  .diff-eyebrow {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+  }
+  .diff-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--black);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .diff-sub { font-size: 15.5px; color: var(--grey-text); line-height: 1.6; margin-bottom: 22px; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .diff-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .diff-box-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .diff-box-label.denodo { color: var(--blue); }
+  .diff-box-label.mosaic { color: var(--orange); }
+  .diff-body { font-size: 14.5px; color: var(--dark); line-height: 1.6; }
+  .diff-body strong { font-weight: 600; }
+
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 0; }
+  .col-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .col-card-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-card-title::before { content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .col-card-title.green { color: var(--green); }
+  .col-card-title.green::before { background: var(--green); }
+  .col-card-title.amber { color: var(--amber); }
+  .col-card-title.amber::before { background: var(--amber); }
+  .col-card-title.red { color: var(--red); }
+  .col-card-title.red::before { background: var(--red); }
+
+  .point {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .point:last-child { border-bottom: none; padding-bottom: 0; }
+  .point-icon {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+  .icon-green { background: var(--green-light); color: var(--green); }
+  .icon-amber { background: var(--amber-light); color: var(--amber); }
+  .icon-red { background: var(--red-light); color: var(--red); }
+  .point-text { font-size: 15px; color: var(--dark); line-height: 1.55; }
+
+  /* ── HEAD TO HEAD TABLE ── */
+  .hth-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .hth-table { width: 100%; border-collapse: collapse; }
+  .hth-table thead { background: var(--bg-section); }
+  .hth-table thead th {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--grey-muted);
+    padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+  }
+  .hth-table thead th.col-d { color: var(--blue); }
+  .hth-table thead th.col-m { color: var(--orange); }
+  .hth-table tbody tr { border-bottom: 1px solid var(--border-soft); transition: background 0.1s; }
+  .hth-table tbody tr:last-child { border-bottom: none; }
+  .hth-table tbody tr:hover { background: var(--bg-section); }
+  .hth-table tbody td { padding: 12px 16px; vertical-align: top; font-size: 14.5px; line-height: 1.55; }
+  .hth-table tbody td ul { margin: 4px 0 0 16px; padding: 0; list-style: disc; font-size: 13.5px; line-height: 1.65; color: inherit; }
+  .hth-table tbody td ul li { margin-bottom: 2px; }
+  .hth-table tbody td strong { font-size: 13.5px; }
+  .td-dim {
+    font-size: 11px; font-weight: 700; color: var(--grey-muted);
+    letter-spacing: 0.07em; text-transform: uppercase; width: 13%;
+    font-family: var(--font-mono);
+  }
+  .td-d { color: var(--dark); width: 40%; }
+  .td-m { color: var(--dark); width: 40%; }
+  .win { color: var(--green); font-weight: 600; }
+  .neut { color: var(--grey-text); }
+  .adv {
+    display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px;
+    font-family: var(--font-mono); letter-spacing: 0.04em;
+    margin-left: 5px; vertical-align: middle; font-weight: 700;
+  }
+  .adv-m { background: var(--orange-light); color: var(--orange); border: 1px solid var(--orange-border); }
+  .adv-d { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-border); }
+
+  /* ── PRICING CALLOUT ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 0;
+  }
+  .pricing-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .pricing-card.highlight {
+    border-color: var(--orange-border);
+    background: #fff9f5;
+  }
+  .pricing-card-title {
+    font-size: 13px; font-weight: 700; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.09em;
+  }
+  .pricing-card-title.blue { color: var(--blue); }
+  .pricing-card-title.orange { color: var(--orange); }
+  .tier-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 9px 0; border-bottom: 1px solid var(--border-soft);
+    font-size: 13px;
+  }
+  .tier-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .tier-name { font-weight: 600; color: var(--dark); }
+  .tier-detail { color: var(--grey-text); font-size: 12px; text-align: right; max-width: 60%; }
+  .tier-row.free .tier-name { color: var(--green); }
+  .pricing-note {
+    background: var(--bg-section); border-radius: var(--radius);
+    padding: 10px 14px; margin-top: 12px;
+    font-size: 13px; color: var(--grey-text); line-height: 1.5;
+  }
+  .pricing-note strong { color: var(--dark); }
+
+  /* ── FIT GUIDE ── */
+  .when-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .when-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .when-card.highlight-m { border-color: var(--orange-border); background: #fff9f5; }
+  .when-title {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border); font-family: var(--font-mono);
+  }
+  .when-title.blue { color: var(--blue); }
+  .when-title.orange { color: var(--orange); }
+  .pill-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pill { font-size: 13px; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-weight: 500; line-height: 1.4; }
+  .pill-blue { background: var(--blue-light); color: var(--blue); border-color: var(--blue-border); }
+  .pill-orange { background: var(--orange-light); color: var(--orange); border-color: var(--orange-border); }
+
+  /* ── FLAGS SECTION ── */
+  .flags-card {
+    background: var(--bg-card);
+    border: 1px solid #f0c4a0;
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 0;
+  }
+  .flags-title {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--amber); margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid #f5d8b8;
+    font-family: var(--font-mono);
+  }
+  .flag-row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border-soft);
+    font-size: 14px; color: var(--grey-text); line-height: 1.55;
+  }
+  .flag-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .flag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); flex-shrink: 0; margin-top: 6px; }
+  .flag-row strong { color: var(--dark); font-weight: 600; }
+
+  /* ── FOOTER ── */
+
+
+  /* ── SITE FOOTER ── */
+  .site-footer {
+    background: var(--black); color: rgba(255,255,255,0.45);
+    padding: 28px 64px; font-size: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 60px;
+  }
+  .site-footer img { height: 22px; display: block; }
+
+  @media print {
+    .navbar { position: static; }
+    .snap-card, .col-card, .hth-wrap, .when-card, .pricing-card, .flags-card, .differentiator-banner { break-inside: avoid; }
+    .hth-table tbody tr:hover { background: transparent; }
+  }
+
+  /* ══════ ANIMATION SYSTEM ══════ */
+
+  /* Progress bar */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--orange), #ff9a5c);
+    z-index: 9999; width: 0%; transition: width 0.1s linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Back to top */
+  #back-to-top {
+    position: fixed; bottom: 32px; right: 32px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--orange); color: #fff; border: none;
+    cursor: pointer; font-size: 18px; line-height: 1;
+    box-shadow: 0 4px 16px rgba(250,102,15,0.35);
+    opacity: 0; transform: translateY(12px) scale(0.85);
+    transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.2s;
+    z-index: 999; display: flex; align-items: center; justify-content: center;
+  }
+  #back-to-top.visible { opacity: 1; transform: translateY(0) scale(1); }
+  #back-to-top:hover { box-shadow: 0 6px 22px rgba(250,102,15,0.5); transform: translateY(-2px) scale(1.06); }
+  #back-to-top svg { width: 18px; height: 18px; }
+
+  /* Scroll-reveal base */
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+                transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.08s; }
+  .reveal-delay-2 { transition-delay: 0.16s; }
+  .reveal-delay-3 { transition-delay: 0.24s; }
+  .reveal-delay-4 { transition-delay: 0.32s; }
+
+  /* Snapshot cards */
+  .snap-card {
+    cursor: default;
+    transition: transform 0.22s ease, box-shadow 0.22s ease,
+                border-color 0.22s ease;
+    border-left: 3px solid transparent;
+  }
+  .snap-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    border-left-color: var(--orange);
+  }
+  .snap-card:hover .snap-value {
+    transform: scale(1.04);
+    color: var(--orange);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .snap-value { transition: transform 0.2s ease, color 0.2s ease; display: block; }
+
+  /* Diff banner border draw animation */
+  @keyframes borderDraw {
+    from { clip-path: inset(0 0 100% 0); }
+    to   { clip-path: inset(0 0 0% 0); }
+  }
+  .differentiator-banner {
+    position: relative;
+    overflow: hidden;
+  }
+  .differentiator-banner::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--orange);
+    animation: borderDraw 0.7s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+  }
+
+  /* Diff boxes stagger */
+  .diff-box {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .diff-box:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+  .diff-box.denodo-box { animation: fadeSlideUp 0.5s ease 0.5s both; }
+  .diff-box.mosaic-box { animation: fadeSlideUp 0.5s ease 0.65s both; }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Table row hover accent bars */
+  .hth-table tbody tr {
+    transition: background 0.15s ease;
+    position: relative;
+  }
+  .hth-table tbody tr td.td-d {
+    transition: border-left-color 0.15s ease;
+    border-left: 3px solid transparent;
+  }
+  .hth-table tbody tr td.td-m {
+    transition: border-left-color 0.15s ease;
+    border-left: 3px solid transparent;
+  }
+  .hth-table tbody tr:hover { background: #f7f7fb; }
+  .hth-table tbody tr:hover td.td-d { border-left-color: var(--blue); }
+  .hth-table tbody tr:hover td.td-m { border-left-color: var(--orange); }
+
+  /* Adv badges — pulse once on load, hover scale */
+  @keyframes badgePulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(250,102,15,0.15); }
+    100% { transform: scale(1); box-shadow: none; }
+  }
+  @keyframes badgePulseBlue {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(24,72,200,0.15); }
+    100% { transform: scale(1); box-shadow: none; }
+  }
+  .adv-m { animation: badgePulse 0.7s ease 1.2s both; cursor: default; }
+  .adv-d { animation: badgePulseBlue 0.7s ease 1.2s both; cursor: default; }
+  .adv-m:hover { transform: scale(1.08); transition: transform 0.15s ease; }
+  .adv-d:hover { transform: scale(1.08); transition: transform 0.15s ease; }
+
+  /* Pricing tier bar fill */
+  .tier-fill-wrap {
+    height: 3px; background: var(--border-soft);
+    border-radius: 2px; margin-top: 6px; overflow: hidden;
+  }
+  .tier-fill-bar {
+    height: 100%; border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+  .tier-fill-bar.filled { transform: scaleX(1); }
+  .tier-fill-bar.blue-bar { background: var(--blue); }
+  .tier-fill-bar.orange-bar { background: var(--orange); }
+
+  /* Source tooltip expansion */
+  .src-item {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 13px; color: var(--grey-text);
+    padding: 5px 0; border-bottom: 1px solid var(--border-soft);
+    cursor: default; transition: background 0.15s;
+    border-radius: 4px; padding-left: 6px; margin-left: -6px;
+  }
+  .src-item:last-child { border-bottom: none; }
+  .src-item:hover { background: var(--orange-light); }
+  .src-num {
+    color: var(--orange); font-weight: 700; flex-shrink: 0;
+    font-size: 11px; font-family: var(--font-mono); min-width: 22px;
+  }
+  .src-text { line-height: 1.5; }
+
+  /* Point reveal stagger */
+  .point {
+    opacity: 0; transform: translateX(-8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .point.point-visible { opacity: 1; transform: translateX(0); }
+
+  /* Hero entrance */
+  .hero-eyebrow { animation: heroFade 0.5s ease 0.1s both; }
+  .hero h1       { animation: heroFade 0.5s ease 0.2s both; }
+  .hero-sub      { animation: heroFade 0.5s ease 0.3s both; }
+  .hero-meta     { animation: heroFade 0.5s ease 0.4s both; }
+  @keyframes heroFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Pill hover */
+  .pill {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: default;
+  }
+  .pill:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+
+  /* Col-card hover */
+  .col-card {
+    transition: box-shadow 0.2s ease;
+  }
+  .col-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.09); }
+
+
+  /* ══════════════════════════════════════
+     ENHANCEMENT v8 — 8 NEW FEATURES
+  ══════════════════════════════════════ */
+
+  /* ── 1. SECTION IDENTITY COLOURS ── */
+  .section-zone[data-theme="orange"] { border-left: 4px solid var(--orange); }
+  .section-zone[data-theme="blue"]   { border-left: 4px solid var(--blue); }
+  .section-zone[data-theme="green"]  { border-left: 4px solid var(--green); }
+  .section-zone[data-theme="amber"]  { border-left: 4px solid var(--amber); }
+  .section-zone[data-theme="purple"] { border-left: 4px solid var(--purple); }
+
+  /* ── 2. SECTION COUNTER 01/02/03 ── */
+  .sl-counter {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.4s ease 0.05s, transform 0.4s ease 0.05s;
+    flex-shrink: 0;
+  }
+  .section-label.visible .sl-counter { opacity: 1; transform: translateX(0); }
+
+  /* ── 3. FACE-OFF ANIMATION (differentiator) ── */
+  .diff-box.denodo-box {
+    animation: none !important;
+    opacity: 0;
+    transform: translateX(-28px);
+    transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+                transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  }
+  .diff-box.mosaic-box {
+    animation: none !important;
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1) 0.1s,
+                transform 0.55s cubic-bezier(0.22,1,0.36,1) 0.1s;
+  }
+  .diff-box.denodo-box.face-in,
+  .diff-box.mosaic-box.face-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  /* Denodo box: blue left accent, Mosaic: orange */
+  .diff-box.denodo-box { border-left: 3px solid var(--blue) !important; }
+  .diff-box.mosaic-box { border-left: 3px solid var(--orange) !important; }
+
+  /* ── 4. H2H TABLE — ROW SEQUENTIAL REVEAL ── */
+  .hth-table tbody tr.hth-row {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease,
+                background 0.15s ease;
+  }
+  .hth-table tbody tr.hth-row.row-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Winner cell glow */
+  .hth-table tbody td.td-m.win {
+    transition: background 0.2s ease, box-shadow 0.2s ease, border-left-color 0.15s ease;
+  }
+  .hth-table tbody tr:hover td.td-m.win {
+    background: rgba(10,122,82,0.06);
+    box-shadow: inset 0 0 0 1px rgba(10,122,82,0.18);
+  }
+  .hth-table tbody tr:hover td.td-d.win {
+    background: rgba(24,72,200,0.06);
+    box-shadow: inset 0 0 0 1px rgba(24,72,200,0.18);
+  }
+
+  /* ── 5. COUNT-UP VALUES ── */
+  .snap-value[data-countup] { min-height: 1.2em; }
+
+  /* ── 6. PRICING BAR BOUNCE EASING + TOOLTIP ── */
+  .tier-fill-bar {
+    height: 100%; border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .tier-fill-bar.filled { transform: scaleX(1); }
+  .tier-row { position: relative; }
+  .tier-tooltip {
+    position: absolute;
+    right: 0; top: -34px;
+    background: var(--dark);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 10;
+    font-family: var(--font-mono);
+  }
+  .tier-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; right: 16px;
+    border: 5px solid transparent;
+    border-top-color: var(--dark);
+    border-bottom: none;
+  }
+  .tier-row:hover .tier-tooltip { opacity: 1; transform: translateY(0); }
+
+  /* ── 7. STICKY DOT NAVIGATION ── */
+  #dot-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 200;
+  }
+  .dot-nav-item {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease, width 0.25s ease;
+    position: relative;
+  }
+  .dot-nav-item:hover { transform: scale(1.4); background: var(--orange); }
+  .dot-nav-item.active { background: var(--orange); transform: scale(1.2); }
+  .dot-nav-item .dot-label {
+    position: absolute;
+    right: 16px; top: 50%;
+    transform: translateY(-50%);
+    background: var(--dark);
+    color: #fff;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    font-family: var(--font-mono);
+  }
+  .dot-nav-item:hover .dot-label { opacity: 1; }
+
+  /* ── 8. FLAG ITEMS SLIDE REVEAL + AMBER GLOW ── */
+  .flags-card {
+    box-shadow: -4px 0 0 var(--amber), var(--shadow-sm) !important;
+    border-left: 3px solid var(--amber) !important;
+  }
+  .flag-row {
+    opacity: 0;
+    transform: translateX(-14px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .flag-row.flag-visible { opacity: 1; transform: translateX(0); }
+
+  /* ── OVERLAP SECTION: subtle card treatment ── */
+  .overlap-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+  }
+  .overlap-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.38s ease, transform 0.38s ease,
+                box-shadow 0.2s ease;
+  }
+  .overlap-item.overlap-visible { opacity: 1; transform: translateY(0); }
+  .overlap-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+  .overlap-eq {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--amber-light);
+    color: var(--amber);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
+
+<!-- BACK TO TOP -->
+<button id="back-to-top" aria-label="Back to top">
+  <svg viewBox="0 0 18 18" fill="none"><path d="M9 14V4M4 9l5-5 5 5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+
+<!-- DOT NAVIGATION -->
+<nav id="dot-nav" aria-label="Section navigation">
+  <div class="dot-nav-item active" data-target="0"><span class="dot-label">Denodo at a glance</span></div>
+  <div class="dot-nav-item" data-target="1"><span class="dot-label">Architectural difference</span></div>
+  <div class="dot-nav-item" data-target="2"><span class="dot-label">Where they overlap</span></div>
+  <div class="dot-nav-item" data-target="3"><span class="dot-label">Strengths &amp; considerations</span></div>
+  <div class="dot-nav-item" data-target="4"><span class="dot-label">Head-to-head</span></div>
+  <div class="dot-nav-item" data-target="5"><span class="dot-label">Pricing</span></div>
+
+</nav>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <img class="navbar-logo"
+    src="https://images.contentstack.io/v3/assets/bltf8d808d9b8cebd37/bltb585439c8353e389/67905f9d58fb6d4dd481146e/strategy_logo_black.svg"
+    alt="Strategy"
+    onerror="this.style.display='none'">
+  <span class="navbar-tag">Competitive Intelligence &nbsp;·&nbsp; April 2026</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Competitive Intelligence &nbsp;/&nbsp; Semantic Layer</div>
+  <h1>Mosaic vs <em>Denodo</em></h1>
+  <p class="hero-sub">An enterprise architect's honest comparison — what each platform solves, where they overlap, and where the architectural difference is real.</p>
+  <div class="hero-meta">
+    <span>April 2026</span>
+    <span class="dot-sep"></span>
+    <span class="src-text">Strategy — Competitive Intelligence</span></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SECTION 1: SNAPSHOT -->
+  <div class="section-zone" data-theme="blue" style="border-top:none;" data-section="0">
+  <div class="section-label reveal"><span class="sl-counter">01</span><span class="sl-accent"></span><span class="sl-text">Denodo at a glance</span></div>
+  <div class="snapshot">
+    <div class="snap-card reveal">
+      <div class="snap-label">Gartner MQ 2025</div>
+      <div class="snap-value">Leader</div>
+      <div class="snap-sub">Data Integration Tools — <span data-countup="6" data-suffix=" consecutive years" class="count-inline">6</span></div>
+    </div>
+    <div class="snap-card reveal reveal-delay-1">
+      <div class="snap-label">Gartner Peer Insights</div>
+      <div class="snap-value" data-countup="4.6" data-suffix=" / 5" data-decimals="1">4.6 / 5</div>
+      <div class="snap-sub">Customers' Choice — 5th consecutive year (49 reviews, Mar 2025)</div>
+    </div>
+    <div class="snap-card reveal reveal-delay-2">
+      <div class="snap-label">Core identity</div>
+      <div class="snap-value">Data virtualization</div>
+      <div class="snap-sub">Logical data management — live queries, no replication</div>
+    </div>
+    <div class="snap-card reveal reveal-delay-3">
+      <div class="snap-label">Latest release</div>
+      <div class="snap-value">Platform 9.4</div>
+      <div class="snap-sub">Prior: 9.3 (Sept 2025), 9.2 (Apr 2025)</div>
+    </div>
+  </div>
+  </div><!-- /zone1 -->
+
+  <!-- SECTION 2: THE DIFFERENTIATOR -->
+  <div class="section-zone alt" data-theme="orange" data-section="1">
+  <div class="section-label reveal"><span class="sl-counter">02</span><span class="sl-accent"></span><span class="sl-text">The core architectural difference — start here</span></div>
+  <div class="differentiator-banner">
+    <div class="diff-eyebrow">Critical framing — before feature comparison</div>
+    <div class="diff-title">They are not solving the same problem</div>
+    <div class="diff-sub">A direct feature-by-feature comparison between Denodo and Mosaic produces apparent overlap that obscures the real architectural distinction. The right question is not "which has more connectors" — it is <strong>where business definitions live and what enforces their consistency.</strong></div>
+    <div class="diff-grid" id="diff-grid">
+      <div class="diff-box denodo-box">
+        <div class="diff-box-label denodo">Denodo — what it governs</div>
+        <div class="diff-body">
+          <ul style="margin:0;padding:0 0 0 18px;list-style:disc;line-height:1.75;font-size:14px;">
+            <li>A KPI lives <strong>inside a SQL view as an expression</strong> — no independent existence outside that view</li>
+            <li>Multiple teams can define the same metric differently across different views</li>
+            <li>The platform has no mechanism to detect or enforce consistency between conflicting view definitions</li>
+            <li>Consistency requires all teams and tools to agree on which view to consume — governed by discipline <em>outside</em> Denodo</li>
+          </ul>
+          <div style="margin-top:10px;font-size:14px;"><strong>Denodo solves data access</strong> — live, federated, without replication.</div>
+        </div>
+      </div>
+      <div class="diff-box mosaic-box">
+        <div class="diff-box-label mosaic">Mosaic — what it governs</div>
+        <div class="diff-body">
+          <ul style="margin:0;padding:0 0 0 18px;list-style:disc;line-height:1.75;font-size:14px;">
+            <li>A KPI is a <strong>standalone certified metric object</strong> with an owner, a single definition, and lineage</li>
+            <li>Security policies are attached directly to the metric object — not to any individual view or tool</li>
+            <li>Power BI, Qlik, Excel, and AI agents via MCP all receive the same certified answer</li>
+            <li>No tool can override a metric definition locally; no parallel version can exist without a formal governance action</li>
+          </ul>
+          <div style="margin-top:10px;font-size:14px;"><strong>Mosaic solves business definition governance</strong> — consistent by design, not by discipline.</div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+  </div>
+  </div><!-- /zone2 -->
+
+  <!-- SECTION 3: OVERLAP — BE HONEST -->
+  <div class="section-zone" data-theme="amber" data-section="2">
+  <div class="section-label reveal"><span class="sl-counter">03</span><span class="sl-accent"></span><span class="sl-text">Where they genuinely overlap — acknowledge this</span></div>
+  <p style="font-size:15px;color:var(--grey-text);margin-bottom:18px;line-height:1.6;">A direct feature-by-feature comparison will produce apparent overlap. Acknowledging this builds credibility before the real differentiation is made.</p>
+  <div class="overlap-grid" id="overlap-grid">
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both connect to <strong>200+ data sources</strong> across cloud, on-prem, and hybrid environments</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both provide a <strong>semantic / business layer</strong> that abstracts raw data with business meaning</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both support <strong>MCP</strong> for AI agent integration — MCP alone is not a differentiator</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both offer <strong>caching</strong> — Denodo via external JDBC database; Mosaic via in-memory models</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both expose <strong>REST, GraphQL, JDBC, ODBC</strong> interfaces for downstream tools</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text">Both enforce <strong>row-level security, RBAC</strong>, and audit logging centrally</div></div>
+  </div>
+  </div><!-- /zone3 -->
+
+  <!-- SECTION 4: STRENGTHS & CONSIDERATIONS -->
+  <div class="section-zone alt" data-theme="green" data-section="3">
+  <div class="section-label reveal"><span class="sl-counter">04</span><span class="sl-accent"></span><span class="sl-text">Verified strengths &amp; considerations — Denodo</span></div>
+  <div class="two-col reveal">
+    <div class="col-card">
+      <div class="col-card-title green">Verified strengths</div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>Data virtualization — live federation + optional cache</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>Primary path: live queries run directly against source systems in real time</li>
+            <li>Optional cache module stores results in an external JDBC database (partial or full modes)</li>
+            <li>Reduces the need for replication and ETL pipelines for data access use cases</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>Analyst recognition — Gartner Leader 6 years running</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>Gartner MQ Leader — Data Integration Tools, 6 consecutive years (latest: Dec 8, 2025)</li>
+            <li>Gartner Peer Insights Customers' Choice — 5th consecutive year; 4.6/5 from 49 reviews</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>200+ connectors — broad, location-agnostic</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>Covers cloud platforms, data warehouses, data lakes, transactional databases, SaaS, files, and APIs</li>
+            <li>Supports on-prem, cloud, and hybrid — location-agnostic by design</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>MCP + DeepQuery — strong AI-ready foundation</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>MCP Server in Denodo AI SDK (Jul 2025) — integrates with any MCP-compliant client including Claude Desktop</li>
+            <li>DeepQuery GA on GitHub with Platform 9.3 (Sept 16, 2025) — multi-agent deep research across live governed data</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>Data Marketplace — self-service data discovery</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>E-commerce-style interface for browsing and accessing governed data products (Platform 9.2, Apr 2025)</li>
+            <li>AI-powered search, recommendations, and conversational AI experience added in Platform 9.4</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>Enterprise governance — included across all paid tiers</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>Global security policies, AI SDK, Smart Query Acceleration from Team tier upward</li>
+            <li>FinOps logging, Advanced Diagnostic and Monitoring, VCS integration included</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-green">✓</div><div>
+        <div class="point-text"><strong>Flexible deployment including a free tier</strong>
+          <ul style="margin:5px 0 0 16px;padding:0;list-style:disc;color:var(--grey-text);font-size:14px;line-height:1.7;">
+            <li>On-prem, cloud (AWS, Azure, GCP), hybrid, and fully managed SaaS via Agora</li>
+            <li>Denodo Express (free download) and Developer tier on Agora (free — 2.5 TB/year, 50 data products)</li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="col-card">
+      <div class="col-card-title red">Considerations &amp; scope boundaries</div>
+
+      <div class="point"><div class="point-icon icon-red">→</div><div>
+        <div class="point-text"><strong>No native BI layer</strong>
+          <ul style="margin:5px 0 0 16px; padding:0; list-style:disc; color:var(--grey-text); font-size:14px; line-height:1.7;">
+            <li>No dashboards, reports, or visualisation product</li>
+            <li>Requires a separate BI tool (Tableau, Power BI, Qlik) for end-user consumption</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-red">→</div><div>
+        <div class="point-text"><strong>Implementation complexity</strong>
+          <ul style="margin:5px 0 0 16px; padding:0; list-style:disc; color:var(--grey-text); font-size:14px; line-height:1.7;">
+            <li>Complex to deploy in large heterogeneous environments</li>
+            <li>Some connectors cited as inconsistent in reliability (Gartner Peer Insights, Capterra)</li>
+            <li>Data virtualization expertise required — steep learning curve for non-specialists</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-red">→</div><div>
+        <div class="point-text"><strong>Cache is disk-based, not in-memory</strong>
+          <ul style="margin:5px 0 0 16px; padding:0; list-style:disc; color:var(--grey-text); font-size:14px; line-height:1.7;">
+            <li>Cache stored in an external JDBC database (embedded Derby or external RDBMS)</li>
+            <li>Performance gain is from avoiding source re-fetch — not RAM-resident computation</li>
+            <li>Lakehouse Accelerator (Presto-based MPP) available within tier core allocation</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-red">→</div><div>
+        <div class="point-text"><strong>Metric consistency is discipline-dependent</strong>
+          <ul style="margin:5px 0 0 16px; padding:0; list-style:disc; color:var(--grey-text); font-size:14px; line-height:1.7;">
+            <li>KPIs live inside SQL views — no independent certified existence</li>
+            <li>Multiple views can carry conflicting definitions; platform does not detect conflicts</li>
+            <li>Consistency requires governance enforced outside Denodo</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-red">→</div><div>
+        <div class="point-text"><strong>AI modeling is assistive, not end-to-end</strong>
+          <ul style="margin:5px 0 0 16px; padding:0; list-style:disc; color:var(--grey-text); font-size:14px; line-height:1.7;">
+            <li>Denodo Assistant helps with join suggestions and natural language queries</li>
+            <li>Not designed to build semantic models from raw source data end-to-end</li>
+          </ul>
+        </div>
+      </div></div>
+
+      <div class="point"><div class="point-icon icon-red">→</div><div>
+        <div class="point-text"><strong>Usage-based pricing scales with AI workloads</strong>
+          <ul style="margin:5px 0 0 16px; padding:0; list-style:disc; color:var(--grey-text); font-size:14px; line-height:1.7;">
+            <li>Costs tied to data volume processed and data products queried</li>
+            <li>High-frequency AI agent queries increase billable consumption unpredictably</li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  </div><!-- /zone4 -->
+
+  <!-- SECTION 5: HEAD-TO-HEAD -->
+  <div class="section-zone" data-theme="orange" data-section="4">
+  <div class="section-label reveal"><span class="sl-counter">05</span><span class="sl-accent"></span><span class="sl-text">Head-to-head — Denodo vs Strategy Mosaic</span></div>
+  <div class="hth-wrap reveal">
+    <table class="hth-table">
+      <thead><tr>
+        <th>Dimension</th>
+        <th class="col-d">Denodo</th>
+        <th class="col-m">Strategy Mosaic</th>
+      </tr></thead>
+      <tbody>
+        <tr class="hth-row">
+          <td class="td-dim">Core architecture</td>
+          <td class="td-d neut"><strong>Logical data management</strong><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Live queries run directly against source systems</li><li>No data replication or movement required</li><li>Optional external database cache for performance-sensitive views</li></ul></td>
+          <td class="td-m win"><strong>Universal Semantic Layer</strong><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Decouples business logic and security from underlying databases and clouds</li><li>Metric objects exist independently of any tool or view</li><li>Business definitions travel with the model — not with the BI tool</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Where KPIs live</td>
+          <td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>KPIs embedded as SQL expressions inside derived views</li><li>No independent existence outside the view</li><li>Multiple views can carry conflicting definitions — no platform-level conflict detection</li></ul></td>
+          <td class="td-m win"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Standalone certified metric objects — independent of any view or tool</li><li>One definition, one owner, per metric</li><li>Platform enforces consistency across every tool and AI agent</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Metric consistency across tools</td>
+          <td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Achievable when all tools consume the same Denodo views</li><li>Relies on team discipline and governance outside the platform</li><li>Breaks silently when views diverge or teams create parallel views</li></ul></td>
+          <td class="td-m win"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Enforced by platform design — no configuration required</li><li>Power BI, Qlik, Excel, and AI agents always return the same certified answer</li><li>Drift is structurally prevented, not managed</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Product scope</td>
+          <td class="td-d neut">Data virtualization + semantic layer + data marketplace; no native BI reporting or dashboarding</td>
+          <td class="td-m win">Semantic layer + in-memory analytics engine + native BI reporting, dashboards, mobile, and embedded analytics in one platform <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Query execution</td>
+          <td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Primary path: live federated push-down to source systems</li><li>Optional external database cache — partial or full modes (embedded Derby or external RDBMS)</li><li>Optional Lakehouse Accelerator (Presto-based MPP) within tier core allocation</li></ul></td>
+          <td class="td-m win"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Hybrid: live query pushdown + full in-memory calculation engine</li><li>Cross-source joins handled in memory — no source compute triggered</li><li>Semantic-aware caching reduces Snowflake and Databricks spend</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Cloud cost reduction</td>
+          <td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Live federation eliminates ETL pipelines for data access use cases</li><li>Smart Query Acceleration and external database cache reduce repeat source queries</li><li>No data movement costs — data stays at source</li></ul></td>
+          <td class="td-m win"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>In-memory caching absorbs repeated queries — Snowflake/Databricks compute not re-triggered</li><li>Vendor-stated savings: ~$63K on $250K–$1M spend; ~$609K on $1M–$5M spend</li><li>User-based licensing means AI agent query volume adds no incremental cost</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Data connectors</td>
+          <td class="td-d neut">200+ connectors — cloud, on-prem, databases, SaaS, files, APIs (official datasheet)</td>
+          <td class="td-m neut">200+ sources — cloud warehouses, on-prem, legacy databases, files, SAP, Salesforce, business applications (Whitepaper p.4, p.14)</td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">MCP / AI agents</td>
+          <td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>MCP Server in Denodo AI SDK — announced Jul 2025</li><li>Integrates with any MCP-compliant client including Claude Desktop</li><li>AI agents query virtual data views (SQL view-based definitions)</li></ul></td>
+          <td class="td-m win"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Mosaic MCP Server — Claude, OpenAI, and Gemini supported</li><li>AI agents query certified metric objects, not raw views</li><li>Same governed definition served to both AI agents and BI tools</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">AI capabilities</td>
+          <td class="td-d neut"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>DeepQuery (GA on GitHub, Sept 2025) — multi-step analytical reasoning across live governed data</li><li>Denodo Assistant — AI-guided modeling, join suggestions, conversational data access in catalog</li></ul></td>
+          <td class="td-m win"><ul style="margin:4px 0 0 16px;padding:0;list-style:disc;font-size:13.5px;line-height:1.65;"><li>Mosaic Studio — end-to-end AI modeling from raw source data</li><li>Automated profiling, relationship detection, and metric generation</li><li>87% faster time-to-model; 10× throughput vs traditional methods (vendor-stated, Whitepaper p.7)</li></ul> <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Analyst recognition</td>
+          <td class="td-d win">Gartner MQ Leader — Data Integration Tools, 6 consecutive years (Dec 2025); Customers' Choice 2025 <span class="adv adv-d">Denodo</span></td>
+          <td class="td-m neut">Not positioned in Gartner MQ for Data Integration Tools — different category; GigaOm semantic layer positioning</td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Pricing model</td>
+          <td class="td-d neut">Usage-based — volume of data processed (GB) + data products queried; costs scale with workload and AI agent frequency</td>
+          <td class="td-m win">User-based licensing — predictable spend regardless of query volume; AI agent queries carry no incremental cost <span class="adv adv-m">Mosaic</span></td>
+        </tr>
+        <tr class="hth-row">
+          <td class="td-dim">Free tier</td>
+          <td class="td-d win">Yes — Denodo Express (free download); Developer tier on Agora (free, 2.5 TB/year, 50 data products) <span class="adv adv-d">Denodo</span></td>
+          <td class="td-m neut">No public free tier; commercial licensing only</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  </div><!-- /zone5 -->
+
+  <!-- SECTION 6: PRICING DETAIL -->
+  <div class="section-zone alt" data-theme="blue" data-section="5">
+  <div class="section-label reveal"><span class="sl-counter">06</span><span class="sl-accent"></span><span class="sl-text">Pricing comparison — the detail that matters for AI workloads</span></div>
+  <div class="pricing-grid reveal">
+    <div class="pricing-card">
+      <div class="pricing-card-title blue">Denodo — usage-based tiers</div>
+      <div class="tier-row free">
+        <span class="tier-tooltip">Free tier · 2.5 TB · 4 cores</span>
+        <div><span class="tier-name">Developer</span>
+          <div class="tier-fill-wrap"><div class="tier-fill-bar blue-bar" data-width="15"></div></div>
+        </div>
+        <div class="tier-detail">Free · 2.5 TB/year · 50 data products · 4 cores</div>
+      </div>
+      <div class="tier-row">
+        <span class="tier-tooltip">From $X/yr · 7.5 TB · 8 cores</span>
+        <div><span class="tier-name">Team</span>
+          <div class="tier-fill-wrap"><div class="tier-fill-bar blue-bar" data-width="35"></div></div>
+        </div>
+        <div class="tier-detail">7.5 TB/year · 100 data products · 8 cores</div>
+      </div>
+      <div class="tier-row">
+        <span class="tier-tooltip">25 TB · 225 products · 16 cores</span>
+        <div><span class="tier-name">High Availability</span>
+          <div class="tier-fill-wrap"><div class="tier-fill-bar blue-bar" data-width="65"></div></div>
+        </div>
+        <div class="tier-detail">25 TB/year · 225 data products · 16 cores</div>
+      </div>
+      <div class="tier-row">
+        <span class="tier-tooltip">75 TB · 750 products · 48 cores</span>
+        <div><span class="tier-name">Business Critical</span>
+          <div class="tier-fill-wrap"><div class="tier-fill-bar blue-bar" data-width="100"></div></div>
+        </div>
+        <div class="tier-detail">75 TB/year · 750 data products · 48 cores</div>
+      </div>
+      <div class="pricing-note">
+        All tiers include <strong>unlimited data sources</strong> and <strong>unlimited data consumers</strong>. Pricing is based on <strong>volume of data processed (GB)</strong> and <strong>data products queried</strong>. As AI agent usage increases, each agent query adds to data volume processed — costs scale with workload.
+      </div>
+    </div>
+
+    <div class="pricing-card highlight">
+      <div class="pricing-card-title orange">Mosaic — seat / license-based</div>
+      <div class="tier-row">
+        <div><span class="tier-name">License model</span></div>
+        <div class="tier-detail">Per user — predictable spend</div>
+      </div>
+      <div class="tier-row">
+        <div><span class="tier-name">Query volume impact</span></div>
+        <div class="tier-detail">None — no consumption component</div>
+      </div>
+      <div class="tier-row">
+        <div><span class="tier-name">AI agent queries</span></div>
+        <div class="tier-detail">No incremental cost as agents scale</div>
+      </div>
+      <div class="tier-row">
+        <div><span class="tier-name">Free tier</span></div>
+        <div class="tier-detail">No public free tier</div>
+      </div>
+      <div class="pricing-note">
+        <strong>The AI agent pricing difference is material.</strong> A deployment with 10 AI agents each running 500 queries/day generates 5,000 queries daily. Under usage-based pricing, this volume accumulates against your data tier. Under user-based pricing, agent query volume is irrelevant to cost. As agentic AI scales, this difference compounds.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- SOURCES -->
+  <div class="section-zone" data-theme="amber" data-section="6">
+
+
+  <!-- FOOTER -->
+  <div class="section-label reveal" style="margin-top:0;"><span class="sl-accent"></span><span class="sl-text">Sources</span></div>
+  <div style="background:var(--bg-section); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px 24px; margin-bottom:8px;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 32px;">
+      <div class="src-item">
+        <span class="src-num">01</span>
+        <span class="src-text">denodo.com — product overview, data virtualization, subscriptions page (fetched directly)</span></div>
+      <div class="src-item">
+        <span class="src-num">02</span>
+        <span class="src-text">Denodo Platform datasheet — DS-DenodoPlatform-07-web.pdf (official)</span></div>
+      <div class="src-item">
+        <span class="src-num">03</span>
+        <span class="src-text">denodo.com press release — Gartner MQ Leader, Dec 11, 2025</span></div>
+      <div class="src-item">
+        <span class="src-num">04</span>
+        <span class="src-text">denodo.com press release — Customers' Choice, Jul 2, 2025</span></div>
+      <div class="src-item">
+        <span class="src-num">05</span>
+        <span class="src-text">denodo.com press release — MCP + DeepQuery announcement, Jul 7, 2025</span></div>
+      <div class="src-item">
+        <span class="src-num">06</span>
+        <span class="src-text">denodo.com press release — Platform 9.3 GA (DeepQuery), Sept 16, 2025</span></div>
+      <div class="src-item">
+        <span class="src-num">07</span>
+        <span class="src-text">denodo.com press release — Platform 9.2 launch, Apr 29, 2025</span></div>
+      <div class="src-item">
+        <span class="src-num">08</span>
+        <span class="src-text">community.denodo.com — Cache Module, Derived Views, VDP Admin Guide 9.2</span></div>
+      <div class="src-item">
+        <span class="src-num">09</span>
+        <span class="src-text">Gartner Peer Insights — Denodo Platform verified user reviews (public)</span></div>
+      <div class="src-item">
+        <span class="src-num">10</span>
+        <span class="src-text">Capterra — Denodo Platform verified user reviews</span></div>
+      <div class="src-item">
+        <span class="src-num">11</span>
+        <span class="src-text">itbrief.com.au — Denodo Platform 9.4 article, Mar 2026</span></div>
+      <div class="src-item">
+        <span class="src-num">12</span>
+        <span class="src-text">Strategy Mosaic Whitepaper — official PDF, Sept 2025 (pp. 3–16)</span></div>
+      <div class="src-item">
+        <span class="src-num">13</span>
+        <span class="src-text">The Universal Semantic Layer Advantage — official Strategy PDF</span></div>
+      <div class="src-item">
+        <span class="src-num">14</span>
+        <span class="src-text">strategy.com/software/strategymosaic/cloud-cost-control (fetched directly)</span></div>
+      <div class="src-item">
+        <span class="src-num">15</span>
+        <span class="src-text">strategy.com/software/strategymosaic (fetched directly)</span></div>
+    </div>
+    <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:12px; color:var(--grey-faint); font-family:var(--font-mono);">Strategy — Competitive Intelligence</span>
+      <span style="font-size:12px; color:var(--grey-faint); font-family:var(--font-mono);">April 2026</span>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- SITE FOOTER -->
+<footer class="site-footer">
+  <img src="https://images.contentstack.io/v3/assets/bltf8d808d9b8cebd37/blt5cca227e8107e8d3/67905f9d4a7803b31b6c109f/strategy_logo_white.svg"
+    alt="Strategy"
+    onerror="this.style.display='none'">
+  <span>© 2026 Strategy. Competitive Intelligence — internal use. .</span>
+</footer>
+
+
+<script>
+// ══════════════════════════════════════════════
+// COMPLETE INTERACTION ENGINE v8
+// ══════════════════════════════════════════════
+
+const progressBar = document.getElementById('progress-bar');
+const backTop     = document.getElementById('back-to-top');
+const dotNav      = document.getElementById('dot-nav');
+const dotItems    = dotNav ? Array.from(dotNav.querySelectorAll('.dot-nav-item')) : [];
+const sectionZones = Array.from(document.querySelectorAll('.section-zone[data-section]'));
+
+// ─── Progress bar + back to top ───
+function updateScroll() {
+  const sy = window.scrollY;
+  const dh = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (dh > 0 ? (sy/dh)*100 : 0) + '%';
+  backTop.classList.toggle('visible', sy > 400);
+
+  // Active dot nav
+  let activeIdx = 0;
+  sectionZones.forEach((zone, i) => {
+    const top = zone.getBoundingClientRect().top;
+    if (top <= window.innerHeight * 0.45) activeIdx = i;
+  });
+  dotItems.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+}
+window.addEventListener('scroll', updateScroll, { passive: true });
+updateScroll();
+
+backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ─── Dot nav click ───
+dotItems.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const idx = parseInt(dot.dataset.target);
+    const zone = sectionZones[idx];
+    if (zone) zone.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ─── General reveal observer ───
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ─── Staggered point reveals inside col-cards ───
+const pointObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.point').forEach((pt, i) =>
+        setTimeout(() => pt.classList.add('point-visible'), i * 60)
+      );
+      pointObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.col-card').forEach(el => pointObs.observe(el));
+
+// ─── Face-off animation (differentiator boxes) ───
+const diffGrid = document.getElementById('diff-grid');
+if (diffGrid) {
+  const faceObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.querySelectorAll('.diff-box').forEach(b => b.classList.add('face-in')), 100);
+        faceObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  faceObs.observe(diffGrid);
+}
+
+// ─── H2H row sequential reveal ───
+const hthWrap = document.querySelector('.hth-wrap');
+if (hthWrap) {
+  const hthObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.hth-row').forEach((row, i) =>
+          setTimeout(() => row.classList.add('row-visible'), i * 55)
+        );
+        hthObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  hthObs.observe(hthWrap);
+}
+
+// ─── Count-up animation ───
+function animateCount(el) {
+  const target   = parseFloat(el.dataset.countup);
+  const suffix   = el.dataset.suffix || '';
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const dur      = 1200;
+  const start    = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / dur, 1);
+    const ease     = 1 - Math.pow(1 - progress, 3);
+    const val      = (target * ease).toFixed(decimals);
+    el.textContent = val + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = target.toFixed(decimals) + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+const countObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && e.target.dataset.countup) {
+      animateCount(e.target);
+      countObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-countup]').forEach(el => countObs.observe(el));
+
+// ─── Pricing bar fill with bounce easing ───
+const fillObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.tier-fill-bar').forEach((bar, i) => {
+        const w = bar.dataset.width || 50;
+        setTimeout(() => { bar.style.width = w + '%'; bar.classList.add('filled'); }, i * 130);
+      });
+      fillObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+document.querySelectorAll('.pricing-card').forEach(el => fillObs.observe(el));
+
+// ─── Overlap cards stagger ───
+const overlapGrid = document.getElementById('overlap-grid');
+if (overlapGrid) {
+  const ovObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.overlap-item').forEach((item, i) =>
+          setTimeout(() => item.classList.add('overlap-visible'), i * 80)
+        );
+        ovObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  ovObs.observe(overlapGrid);
+}
+
+// ─── Flag items slide reveal ───
+const flagsCard = document.querySelector('.flags-card');
+if (flagsCard) {
+  const flagObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.flag-row').forEach((row, i) =>
+          setTimeout(() => row.classList.add('flag-visible'), i * 90)
+        );
+        flagObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  flagObs.observe(flagsCard);
+}
+</script>
+
+</body>
+</html>
