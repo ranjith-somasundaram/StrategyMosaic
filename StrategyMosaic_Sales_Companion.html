@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mosaic · Sales Companion</title>
+<style>
+:root {
+  --orange: #FA660F;
+  --orange-light: rgba(250,102,15,0.08);
+  --orange-mid: rgba(250,102,15,0.14);
+  --orange-border: rgba(250,102,15,0.28);
+  --black: #0a0a0a;
+  --dark: #1a1a1a;
+  --grey-text: #4a4a5a;
+  --grey-muted: #6a6a7a;
+  --grey-faint: #9a9aaa;
+  --border: #d8d8e8;
+  --border-soft: #ebebf5;
+  --bg: #ffffff;
+  --bg-section: #f7f7fb;
+  --bg-card: #ffffff;
+  --green: #0a7a52;
+  --green-light: rgba(10,122,82,0.07);
+  --green-border: rgba(10,122,82,0.22);
+  --amber: #a05800;
+  --amber-light: rgba(160,88,0,0.07);
+  --amber-border: rgba(160,88,0,0.22);
+  --red: #b02020;
+  --red-light: rgba(176,32,32,0.06);
+  --red-border: rgba(176,32,32,0.2);
+  --blue: #1848c8;
+  --blue-light: rgba(24,72,200,0.07);
+  --blue-border: rgba(24,72,200,0.2);
+  --purple: #5e35b1;
+  --purple-light: rgba(94,53,177,0.07);
+  --purple-border: rgba(94,53,177,0.22);
+  --teal: #0a6e56;
+  --teal-light: rgba(10,110,86,0.07);
+  --teal-border: rgba(10,110,86,0.22);
+  --font: 'Segoe UI',-apple-system,system-ui,sans-serif;
+  --font-mono: 'Cascadia Code','SF Mono',ui-monospace,monospace;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 3px 10px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:16px;line-height:1.65;}
+
+/* ── PROGRESS BAR ── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--orange),#ff9a5c);z-index:9999;width:0%;transition:width 0.1s linear;border-radius:0 2px 2px 0;}
+
+/* ── BACK TO TOP ── */
+#back-to-top{position:fixed;bottom:32px;right:32px;width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;border:none;cursor:pointer;font-size:17px;box-shadow:0 4px 16px rgba(250,102,15,0.38);opacity:0;transform:translateY(12px) scale(0.85);transition:opacity 0.25s,transform 0.25s,box-shadow 0.2s;z-index:999;display:flex;align-items:center;justify-content:center;}
+#back-to-top.visible{opacity:1;transform:translateY(0) scale(1);}
+#back-to-top:hover{box-shadow:0 6px 24px rgba(250,102,15,0.52);transform:translateY(-2px) scale(1.07);}
+
+/* ── NAVBAR ── */
+.navbar{background:#fff;border-bottom:1px solid var(--border);padding:0 64px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.navbar-left{display:flex;align-items:center;gap:16px;}
+.navbar-brand{font-size:16px;font-weight:800;color:var(--black);letter-spacing:-0.02em;}
+.navbar-brand span{color:var(--orange);}
+.navbar-divider{width:1px;height:20px;background:var(--border);}
+.navbar-doc{font-size:11.5px;color:var(--grey-muted);font-family:var(--font-mono);letter-spacing:0.06em;text-transform:uppercase;}
+.navbar-badge{font-size:11px;padding:3px 11px;border-radius:20px;background:var(--orange-light);color:var(--orange);border:1px solid var(--orange-border);font-family:var(--font-mono);font-weight:700;}
+
+/* ── SECTION TAB BAR ── */
+.tab-bar{background:#fff;border-bottom:1px solid var(--border);padding:0 64px;display:flex;align-items:flex-end;gap:0;position:sticky;top:62px;z-index:190;overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.stab{font-size:13px;font-weight:600;padding:0 22px;height:48px;display:flex;align-items:center;gap:8px;cursor:pointer;border:none;background:transparent;color:var(--grey-muted);font-family:var(--font);border-bottom:3px solid transparent;transition:all 0.18s;white-space:nowrap;position:relative;}
+.stab:hover{color:var(--dark);}
+.stab.active{color:var(--orange);border-bottom-color:var(--orange);font-weight:700;}
+.stab-num{font-size:10.5px;font-family:var(--font-mono);font-weight:700;padding:2px 7px;border-radius:20px;background:var(--bg-section);border:1px solid var(--border);transition:all 0.18s;letter-spacing:0.03em;}
+.stab.active .stab-num{background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);}
+.stab-sep{width:1px;height:22px;background:var(--border);flex-shrink:0;align-self:center;margin:0 2px;}
+
+/* ── SECTION PANELS ── */
+.sec-panel{display:none;}
+.sec-panel.active{display:block;animation:secIn 0.28s cubic-bezier(0.22,1,0.36,1);}
+@keyframes secIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── HERO (per section) ── */
+.sec-hero{padding:44px 64px 36px;border-bottom:1px solid var(--border-soft);position:relative;overflow:hidden;}
+.sec-hero::after{content:'';position:absolute;right:-80px;top:-60px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(250,102,15,0.05) 0%,transparent 70%);pointer-events:none;}
+.sec-eyebrow{font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--orange);margin-bottom:12px;font-family:var(--font-mono);}
+.sec-hero h2{font-size:32px;font-weight:800;color:var(--black);line-height:1.1;letter-spacing:-0.03em;margin-bottom:12px;}
+.sec-hero h2 em{color:var(--orange);font-style:normal;}
+.sec-desc{font-size:17px;color:var(--grey-text);max-width:600px;line-height:1.65;margin-bottom:20px;}
+.sec-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.expand-btn{font-size:12px;font-family:var(--font-mono);color:var(--grey-muted);border:1px solid var(--border);background:var(--bg-section);padding:5px 14px;border-radius:20px;cursor:pointer;transition:all 0.15s;font-weight:600;letter-spacing:0.03em;}
+.expand-btn:hover{border-color:var(--orange-border);color:var(--orange);background:var(--orange-light);}
+.sec-hint{font-size:12px;color:var(--grey-faint);font-family:var(--font-mono);}
+
+/* ── MAIN CONTENT ── */
+.sec-body{max-width:1160px;margin:0 auto;padding:0 64px 80px;}
+
+/* ── SUBSECTION LABEL ── */
+.ssec-label{font-size:13px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:var(--black);margin:44px 0 20px;display:flex;align-items:center;gap:14px;font-family:var(--font-mono);}
+.ssec-label .sl-bar{width:4px;height:20px;background:var(--orange);border-radius:2px;flex-shrink:0;transform:scaleY(0);transform-origin:bottom;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);}
+.ssec-label.vis .sl-bar{transform:scaleY(1);}
+.ssec-label .sl-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);transform:scaleX(0);transform-origin:left;transition:transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s;}
+.ssec-label.vis .sl-line{transform:scaleX(1);}
+
+/* ── SUB TABS (hooks / problem etc) ── */
+.sub-tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap;}
+.sub-tab{font-size:13px;padding:7px 18px;border-radius:20px;border:1px solid var(--border);cursor:pointer;background:var(--bg-section);color:var(--grey-muted);font-family:var(--font);font-weight:500;transition:all 0.16s;}
+.sub-tab:hover{border-color:var(--orange-border);color:var(--orange);}
+.sub-tab.active{background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);font-weight:700;}
+.sub-pane{display:none;}
+.sub-pane.active{display:block;animation:secIn 0.2s ease;}
+
+/* ── FILTER PILLS ── */
+.fpills{display:flex;gap:7px;margin-bottom:22px;flex-wrap:wrap;}
+.fpill{font-size:12.5px;padding:5px 14px;border-radius:20px;border:1px solid var(--border);cursor:pointer;background:var(--bg-section);color:var(--grey-muted);font-weight:500;transition:all 0.15s;}
+.fpill:hover{border-color:var(--orange-border);color:var(--orange);}
+.fpill.active{background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);font-weight:700;}
+
+/* ── COLLAPSIBLE BLOCKS ── */
+.cblock{border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden;transition:box-shadow 0.2s,transform 0.2s;}
+.cblock:hover{box-shadow:var(--shadow-sm);}
+.cblock-hdr{padding:16px 22px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--bg-section);transition:background 0.15s;user-select:none;}
+.cblock-hdr:hover{background:#f0f0f8;}
+.cblock-hdr.open{background:#fff;border-bottom:1px solid var(--border-soft);}
+.cblock-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+.cbadge{font-size:10.5px;font-family:var(--font-mono);font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;border:1px solid;letter-spacing:0.03em;}
+.b-orange{background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);}
+.b-amber{background:var(--amber-light);color:var(--amber);border-color:var(--amber-border);}
+.b-purple{background:var(--purple-light);color:var(--purple);border-color:var(--purple-border);}
+.b-teal{background:var(--teal-light);color:var(--teal);border-color:var(--teal-border);}
+.b-green{background:var(--green-light);color:var(--green);border-color:var(--green-border);}
+.b-blue{background:var(--blue-light);color:var(--blue);border-color:var(--blue-border);}
+.b-red{background:var(--red-light);color:var(--red);border-color:var(--red-border);}
+.b-grey{background:var(--bg-section);color:var(--grey-muted);border-color:var(--border);}
+.cblock-title{font-size:15px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cblock-preview{font-size:13px;color:var(--grey-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;}
+.cchev{font-size:12px;color:var(--grey-faint);transition:transform 0.28s cubic-bezier(0.22,1,0.36,1);flex-shrink:0;}
+.cchev.open{transform:rotate(180deg);color:var(--orange);}
+.cblock-body{max-height:0;overflow:hidden;transition:max-height 0.4s cubic-bezier(0.22,1,0.36,1);}
+.cblock-body.open{max-height:3000px;}
+.cinner{padding:24px 26px;}
+
+/* ── SCRIPT BLOCKS ── */
+.script-block{font-size:16px;color:var(--dark);line-height:1.78;font-style:italic;border-left:4px solid var(--orange);padding-left:18px;margin-bottom:14px;}
+.script-note{font-size:14.5px;color:var(--grey-text);background:var(--bg-section);border-radius:var(--radius);padding:12px 16px;border-left:3px solid var(--border);line-height:1.6;}
+
+/* ── ANALOGY ── */
+.analogy-box{background:linear-gradient(135deg,#fff9f5,#fff5ee);border:1.5px solid var(--orange-border);border-radius:var(--radius-lg);padding:22px 26px;margin-bottom:10px;position:relative;overflow:hidden;}
+.analogy-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--orange);}
+.analogy-lbl{font-size:10.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;font-family:var(--font-mono);}
+.analogy-text{font-size:16px;color:var(--dark);line-height:1.72;}
+
+/* ── ROI ── */
+.roi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.roi-card{background:var(--bg-section);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;text-align:center;transition:transform 0.22s,box-shadow 0.22s,border-left-color 0.22s;border-left:3px solid transparent;cursor:default;}
+.roi-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,0.09);border-left-color:var(--orange);}
+.roi-num{font-size:28px;font-weight:800;color:var(--orange);letter-spacing:-0.02em;display:block;transition:transform 0.2s;}
+.roi-card:hover .roi-num{transform:scale(1.05);}
+.roi-label{font-size:13.5px;color:var(--grey-text);margin-top:6px;line-height:1.45;}
+
+/* ── ARB GRID ── */
+.arb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.arb-card{border-radius:var(--radius-lg);padding:20px 22px;border:1px solid;}
+.arb-without{background:#fdf5f5;border-color:var(--red-border);}
+.arb-with{background:#f4faf7;border-color:var(--green-border);}
+.arb-title{font-size:11.5px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid;}
+.arb-without .arb-title{color:var(--red);border-color:var(--red-border);}
+.arb-with .arb-title{color:var(--green);border-color:var(--green-border);}
+.arb-list{list-style:none;}
+.arb-list li{font-size:14.5px;padding:5px 0 5px 18px;position:relative;color:var(--grey-text);line-height:1.5;border-bottom:1px solid rgba(0,0,0,0.05);}
+.arb-list li:last-child{border-bottom:none;}
+.arb-without .arb-list li::before{content:'✗';position:absolute;left:0;color:var(--red);font-weight:700;}
+.arb-with .arb-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+
+/* ── COST LEVERS ── */
+.lever-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.lever{background:var(--bg-section);border-radius:var(--radius-lg);padding:18px 20px;border:1px solid var(--border);}
+.lever-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--orange);font-family:var(--font-mono);margin-bottom:7px;}
+.lever-body{font-size:14.5px;color:var(--grey-text);line-height:1.6;}
+
+/* ── TCO BANNER ── */
+.tco-banner{background:linear-gradient(135deg,#fff8f0,#fff4e8);border:1.5px solid var(--amber-border);border-radius:var(--radius-lg);padding:18px 22px;}
+.tco-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--amber);font-family:var(--font-mono);margin-bottom:7px;}
+.tco-text{font-size:16px;color:var(--dark);font-style:italic;line-height:1.68;}
+
+/* ── PROBLEM ITEMS ── */
+.prob-item{display:flex;gap:16px;align-items:flex-start;padding:18px 20px;background:var(--bg-section);border-radius:var(--radius-lg);border:1px solid var(--border);}
+.prob-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;background:var(--orange-light);}
+.prob-col .prob-title{font-size:15.5px;font-weight:700;color:var(--black);margin-bottom:6px;}
+.prob-col .prob-body{font-size:14.5px;color:var(--grey-text);line-height:1.6;margin-bottom:10px;}
+.prob-answer{font-size:14px;color:var(--teal);font-weight:500;padding:8px 12px;background:var(--teal-light);border-radius:7px;border-left:3px solid var(--teal);line-height:1.55;}
+
+/* ── REACTIONS ── */
+.react-item{margin-bottom:7px;}
+.react-q{font-size:15px;font-weight:600;color:var(--dark);padding:13px 18px;background:var(--bg-section);border-radius:var(--radius);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;border:1px solid var(--border);transition:all 0.15s;}
+.react-q:hover{background:#f0f0f8;border-color:var(--orange-border);}
+.rchev{font-size:12px;color:var(--grey-faint);transition:transform 0.25s cubic-bezier(0.22,1,0.36,1);}
+.rchev.open{transform:rotate(180deg);color:var(--orange);}
+.react-a{max-height:0;overflow:hidden;transition:max-height 0.32s cubic-bezier(0.22,1,0.36,1);}
+.react-a.open{max-height:300px;}
+.react-body{font-size:15.5px;color:var(--grey-text);line-height:1.7;padding:16px 20px;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg-card);}
+
+/* ── DD ── */
+.dd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.dd-card{border-radius:var(--radius-lg);padding:22px 24px;border:1px solid;}
+.dd-do{background:#f4faf7;border-color:var(--green-border);}
+.dd-dont{background:#fdf5f5;border-color:var(--red-border);}
+.dd-title{font-size:11.5px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid;}
+.dd-do .dd-title{color:var(--green);border-color:var(--green-border);}
+.dd-dont .dd-title{color:var(--red);border-color:var(--red-border);}
+.dd-list{list-style:none;}
+.dd-list li{font-size:14.5px;padding:6px 0 6px 18px;position:relative;line-height:1.55;color:var(--grey-text);border-bottom:1px solid rgba(0,0,0,0.05);}
+.dd-list li:last-child{border-bottom:none;}
+.dd-do .dd-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+.dd-dont .dd-list li::before{content:'✗';position:absolute;left:0;color:var(--red);font-weight:700;}
+
+/* ── SCENARIO ── */
+.scene-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.scene-card{border-radius:var(--radius-lg);padding:20px 22px;cursor:pointer;border:2px solid transparent;transition:all 0.22s cubic-bezier(0.22,1,0.36,1);}
+.scene-card.gf{background:#f4faf7;border-color:var(--green-border);}
+.scene-card.bf{background:var(--orange-light);border-color:var(--orange-border);}
+.scene-card.hf{background:var(--amber-light);border-color:var(--amber-border);}
+.scene-card.gf:hover,.scene-card.gf.active{border-color:var(--green);box-shadow:0 4px 18px rgba(10,122,82,0.15);transform:translateY(-2px);}
+.scene-card.bf:hover,.scene-card.bf.active{border-color:var(--orange);box-shadow:0 4px 18px rgba(250,102,15,0.15);transform:translateY(-2px);}
+.scene-card.hf:hover,.scene-card.hf.active{border-color:var(--amber);box-shadow:0 4px 18px rgba(160,88,0,0.15);transform:translateY(-2px);}
+.scene-tag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;font-family:var(--font-mono);margin-bottom:6px;}
+.gf .scene-tag{color:var(--green);}
+.bf .scene-tag{color:var(--orange);}
+.hf .scene-tag{color:var(--amber);}
+.scene-name{font-size:15.5px;font-weight:700;color:var(--black);margin-bottom:4px;}
+.scene-sub{font-size:13.5px;color:var(--grey-muted);line-height:1.4;}
+.scene-detail{display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 26px;box-shadow:var(--shadow-sm);animation:secIn 0.24s ease;}
+.scene-detail.open{display:block;}
+.sig-title{font-size:13px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:12px;}
+.gf-c{color:var(--green);}
+.bf-c{color:var(--orange);}
+.hf-c{color:var(--amber);}
+.sig-list{list-style:none;margin-bottom:16px;}
+.sig-list li{font-size:15px;color:var(--grey-text);padding:7px 0 7px 18px;position:relative;line-height:1.55;border-bottom:1px solid var(--border-soft);}
+.sig-list li:last-child{border-bottom:none;}
+.sig-list li::before{content:'›';position:absolute;left:0;color:var(--grey-faint);font-weight:700;}
+.scene-mosaic{font-size:15px;color:var(--teal);font-weight:500;padding:12px 16px;background:var(--teal-light);border-radius:var(--radius);border-left:3px solid var(--teal);line-height:1.6;margin-bottom:10px;}
+.scene-cost{font-size:15px;color:var(--amber);padding:12px 16px;background:var(--amber-light);border-radius:var(--radius);border-left:3px solid var(--amber);line-height:1.6;}
+
+/* ── QUAL Q ── */
+.qual-card{background:var(--bg-section);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-top:14px;}
+.qual-q{font-size:15.5px;color:var(--dark);padding:11px 0 11px 18px;border-left:3px solid var(--orange);background:var(--orange-light);border-radius:0 var(--radius) var(--radius) 0;margin-bottom:9px;font-style:italic;line-height:1.58;padding-right:12px;}
+.qual-q:last-child{margin-bottom:0;}
+
+/* ── DISCOVERY ── */
+.persona-row{display:flex;gap:8px;margin-bottom:22px;}
+.persona-btn{font-size:13.5px;padding:8px 22px;border-radius:20px;border:1.5px solid var(--border);cursor:pointer;background:var(--bg-section);color:var(--grey-muted);font-weight:500;transition:all 0.16s;}
+.persona-btn:hover{border-color:var(--orange-border);color:var(--orange);}
+.persona-btn.active{background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);font-weight:700;}
+.q-wrap{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.q-item{padding:13px 22px;border-bottom:1px solid var(--border-soft);cursor:pointer;transition:background 0.13s,padding-left 0.15s;}
+.q-item:last-child{border-bottom:none;}
+.q-item:hover{background:var(--orange-light);padding-left:28px;}
+.q-row{display:flex;gap:12px;align-items:flex-start;}
+.q-num{font-size:11.5px;font-family:var(--font-mono);font-weight:700;color:var(--orange);min-width:22px;margin-top:3px;flex-shrink:0;}
+.q-col{flex:1;}
+.q-text{font-size:15.5px;color:var(--dark);line-height:1.62;font-weight:500;}
+.q-sub{font-size:14px;color:var(--grey-muted);font-style:italic;margin-top:5px;display:none;line-height:1.55;}
+.q-tip{max-height:0;overflow:hidden;transition:max-height 0.32s cubic-bezier(0.22,1,0.36,1);}
+.q-tip.open{max-height:250px;}
+.q-tip-inner{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;margin-bottom:4px;}
+.tip-why{padding:11px 14px;border-radius:var(--radius);background:var(--orange-light);border-left:3px solid var(--orange);}
+.tip-mosaic{padding:11px 14px;border-radius:var(--radius);background:var(--teal-light);border-left:3px solid var(--teal);}
+.tip-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;font-family:var(--font-mono);margin-bottom:4px;}
+.tip-why .tip-lbl{color:var(--orange);}
+.tip-mosaic .tip-lbl{color:var(--teal);}
+.tip-body{font-size:13.5px;color:var(--grey-text);line-height:1.55;}
+
+/* ── INDUSTRY ── */
+.ind-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:22px;}
+.ind-btn{font-size:13px;padding:14px 8px;border-radius:var(--radius-lg);border:1.5px solid var(--border);cursor:pointer;background:var(--bg-section);color:var(--grey-muted);text-align:center;transition:all 0.2s cubic-bezier(0.22,1,0.36,1);font-weight:500;}
+.ind-btn:hover{border-color:var(--orange-border);color:var(--orange);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
+.ind-btn.active{background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);font-weight:700;transform:translateY(-3px);box-shadow:0 4px 14px rgba(250,102,15,0.16);}
+.ind-icon{font-size:20px;display:block;margin-bottom:5px;}
+.ind-detail{display:none;animation:secIn 0.24s ease;}
+.ind-detail.active{display:block;}
+.ind-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;}
+.ind-block{background:var(--bg-section);border-radius:var(--radius-lg);padding:18px 20px;border:1px solid var(--border);}
+.ind-block-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;font-family:var(--font-mono);margin-bottom:11px;padding-bottom:9px;border-bottom:1px solid var(--border-soft);}
+.ind-block.pain .ind-block-title{color:var(--orange);}
+.ind-block.value .ind-block-title{color:var(--teal);}
+.ind-block ul{list-style:none;}
+.ind-block ul li{font-size:14.5px;color:var(--grey-text);padding:5px 0 5px 14px;position:relative;line-height:1.5;border-bottom:1px solid var(--border-soft);}
+.ind-block ul li:last-child{border-bottom:none;}
+.ind-block ul li::before{content:'›';position:absolute;left:0;color:var(--grey-faint);}
+.ind-cost{font-size:14.5px;color:var(--amber);padding:13px 17px;background:var(--amber-light);border-radius:var(--radius-lg);border-left:3px solid var(--amber);margin-bottom:12px;line-height:1.6;}
+.ind-q-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--grey-faint);font-family:var(--font-mono);margin-bottom:11px;}
+.ind-qs{display:flex;flex-direction:column;gap:8px;}
+.ind-q{font-size:15.5px;color:var(--dark);padding:12px 16px;background:var(--bg-section);border-radius:var(--radius);border-left:3px solid var(--orange);font-style:italic;line-height:1.58;border:1px solid var(--border);border-left-width:3px;}
+
+/* ── VALUE CARDS ── */
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.val-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow-sm);transition:all 0.22s cubic-bezier(0.22,1,0.36,1);cursor:default;opacity:0;transform:translateY(14px);}
+.val-card.val-in{opacity:1;transform:translateY(0);}
+.val-card:hover{box-shadow:0 8px 28px rgba(0,0,0,0.1);transform:translateY(-4px);}
+.val-tag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px;font-family:var(--font-mono);border:1px solid;}
+.t-cost{background:var(--amber-light);color:var(--amber);border-color:var(--amber-border);}
+.t-ai{background:var(--purple-light);color:var(--purple);border-color:var(--purple-border);}
+.t-gov{background:var(--teal-light);color:var(--teal);border-color:var(--teal-border);}
+.t-arch{background:var(--blue-light);color:var(--blue);border-color:var(--blue-border);}
+.val-title{font-size:15.5px;font-weight:700;color:var(--black);margin-bottom:7px;}
+.val-desc{font-size:14px;color:var(--grey-text);line-height:1.65;}
+.val-cost-note{font-size:13px;color:var(--amber);font-weight:600;margin-top:11px;padding-top:11px;border-top:1px solid var(--amber-border);}
+
+/* ── COMPETE ── */
+.comp-item{margin-bottom:7px;}
+.comp-q{font-size:15.5px;font-weight:600;color:var(--dark);padding:14px 20px;background:var(--bg-section);border-radius:var(--radius);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;border:1px solid var(--border);transition:all 0.15s;}
+.comp-q:hover{background:#f0f0f8;border-color:var(--orange-border);}
+.comp-meta{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.comp-cat{font-size:11px;color:var(--grey-faint);font-family:var(--font-mono);border:1px solid var(--border);padding:2px 9px;border-radius:20px;}
+.comp-chev{font-size:11px;color:var(--grey-faint);transition:transform 0.25s cubic-bezier(0.22,1,0.36,1);}
+.comp-chev.open{transform:rotate(180deg);color:var(--orange);}
+.comp-a{max-height:0;overflow:hidden;transition:max-height 0.38s cubic-bezier(0.22,1,0.36,1);}
+.comp-a.open{max-height:700px;}
+.comp-body{font-size:15px;color:var(--grey-text);line-height:1.72;padding:18px 22px;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);background:var(--bg-card);}
+.comp-bullets{list-style:none;margin-bottom:12px;}
+.comp-bullets li{padding:6px 0 6px 16px;position:relative;line-height:1.58;border-bottom:1px solid var(--border-soft);}
+.comp-bullets li:last-child{border-bottom:none;}
+.comp-bullets li::before{content:'›';position:absolute;left:0;color:var(--orange);}
+.comp-cost{padding:11px 16px;background:var(--amber-light);border-radius:var(--radius);border-left:3px solid var(--amber);font-size:14.5px;color:var(--amber);font-weight:500;line-height:1.55;}
+
+/* ── CLOSE ── */
+.close-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.close-item{display:flex;gap:16px;align-items:flex-start;padding:18px 22px;background:var(--bg-section);border-radius:var(--radius-lg);border:1px solid var(--border);transition:all 0.17s;opacity:0;transform:translateX(-10px);}
+.close-item.cl-in{opacity:1;transform:translateX(0);}
+.close-item:hover{background:#f0f0f8;box-shadow:var(--shadow-sm);}
+.close-num{font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:20px;flex-shrink:0;margin-top:2px;font-family:var(--font-mono);border:1px solid;letter-spacing:0.04em;}
+.close-lbl{font-size:15.5px;font-weight:700;color:var(--black);margin-bottom:5px;}
+.close-q{font-size:15px;color:var(--grey-text);font-style:italic;line-height:1.65;}
+.disq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.disq-card{border-radius:var(--radius-lg);padding:20px 22px;border:1px solid;}
+.disq-no{background:#fdf5f5;border-color:var(--red-border);}
+.disq-yes{background:#f4faf7;border-color:var(--green-border);}
+.disq-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;font-family:var(--font-mono);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid;}
+.disq-no .disq-title{color:var(--red);border-color:var(--red-border);}
+.disq-yes .disq-title{color:var(--green);border-color:var(--green-border);}
+.disq-list{list-style:none;}
+.disq-list li{font-size:14.5px;padding:6px 0 6px 18px;position:relative;line-height:1.55;color:var(--grey-text);border-bottom:1px solid rgba(0,0,0,0.05);}
+.disq-list li:last-child{border-bottom:none;}
+.disq-no .disq-list li::before{content:'✗';position:absolute;left:0;color:var(--red);font-weight:700;}
+.disq-yes .disq-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1),transform 0.5s cubic-bezier(0.22,1,0.36,1);}
+.reveal.vis{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:0.07s;}.rd2{transition-delay:0.14s;}.rd3{transition-delay:0.21s;}.rd4{transition-delay:0.28s;}.rd5{transition-delay:0.35s;}
+
+/* ── UTILITY ── */
+.mb10{margin-bottom:10px;}.mb14{margin-bottom:14px;}.mb20{margin-bottom:20px;}.mb22{margin-bottom:22px;}
+.section-note{font-size:16px;color:var(--grey-text);line-height:1.68;max-width:700px;margin-bottom:22px;}
+.sub-hdr{font-size:11.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--grey-muted);margin-bottom:14px;font-family:var(--font-mono);display:flex;align-items:center;gap:9px;}
+.sub-hdr::before{content:'';width:16px;height:2px;background:var(--orange);border-radius:1px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<button id="back-to-top">↑</button>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-left">
+    <span class="navbar-brand">Strategy<span>B</span></span>
+    <div class="navbar-divider"></div>
+    <span class="navbar-doc">Mosaic · Sales Companion</span>
+  </div>
+  <span class="navbar-badge">Feb 2026</span>
+</nav>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="stab active" onclick="showSec('s1',this)"><span class="stab-num">01</span>Opening</button>
+  <div class="stab-sep"></div>
+  <button class="stab" onclick="showSec('s2',this)"><span class="stab-num">02</span>Scenario</button>
+  <div class="stab-sep"></div>
+  <button class="stab" onclick="showSec('s3',this)"><span class="stab-num">03</span>Discovery</button>
+  <div class="stab-sep"></div>
+  <button class="stab" onclick="showSec('s4',this)"><span class="stab-num">04</span>Industry</button>
+  <div class="stab-sep"></div>
+  <button class="stab" onclick="showSec('s5',this)"><span class="stab-num">05</span>Value Props</button>
+  <div class="stab-sep"></div>
+  <button class="stab" onclick="showSec('s6',this)"><span class="stab-num">06</span>Compete</button>
+  <div class="stab-sep"></div>
+  <button class="stab" onclick="showSec('s7',this)"><span class="stab-num">07</span>Close</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     S1 — OPENING
+═══════════════════════════════════ -->
+<div class="sec-panel active" id="panel-s1">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 01</div>
+    <h2>Opening the call &amp; introducing <em>Mosaic</em></h2>
+    <p class="sec-desc">Three hook variants for different prospect angles, problem framing, ROI anchors, reaction handling, and do's &amp; don'ts — everything you need from the first 30 seconds.</p>
+    <div class="sec-meta">
+      <button class="expand-btn" onclick="toggleAll('s1',this)">Expand all</button>
+      <span class="sec-hint">↓ Click any block to expand · Press 1–7 to switch sections</span>
+    </div>
+  </div>
+  <div class="sec-body">
+
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="showSub('s1','hooks',this)">Hook scripts</button>
+      <button class="sub-tab" onclick="showSub('s1','problem',this)">Problem framing</button>
+      <button class="sub-tab" onclick="showSub('s1','roi',this)">ROI &amp; cost savings</button>
+      <button class="sub-tab" onclick="showSub('s1','reactions',this)">Handling reactions</button>
+      <button class="sub-tab" onclick="showSub('s1','dodont',this)">Do's &amp; don'ts</button>
+    </div>
+
+    <!-- HOOKS -->
+    <div class="sub-pane active" id="s1-hooks">
+      <div class="cblock reveal">
+        <div class="cblock-hdr" onclick="toggleCB(this)">
+          <div class="cblock-left"><span class="cbadge b-orange">~30 sec · cold call</span><span class="cblock-title">Hook A — Data consistency angle</span><span class="cblock-preview">Most companies deal with the same problem: data in different places, different tools…</span></div>
+          <span class="cchev">▼</span>
+        </div>
+        <div class="cblock-body"><div class="cinner">
+          <div class="script-block">"Quick context on why I'm reaching out — we've built a product called Mosaic. Most companies we talk to are dealing with the same problem: data sitting in different places, different teams using different tools, and no one being totally sure they're all looking at the same numbers. Mosaic fixes that. It sits in the middle of your existing stack and creates one trusted version of your data that every tool — and every AI — works from. Nothing gets moved, nothing gets replaced. Just one layer that everyone agrees on."</div>
+          <div class="script-note">Pause. Then: "Is that something that resonates with what you're dealing with right now?"</div>
+        </div></div>
+      </div>
+      <div class="cblock reveal rd1">
+        <div class="cblock-hdr" onclick="toggleCB(this)">
+          <div class="cblock-left"><span class="cbadge b-amber">~30 sec · cost-conscious</span><span class="cblock-title">Hook B — Cost &amp; warehouse spend angle</span><span class="cblock-preview">Companies spending more on Snowflake / Databricks as dashboards scale, not getting faster answers…</span></div>
+          <span class="cchev">▼</span>
+        </div>
+        <div class="cblock-body"><div class="cinner">
+          <div class="script-block">"The reason I'm calling — we work with companies that are spending more and more on Snowflake or Databricks as their reporting and dashboards scale, and they're not necessarily getting faster answers. Mosaic is a layer that sits on top of your warehouse and uses intelligent caching and query optimisation to significantly reduce how often you're hitting the warehouse directly. Most customers see their compute costs drop around 40%. And as a side effect, every BI tool and every AI agent ends up reading from the same governed data."</div>
+          <div class="script-note">Pause. Then: "Is the cost side something on your radar, or is it more the consistency piece?"</div>
+        </div></div>
+      </div>
+      <div class="cblock reveal rd2">
+        <div class="cblock-hdr" onclick="toggleCB(this)">
+          <div class="cblock-left"><span class="cbadge b-purple">~30 sec · AI-focused</span><span class="cblock-title">Hook C — AI readiness angle</span><span class="cblock-preview">Companies rolling out AI agents keep hitting the same wall — the AI gives wrong answers…</span></div>
+          <span class="cchev">▼</span>
+        </div>
+        <div class="cblock-body"><div class="cinner">
+          <div class="script-block">"A lot of the companies we speak to are trying to roll out AI agents or LLM-based tools on top of their business data — and they keep running into the same wall. The AI gives wrong answers, because the data it's reading from isn't clean or consistent. Mosaic is the layer that fixes that. It's the governed data foundation that sits between your data sources and your AI — so when your AI asks a question, it gets a certified, trusted answer, not a hallucinated one. We support ChatGPT, Claude, Copilot, Gemini — all of them — through the same layer."</div>
+          <div class="script-note">Pause. Then: "Is that a challenge you're hitting, or are you still earlier in the AI exploration phase?"</div>
+        </div></div>
+      </div>
+      <div class="analogy-box reveal rd3">
+        <div class="analogy-lbl">Plain language analogy — if they ask "what does it actually do?"</div>
+        <div class="analogy-text">"Think of it like a translation layer. Your data speaks a hundred different dialects — Snowflake, Oracle, SAP, Salesforce. Mosaic translates all of it into one business language that every tool reads consistently. Power BI, Tableau, Excel, your AI agents — they all read from that single translation. And because it's just a layer, nothing in your existing stack changes."</div>
+      </div>
+      <div class="cblock reveal rd4">
+        <div class="cblock-hdr" onclick="toggleCB(this)">
+          <div class="cblock-left"><span class="cbadge b-teal">Only if they engage</span><span class="cblock-title">If they ask for more — 60-second expand</span><span class="cblock-preview">Three parts: 200+ connectors, Studio (AI modelling), Sentinel (governance)…</span></div>
+          <span class="cchev">▼</span>
+        </div>
+        <div class="cblock-body"><div class="cinner">
+          <div class="script-block">"Mosaic has three parts. First, it connects to over 200 data sources — warehouses, databases, SaaS tools — without moving any data. Second, there's an AI-powered modelling tool inside called Studio. It cuts the time to build a data model from weeks to minutes — up to 87% faster. And third, there's a governance layer called Sentinel that tracks who's accessing what, flags risks, and keeps everything audit-ready across every tool automatically. The commercial model is seat-based, so there are no surprise compute bills as you scale."</div>
+          <div class="script-note">Then immediately: "Which of those three is most relevant to where you are right now?" — don't explain further until they direct you.</div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- PROBLEM FRAMING -->
+    <div class="sub-pane" id="s1-problem">
+      <p class="section-note">Use these to anchor the conversation in their pain before positioning the product. Each one maps directly to a Mosaic capability.</p>
+      <div class="cblock reveal"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain 1</span><span class="cblock-title">Inconsistent metrics across tools</span><span class="cblock-preview">Teams define revenue, profit, and churn differently depending on the tool they're in…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="prob-item"><div class="prob-icon">📊</div><div class="prob-col"><div class="prob-title">The problem</div><div class="prob-body">Teams using different BI tools define revenue, profit, and churn differently. Leaders see competing answers to the same question. Board meetings get derailed reconciling numbers before every pack.</div><div class="prob-answer">Mosaic: One certified definition consumed identically by Power BI, Tableau, Excel, and AI simultaneously. The reconciliation meeting disappears permanently.</div></div></div></div></div></div>
+      <div class="cblock reveal rd1"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-amber">Pain 2</span><span class="cblock-title">Rising compute costs as BI scales</span><span class="cblock-preview">Every new dashboard hits the warehouse directly — bills grow linearly with adoption…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="prob-item"><div class="prob-icon">💸</div><div class="prob-col"><div class="prob-title">The problem</div><div class="prob-body">Every new dashboard hits the warehouse directly. Snowflake and Databricks bills grow linearly with usage. ETL pipelines multiply. No one is optimising what gets queried and when.</div><div class="prob-answer">Mosaic: Intelligent caching and query pushdown reduce warehouse hits. Customers report ~40% compute cost reduction. Often pays for itself on savings alone.</div></div></div></div></div></div>
+      <div class="cblock reveal rd2"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Pain 3</span><span class="cblock-title">Fragmented governance across tools</span><span class="cblock-preview">Security set separately in each BI tool — compliance audits are manual and painful…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="prob-item"><div class="prob-icon">🔒</div><div class="prob-col"><div class="prob-title">The problem</div><div class="prob-body">Security policies set separately in Tableau, Power BI, Excel, and AI tools. When someone leaves, access must be revoked in five places. Compliance audits are manual and painful every cycle.</div><div class="prob-answer">Mosaic Sentinel: One security policy enforced centrally across all consumption points. Row-level, object-level, full audit trail — without touching each tool individually.</div></div></div></div></div></div>
+      <div class="cblock reveal rd3"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-red">Pain 4</span><span class="cblock-title">Vendor lock-in blocking modernisation</span><span class="cblock-preview">Business logic baked into one vendor — switching costs are enormous, roadmap held hostage…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="prob-item"><div class="prob-icon">🔗</div><div class="prob-col"><div class="prob-title">The problem</div><div class="prob-body">Business logic and security baked into Databricks, Snowflake, or Fabric means switching costs are enormous. Data strategy is hostage to one vendor's pricing and roadmap.</div><div class="prob-answer">Mosaic: Decouples business logic and security from any specific data store. Switch clouds or databases without rebuilding models, reports, or security policies.</div></div></div></div></div></div>
+      <div class="cblock reveal rd4"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-purple">Pain 5</span><span class="cblock-title">AI initiatives failing on ungoverned data</span><span class="cblock-preview">Direct LLM-to-database queries miss business rules — hallucinations at scale…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="prob-item"><div class="prob-icon">🤖</div><div class="prob-col"><div class="prob-title">The problem</div><div class="prob-body">Direct LLM-to-database queries miss business rules and produce hallucinations. AI projects stall because data teams can't certify what the AI is reading from.</div><div class="prob-answer">Mosaic: Abstraction layer between LLMs and raw data. AI reads certified metrics with business context. Hallucination risk drops structurally — not by prompt engineering.</div></div></div></div></div></div>
+    </div>
+
+    <!-- ROI -->
+    <div class="sub-pane" id="s1-roi">
+      <div class="roi-grid reveal">
+        <div class="roi-card"><span class="roi-num">~40%</span><div class="roi-label">Warehouse compute cost reduction via intelligent caching &amp; query optimisation</div></div>
+        <div class="roi-card"><span class="roi-num">87%</span><div class="roi-label">Faster time-to-first data model vs traditional semantic layer methods</div></div>
+        <div class="roi-card"><span class="roi-num">10×</span><div class="roi-label">Throughput improvement in data modelling with Mosaic Studio AI</div></div>
+        <div class="roi-card"><span class="roi-num">200+</span><div class="roi-label">Data source connectors — no data movement or replication required</div></div>
+      </div>
+      <div class="cblock reveal rd1 mb14">
+        <div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-amber">Core commercial argument</span><span class="cblock-title">Cost arbitrage — without vs with Mosaic</span><span class="cblock-preview">Every BI query hitting the warehouse directly is unnecessary spend — here's what changes…</span></div><span class="cchev">▼</span></div>
+        <div class="cblock-body"><div class="cinner">
+          <p style="font-size:15.5px;color:var(--grey-text);line-height:1.65;margin-bottom:16px;">Most prospects don't realise their architecture forces every BI query to their most expensive vendor. Mosaic changes the economics structurally, not just incrementally.</p>
+          <div class="arb-grid">
+            <div class="arb-card arb-without"><div class="arb-title">Without Mosaic</div><ul class="arb-list"><li>Every dashboard query hits Snowflake or Databricks directly</li><li>Costs scale linearly with reporting adoption</li><li>Duplicate ETL pipelines for different BI tools</li><li>Data replicated across systems — storage costs compound</li><li>Locked into one vendor's pricing — no cost arbitrage possible</li><li>Business logic baked in per tool — change = rebuild everywhere</li></ul></div>
+            <div class="arb-card arb-with"><div class="arb-title">With Mosaic</div><ul class="arb-list"><li>Intelligent caching intercepts repeat queries — warehouse only hit when needed</li><li>Hybrid live-query vs cached — always the cheaper path chosen automatically</li><li>ETL dependency minimised — direct live query where possible</li><li>No data duplication — one layer, data stays at source</li><li>Swap cloud vendors without rebuilding anything — true cost arbitrage</li><li>One model, all tools — change once, applies everywhere immediately</li></ul></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="cblock reveal rd2 mb14">
+        <div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Four additional levers</span><span class="cblock-title">Other cost savings to surface in conversation</span><span class="cblock-preview">Analyst hours, redundant BI licensing, compliance cost, seat-based pricing advantage…</span></div><span class="cchev">▼</span></div>
+        <div class="cblock-body"><div class="cinner"><div class="lever-grid">
+          <div class="lever"><div class="lever-title">Analyst hours</div><div class="lever-body">Studio cuts modelling from weeks to minutes. Data engineers focus on analysis, not pipeline maintenance. Fewer tickets, faster delivery per insight.</div></div>
+          <div class="lever"><div class="lever-title">Redundant BI licensing</div><div class="lever-body">One semantic layer serving all BI tools. No need to duplicate dashboards and logic across Tableau and Power BI. Rationalise licences over time.</div></div>
+          <div class="lever"><div class="lever-title">Compliance &amp; audit cost</div><div class="lever-body">Sentinel centralises governance. One audit trail instead of five. Eliminates the manual compliance effort costing teams weeks per regulatory cycle.</div></div>
+          <div class="lever"><div class="lever-title">Seat-based pricing advantage</div><div class="lever-body">Unlike Snowflake or Databricks, Mosaic is seat-based — not compute-based. No surprise bills as query volume scales. Predictable and budgetable.</div></div>
+        </div></div></div>
+      </div>
+      <div class="tco-banner reveal rd3"><div class="tco-lbl">TCO framing close</div><div class="tco-text">"Many of our customers find that Mosaic's warehouse compute savings — typically around 40% — offset the platform cost on their own. Would it be worth putting together a quick TCO estimate for your environment so you have a concrete number to take internally?"</div></div>
+    </div>
+
+    <!-- REACTIONS -->
+    <div class="sub-pane" id="s1-reactions">
+      <p class="section-note">Common responses after the opening hook — and how to steer without losing momentum.</p>
+      <div class="react-item reveal"><div class="react-q" onclick="toggleR(this)">"We already have a data warehouse — isn't that the same thing?"<span class="rchev">▼</span></div><div class="react-a"><div class="react-body">A warehouse stores data. Mosaic defines what it means — and makes that definition available to every tool that consumes it. The warehouse is still there doing its job. Mosaic is the intelligence layer on top — the reason "revenue" means the same thing in Tableau as it does in Power BI and in your AI agent. Most of our customers have Snowflake or Databricks already. Mosaic sits on top of it.</div></div></div>
+      <div class="react-item reveal rd1"><div class="react-q" onclick="toggleR(this)">"We're all-in on Microsoft — Fabric handles this for us."<span class="rchev">▼</span></div><div class="react-a"><div class="react-body">Fabric is strong within Microsoft — but the moment a team opens Tableau, connects via Python, or uses an AI tool outside Microsoft, you lose consistency. Mosaic is cloud and tool agnostic — it works alongside Fabric, not against it. The pricing model is also predictable versus Fabric's consumption-based cost, which spikes as adoption scales.</div></div></div>
+      <div class="react-item reveal rd2"><div class="react-q" onclick="toggleR(this)">"Our Snowflake / Databricks costs aren't really a concern right now."<span class="rchev">▼</span></div><div class="react-a"><div class="react-body">Fair — cost often becomes the conversation as BI adoption scales and more dashboards get built. The other angle that typically resonates is the consistency piece — if teams are using multiple tools or exploring AI, Mosaic ensures everyone works from the same certified numbers. Which of those is more relevant to where you are today?</div></div></div>
+      <div class="react-item reveal rd3"><div class="react-q" onclick="toggleR(this)">"We're exploring AI but haven't connected it to our data yet."<span class="rchev">▼</span></div><div class="react-a"><div class="react-body">That's the best time to have this conversation. Companies that deploy AI on ungoverned data end up with hallucinated outputs at scale — which is harder to fix than starting right. Mosaic is the AI-readiness layer. Get the governed foundation in place first, and every AI initiative — agents, chatbots, predictive models — lands on trusted data from day one. We support ChatGPT, Claude, Copilot, and Gemini through the same layer via MCP.</div></div></div>
+      <div class="react-item reveal rd4"><div class="react-q" onclick="toggleR(this)">"What's the commercial model — is this expensive?"<span class="rchev">▼</span></div><div class="react-a"><div class="react-body">Mosaic is seat-based — not compute-based. The cost doesn't spike as query volume grows. And given customers typically see around 40% reduction in warehouse compute costs, the net cost of adding Mosaic is often neutral or better from day one. Happy to run a quick TCO estimate if that would be useful for an internal conversation.</div></div></div>
+      <div class="react-item reveal rd5"><div class="react-q" onclick="toggleR(this)">"We use dbt for our semantic layer already."<span class="rchev">▼</span></div><div class="react-a"><div class="react-body">dbt is excellent at transformation — but its semantic layer is warehouse-bound and code-first. Business teams can't use it directly without engineering. Mosaic turns dbt outputs into a business-friendly layer accessible to any tool, any AI, any user — with governance and lineage built in. They're complementary, not competing.</div></div></div>
+    </div>
+
+    <!-- DO / DON'T -->
+    <div class="sub-pane" id="s1-dodont">
+      <div class="dd-grid reveal">
+        <div class="dd-card dd-do"><div class="dd-title">Do this on the opening call</div><ul class="dd-list"><li>Lead with a specific pain — cost, consistency, or AI — based on what you know about the prospect</li><li>Use plain language: "trusted data layer", "one version of the numbers", "sits on top of what you have"</li><li>Name tools they likely use — Snowflake, Power BI, Excel — to make it concrete and specific</li><li>Pause after 30 seconds and check in before going further</li><li>Bring up compute cost savings early — fastest path to a second meeting</li><li>Offer a TCO model as a tangible next step — converts curiosity into a meeting</li><li>Ask one question and let them talk — their answer shapes the rest of the call</li></ul></div>
+        <div class="dd-card dd-dont"><div class="dd-title">Avoid on the opening call</div><ul class="dd-list"><li>Don't say "universal semantic layer" — say "one trusted data layer that everything reads from"</li><li>Don't list Studio, Sentinel, and connectors all at once before they ask</li><li>Don't pitch for more than 30–40 seconds without checking in with a question</li><li>Don't go competitive in the opening — anchor value first, competitive later</li><li>Don't fill silence after the hook — let it land and wait for their reaction</li><li>Don't lead with features — lead with their cost or consistency pain</li><li>Don't ask multiple questions at once — one question, then listen fully</li></ul></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S2 — SCENARIO
+═══════════════════════════════════ -->
+<div class="sec-panel" id="panel-s2">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 02</div>
+    <h2>Qualify the <em>scenario</em> — first 2 minutes</h2>
+    <p class="sec-desc">Which scenario the prospect fits determines your positioning, the cost angle to lead with, and which Mosaic story lands hardest. Identify this before anything else.</p>
+    <div class="sec-meta">
+      <button class="expand-btn" onclick="toggleAll('s2',this)">Expand all</button>
+    </div>
+  </div>
+  <div class="sec-body">
+    <div class="ssec-label reveal"><div class="sl-bar"></div>Click a scenario to see signals, Mosaic angle, and cost framing<div class="sl-line"></div></div>
+    <div class="scene-grid reveal rd1">
+      <div class="scene-card gf" onclick="showScene('gf',this)"><div class="scene-tag">Greenfield</div><div class="scene-name">Starting fresh</div><div class="scene-sub">No established warehouse or consistent stack yet</div></div>
+      <div class="scene-card bf" onclick="showScene('bf',this)"><div class="scene-tag">Brownfield</div><div class="scene-name">Existing platform</div><div class="scene-sub">Snowflake / Databricks in. Needs value extraction.</div></div>
+      <div class="scene-card hf" onclick="showScene('hf',this)"><div class="scene-tag">Homefield</div><div class="scene-name">Strategy customer</div><div class="scene-sub">Uses Strategy BI. Hasn't unlocked Mosaic yet.</div></div>
+    </div>
+    <div class="scene-detail" id="sc-gf"><div class="sig-title gf-c">Greenfield — signals to listen for</div><ul class="sig-list"><li>No primary warehouse yet — exploring Snowflake or Databricks for overall architecture</li><li>Data scattered across legacy systems, SaaS tools, and flat files with no unified view</li><li>Multiple BI tools used inconsistently across departments — no standard defined</li><li>Early AI exploration but no governance model in place to support it</li><li>Usually cost-conscious — hasn't committed to a vendor yet</li></ul><div class="scene-mosaic mb10">Mosaic angle: Position as the foundational layer from day one. Prevents vendor lock-in before it starts. Build governance, AI-readiness, and consistency into the architecture — not as a retrofit later.</div><div class="scene-cost">Cost angle: "Starting with Mosaic means you never build the expensive data duplication problem. Every warehouse query goes through an intelligent caching layer — your compute costs scale cleanly as you grow."</div></div>
+    <div class="scene-detail" id="sc-bf"><div class="sig-title bf-c">Brownfield — signals to listen for</div><ul class="sig-list"><li>Mature warehouse (Snowflake, Databricks, Redshift) but inconsistent metrics across BI tools</li><li>Rising compute bills — warehouse costs climbing as dashboard adoption scales</li><li>Multiple BI tools in use — Tableau, Power BI, Excel with no unified definitions</li><li>Exploring Microsoft Fabric or built-in semantic layers — starting to worry about lock-in</li><li>Slow dashboard delivery cycles — engineering backlog, business waiting on IT</li></ul><div class="scene-mosaic mb10">Mosaic angle: The missing intelligence layer. Sits on top of the existing warehouse. Centralises metric definitions, eliminates inconsistency, and extends governed data to every BI tool and AI agent — without replacing anything.</div><div class="scene-cost">Cost angle: "Mosaic's intelligent caching reduces direct warehouse queries significantly. Customers typically see ~40% off their Snowflake or Databricks compute bill. In many cases savings offset the cost of Mosaic itself — happy to model that for your environment."</div></div>
+    <div class="scene-detail" id="sc-hf"><div class="sig-title hf-c">Homefield — signals to listen for</div><ul class="sig-list"><li>Already using Strategy (MicroStrategy) for BI dashboards — has existing reports</li><li>Other departments still running Excel, Power BI, or Tableau outside the Strategy ecosystem</li><li>Interest in AI Agents but needs a governed, consistent data foundation first</li><li>Wants to connect Strategy to external tools or extend analytics beyond the core platform</li><li>Hasn't activated Mosaic as a separate open semantic layer product</li></ul><div class="scene-mosaic mb10">Mosaic angle: Extend what they've already built. Mosaic takes the semantic model defined in Strategy and makes it available to every other tool — Tableau, Power BI, Excel, AI agents via MCP. Maximises the investment already made.</div><div class="scene-cost">Cost angle: "You've already built the definitions inside Strategy. Mosaic means you don't rebuild them in Tableau or Power BI as well. One model, all tools — that's months of engineering time saved, and one governance policy instead of five."</div></div>
+
+    <div class="cblock reveal" style="margin-top:14px;">
+      <div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Use these</span><span class="cblock-title">Scenario qualifier questions — first 2 minutes</span><span class="cblock-preview">Three questions to identify which scenario applies before diving into discovery…</span></div><span class="cchev">▼</span></div>
+      <div class="cblock-body"><div class="cinner"><div class="qual-card" style="background:transparent;border:none;padding:0;">
+        <div class="qual-q">"Do you have a primary data warehouse today — something like Snowflake or Databricks — or are you still evaluating your data architecture?"</div>
+        <div class="qual-q">"Are you currently using any BI tools like Tableau, Power BI, or Strategy today — or are you greenfield on analytics as well?"</div>
+        <div class="qual-q">"When you think about your data costs right now — is that compute spend, analyst time, or the time it takes to get a new insight out the door?"</div>
+      </div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S3 — DISCOVERY
+═══════════════════════════════════ -->
+<div class="sec-panel" id="panel-s3">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 03</div>
+    <h2>Discovery &amp; <em>qualification</em> questions</h2>
+    <p class="sec-desc">Questions for technical data profiles and business leaders — filterable by category. Click any question to reveal the coaching tip and follow-up probe.</p>
+    <div class="sec-meta"><button class="expand-btn" onclick="toggleAll('s3',this)">Expand all</button></div>
+  </div>
+  <div class="sec-body">
+    <div class="persona-row reveal">
+      <button class="persona-btn active" onclick="switchP('tech',this)">Technical / Data profile</button>
+      <button class="persona-btn" onclick="switchP('biz',this)">Business user / Leader</button>
+    </div>
+    <div id="pd-tech">
+      <div class="fpills reveal rd1"><span class="fpill active" onclick="filterQ('tech','all',this)">All</span><span class="fpill" onclick="filterQ('tech','bi',this)">BI landscape</span><span class="fpill" onclick="filterQ('tech','data',this)">Data sources</span><span class="fpill" onclick="filterQ('tech','cost',this)">Cost &amp; compute</span><span class="fpill" onclick="filterQ('tech','gov',this)">Governance</span><span class="fpill" onclick="filterQ('tech','ai',this)">AI readiness</span><span class="fpill" onclick="filterQ('tech','pain',this)">Pain areas</span></div>
+      <div class="q-wrap reveal rd2">
+        <div class="q-item" data-cat="bi" onclick="expandQ(this)"><div class="q-row"><span class="q-num">01</span><div class="q-col"><div class="q-text">How many BI tools are teams using across the organisation — Power BI, Tableau, Excel, anything else? Is it centralised or does each department run their own?</div><div class="q-sub">"Do you find definitions like revenue or churn calculated differently depending on which tool you're in?"</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Multi-tool environments are Mosaic's primary signal. Each tool with its own logic = inconsistency and duplication cost.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">One semantic layer serves all BI tools — no duplicated dashboards, definitions, or maintenance. Cuts redundant BI spend.</div></div></div></div></div>
+        <div class="q-item" data-cat="data" onclick="expandQ(this)"><div class="q-row"><span class="q-num">02</span><div class="q-col"><div class="q-text">Where does most of your data live — centralised warehouse like Snowflake or Databricks, or spread across several systems including on-prem?</div><div class="q-sub">"Are there data sources currently off-limits to certain tools — things you can't easily connect today?"</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Fragmented sources = core Mosaic use case. 200+ connectors including legacy, cloud, SaaS, and files. No data movement required.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Universal Access Service connects all sources and exposes them as unified, semantically enriched tables. No ETL, no duplication.</div></div></div></div></div>
+        <div class="q-item" data-cat="cost" onclick="expandQ(this)"><div class="q-row"><span class="q-num">03</span><div class="q-col"><div class="q-text">Have you noticed your Snowflake or Databricks compute costs increasing as more dashboards and reports go live? How are you managing that growth?</div><div class="q-sub">"Do you have visibility into which queries are the most expensive to run?"</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Compute cost inflation is one of the fastest paths to a second meeting. Every BI query hitting the warehouse directly is unnecessary spend.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Intelligent caching, query pushdown, and hybrid execution reduce direct warehouse hits. ~40% compute cost reduction typical.</div></div></div></div></div>
+        <div class="q-item" data-cat="cost" onclick="expandQ(this)"><div class="q-row"><span class="q-num">04</span><div class="q-col"><div class="q-text">How are you currently managing egress costs — data moving between cloud regions or out of your warehouse to BI tools?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Egress is an invisible cost that compounds. Most organisations underestimate it significantly until the bill arrives.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Minimises egress by leveraging data live or cached at source. Cost arbitrage across cloud vendors too.</div></div></div></div></div>
+        <div class="q-item" data-cat="bi" onclick="expandQ(this)"><div class="q-row"><span class="q-num">05</span><div class="q-col"><div class="q-text">When a business team needs a new dashboard — how long before they see something live? Who owns that delivery?</div><div class="q-sub">"Is there a backlog of requests, or do teams self-serve?"</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Time-to-insight measures analyst bottleneck. Weeks or months = Mosaic Studio value (87% faster modelling, 10× throughput).</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Studio cuts modelling from weeks to minutes. Auto Dashboards deliver governed insights fast. Less analyst dependency.</div></div></div></div></div>
+        <div class="q-item" data-cat="gov" onclick="expandQ(this)"><div class="q-row"><span class="q-num">06</span><div class="q-col"><div class="q-text">How do you handle access control across all your BI tools today — is there a central security policy, or does each platform manage it separately?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Tool-by-tool governance = duplicated admin effort, inconsistent enforcement, and compliance risk.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Sentinel centralises governance. Row-level and object-level security enforced once across all tools. GDPR, SOX, HIPAA compliant.</div></div></div></div></div>
+        <div class="q-item" data-cat="ai" onclick="expandQ(this)"><div class="q-row"><span class="q-num">07</span><div class="q-col"><div class="q-text">Are you exploring AI agents or LLM-based tools on your business data? What's the biggest challenge you're running into?</div><div class="q-sub">"How do you ensure those AI tools are working from governed, accurate data and not hallucinating answers?"</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Hallucinations are a deal-stopper for enterprise AI. Direct LLM-to-database queries miss business rules. Mosaic's strongest AI differentiator.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Mosaic sits between LLMs and raw data. AI reads certified metrics. MCP connects ChatGPT, Claude, Copilot, Gemini. Feb 2026: direct Mosaic access via MCP without an agent.</div></div></div></div></div>
+        <div class="q-item" data-cat="pain" onclick="expandQ(this)"><div class="q-row"><span class="q-num">08</span><div class="q-col"><div class="q-text">If you had to name your top two or three pain points in your data landscape today — cost, inconsistency, governance, or speed to deliver — what would they be?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Let them self-prioritise. Their answer determines which Mosaic value prop to lead with in the rest of the call and demo.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Mosaic addresses all four — listen and anchor to their specific words when you position the solution.</div></div></div></div></div>
+      </div>
+    </div>
+    <div id="pd-biz" style="display:none;">
+      <div class="fpills reveal rd1"><span class="fpill active" onclick="filterQ('biz','all',this)">All</span><span class="fpill" onclick="filterQ('biz','trust',this)">Data trust</span><span class="fpill" onclick="filterQ('biz','speed',this)">Speed</span><span class="fpill" onclick="filterQ('biz','ai',this)">AI</span><span class="fpill" onclick="filterQ('biz','gov',this)">Governance</span><span class="fpill" onclick="filterQ('biz','pain',this)">Pain</span></div>
+      <div class="q-wrap reveal rd2">
+        <div class="q-item" data-cat="trust" onclick="expandQ(this)"><div class="q-row"><span class="q-num">01</span><div class="q-col"><div class="q-text">When different teams present numbers to leadership — do they always agree, or does reconciling the data eat up time before every board pack?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Classic metric inconsistency pain in business language. "Depends who you ask" is a strong buying signal at leadership level.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">One certified definition for every KPI, consumed identically by every tool. The reconciliation meeting disappears permanently.</div></div></div></div></div>
+        <div class="q-item" data-cat="speed" onclick="expandQ(this)"><div class="q-row"><span class="q-num">02</span><div class="q-col"><div class="q-text">When you need a new report or KPI tracked — how long from request to seeing it live? Is that fast enough for how your business moves?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Slow delivery = missed decisions. Business leaders feel this acutely even without seeing engineering hours behind it.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Auto Dashboards and AI-powered modelling compress delivery from weeks to minutes. Business users self-serve on governed data.</div></div></div></div></div>
+        <div class="q-item" data-cat="trust" onclick="expandQ(this)"><div class="q-row"><span class="q-num">03</span><div class="q-col"><div class="q-text">How confident are your teams in the data they're working from — do they trust it enough to make decisions without double-checking?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Low data trust = hidden cost. Every verification cycle and reconciliation meeting is time and money.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Certified metrics. Every tool and every AI reads the same definition. Trust becomes structural, not dependent on who built the report.</div></div></div></div></div>
+        <div class="q-item" data-cat="ai" onclick="expandQ(this)"><div class="q-row"><span class="q-num">04</span><div class="q-col"><div class="q-text">Are you exploring AI tools — chatbots, agents, automated reports — for your team? Do you feel confident those tools would give you the right answers on your actual business data?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Business leaders understand AI risk at the outcome level — wrong answers in board reports. Resonates without technical detail.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">AI Agents grounded in Mosaic's governed data. Plain language questions, certified answers. Supports ChatGPT, Claude, Copilot, Gemini via MCP.</div></div></div></div></div>
+        <div class="q-item" data-cat="gov" onclick="expandQ(this)"><div class="q-row"><span class="q-num">05</span><div class="q-col"><div class="q-text">Do your teams ever run into friction around data access — waiting for approvals, or uncertainty about whether someone should be seeing certain numbers?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Access friction = lost productivity. Over-sharing = compliance risk. Both are costs Sentinel eliminates centrally.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">Governance applied once across all tools. Users get exactly what they're entitled to see, instantly and automatically.</div></div></div></div></div>
+        <div class="q-item" data-cat="pain" onclick="expandQ(this)"><div class="q-row"><span class="q-num">06</span><div class="q-col"><div class="q-text">If you could fix one thing about how your organisation uses data today — what would it be? Too slow, too unreliable, too expensive, or too hard to use?</div></div></div><div class="q-tip"><div class="q-tip-inner"><div class="tip-why"><div class="tip-lbl">Why ask</div><div class="tip-body">Open-ended close to discovery. Their answer anchors your entire demo and next step. Listen for the emotional weight.</div></div><div class="tip-mosaic"><div class="tip-lbl">Mosaic angle</div><div class="tip-body">All four are Mosaic wins. Mirror their specific language back when you position the solution and demo request.</div></div></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S4 — INDUSTRY
+═══════════════════════════════════ -->
+<div class="sec-panel" id="panel-s4">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 04</div>
+    <h2>Industry context &amp; <em>questions</em></h2>
+    <p class="sec-desc">Pain signals, Mosaic value, cost angles, and ready-to-use discovery questions — tailored for six key verticals. Select an industry below.</p>
+  </div>
+  <div class="sec-body">
+    <div class="ind-grid reveal">
+      <button class="ind-btn active" onclick="showInd('banking',this)"><span class="ind-icon">🏦</span>Banking</button>
+      <button class="ind-btn" onclick="showInd('telecom',this)"><span class="ind-icon">📡</span>Telecom</button>
+      <button class="ind-btn" onclick="showInd('retail',this)"><span class="ind-icon">🛍</span>Retail</button>
+      <button class="ind-btn" onclick="showInd('insurance',this)"><span class="ind-icon">🛡</span>Insurance</button>
+      <button class="ind-btn" onclick="showInd('health',this)"><span class="ind-icon">🏥</span>Healthcare</button>
+      <button class="ind-btn" onclick="showInd('energy',this)"><span class="ind-icon">⚡</span>Energy</button>
+    </div>
+
+    <div class="ind-detail active" id="ind-banking">
+      <div class="cblock mb10"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain signals</span><span class="cblock-title">Banking — what to listen for</span><span class="cblock-preview">Risk / treasury / finance calculating ratios differently · regulatory compute spikes…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-2col"><div class="ind-block pain"><div class="ind-block-title">Pain signals</div><ul><li>Risk, treasury, and finance calculating the same ratios differently</li><li>Regulatory reporting (Basel, IFRS9, CBUAE/SAMA) across disconnected systems</li><li>Massive legacy stack — Oracle, SAP, Temenos, core banking — all siloed</li><li>AI/ML initiatives blocked by ungoverned, uncertified data</li><li>Compute costs rising as regulatory dashboards multiply</li></ul></div><div class="ind-block value"><div class="ind-block-title">Mosaic value</div><ul><li>Certified risk, liquidity, and P&amp;L metrics — one version across all tools</li><li>Sentinel: full audit trail for regulatory reviews without data movement</li><li>Connects core banking, DWH, and cloud without replication</li><li>AI Agents on governed data — credit risk, fraud pattern scoring</li><li>Seat-based pricing predictable vs compute spikes during regulatory peaks</li></ul></div></div><div class="ind-cost" style="margin-top:14px;margin-bottom:0;">Cost angle: Regulatory reporting cycles are the most compute-intensive workloads in banking. Mosaic's caching layer intercepts repeat queries — reducing warehouse cost significantly during peak periods like quarter-end and year-end.</div></div></div></div>
+      <div class="cblock"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Questions</span><span class="cblock-title">Banking — discovery questions</span><span class="cblock-preview">Ratios, audit trails, AI governance on credit and fraud models…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-qs"><div class="ind-q">"Do your risk, finance, and treasury teams work from the same version of your key ratios — or does reconciliation eat up time before every board pack?"</div><div class="ind-q">"When your auditors ask for a data access trail — how long does it take to produce that today?"</div><div class="ind-q">"Are your AI or ML models for credit risk or fraud working from a governed, auditable data foundation — or raw warehouse tables?"</div></div></div></div></div>
+    </div>
+
+    <div class="ind-detail" id="ind-telecom">
+      <div class="cblock mb10"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain signals</span><span class="cblock-title">Telecom — what to listen for</span><span class="cblock-preview">Multi-cloud stack · ARPU / churn defined differently · egress costs…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-2col"><div class="ind-block pain"><div class="ind-block-title">Pain signals</div><ul><li>Multi-cloud or hybrid — Huawei, AWS, GCP, on-prem co-existing</li><li>ARPU, churn, NPS calculated differently by marketing, finance, and network ops</li><li>AdTech and personalisation teams need real-time governed customer data</li><li>Partner and wholesale data locked in separate billing systems</li><li>Compute and egress costs rising as subscriber data volumes scale</li></ul></div><div class="ind-block value"><div class="ind-block-title">Mosaic value</div><ul><li>Multi-cloud connector spans Huawei, AWS, GCP with one semantic layer</li><li>Unified ARPU, churn, revenue definitions across all BI and AI tools</li><li>AI Agents via MCP for customer experience and AdTech campaign analysis</li><li>Sentinel: governance across vendor and partner ecosystems</li><li>Live query + caching reduces egress costs across cloud boundaries</li></ul></div></div><div class="ind-cost" style="margin-top:14px;margin-bottom:0;">Cost angle: Multi-cloud egress is a significant hidden cost in telco. Mosaic minimises cross-cloud data movement through intelligent caching and live query routing — reducing egress charges while maintaining data freshness for real-time use cases.</div></div></div></div>
+      <div class="cblock"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Questions</span><span class="cblock-title">Telecom — discovery questions</span><span class="cblock-preview">ARPU consistency, multi-cloud reporting, AdTech data latency…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-qs"><div class="ind-q">"Does your marketing team work from the same churn and ARPU definition as your finance team — or are those calculated differently per system?"</div><div class="ind-q">"With data across multiple cloud environments, how are you managing a consistent view for reporting and for your AI tools?"</div><div class="ind-q">"Are your AdTech or personalisation teams accessing governed customer data in near-real time, or is there always a pipeline lag?"</div></div></div></div></div>
+    </div>
+
+    <div class="ind-detail" id="ind-retail">
+      <div class="cblock mb10"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain signals</span><span class="cblock-title">Retail — what to listen for</span><span class="cblock-preview">Revenue calculated differently by channel · seasonal compute spikes · personalisation AI…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-2col"><div class="ind-block pain"><div class="ind-block-title">Pain signals</div><ul><li>Revenue, margin, sell-through calculated differently by merchandising, finance, and digital</li><li>Multiple BI tools — Excel in stores, Tableau for digital, Power BI for finance</li><li>Seasonal spikes expose slow dashboard delivery and compute cost bursts</li><li>Personalisation AI needs trusted, real-time customer and inventory data</li><li>ETL pipelines multiply as channels expand — cost and maintenance compound</li></ul></div><div class="ind-block value"><div class="ind-block-title">Mosaic value</div><ul><li>One certified revenue, margin, and inventory metric across all channels</li><li>Auto Dashboards accelerate seasonal reporting without IT backlogs</li><li>AI Agents on Mosaic for demand forecasting and personalisation</li><li>Connects POS, e-commerce, and ERP in one semantic model</li><li>Caching reduces compute spikes during peak season — predictable cost</li></ul></div></div><div class="ind-cost" style="margin-top:14px;margin-bottom:0;">Cost angle: Peak season compute spikes are a major cost challenge in retail. Mosaic's caching layer absorbs repeat queries during high-traffic periods — smoothing the compute curve and reducing the warehouse bill when it matters most.</div></div></div></div>
+      <div class="cblock"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Questions</span><span class="cblock-title">Retail — discovery questions</span><span class="cblock-preview">Revenue consistency across channels, peak season delivery, personalisation data…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-qs"><div class="ind-q">"Does your digital team and in-store merchandising team report the same revenue number — or does each have their own calculation?"</div><div class="ind-q">"When a peak season campaign needs fast reporting, how long does it take to get a new dashboard live — and what does that cost in analyst time?"</div><div class="ind-q">"Are your personalisation or recommendation models working from a governed, real-time product and customer data layer?"</div></div></div></div></div>
+    </div>
+
+    <div class="ind-detail" id="ind-insurance">
+      <div class="cblock mb10"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain signals</span><span class="cblock-title">Insurance — what to listen for</span><span class="cblock-preview">Loss ratio varies by system · IFRS17 compliance · fraud AI needs governed data…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-2col"><div class="ind-block pain"><div class="ind-block-title">Pain signals</div><ul><li>Loss ratio, combined ratio, premium metrics vary between actuarial, finance, and underwriting</li><li>IFRS17, Solvency II, local central bank compliance requirements</li><li>Claims data in legacy systems disconnected from modern BI and AI</li><li>Fraud detection AI requires auditable, governed data pipelines</li><li>Compute costs rising as regulatory reporting demands increase</li></ul></div><div class="ind-block value"><div class="ind-block-title">Mosaic value</div><ul><li>Certified actuarial and finance metrics — one version across all teams</li><li>Sentinel for IFRS17 and regulatory audit trails without data movement</li><li>Connects legacy claims systems and modern cloud warehouses</li><li>AI Agents for claims triage and fraud scoring on governed data</li><li>Seat-based pricing — no compute surprise during regulatory peaks</li></ul></div></div><div class="ind-cost" style="margin-top:14px;margin-bottom:0;">Cost angle: IFRS17 compliance reporting is extremely compute-intensive. Mosaic's caching and query optimisation reduce warehouse load during regulatory cycles — and Sentinel's audit trail eliminates the manual compliance effort costing actuarial teams weeks per quarter.</div></div></div></div>
+      <div class="cblock"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Questions</span><span class="cblock-title">Insurance — discovery questions</span><span class="cblock-preview">Loss ratio consistency, IFRS17 audit trail, fraud scoring data governance…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-qs"><div class="ind-q">"Do your actuarial and finance teams work from the same loss ratio definition — or does it vary depending on which system you're looking at?"</div><div class="ind-q">"How are you managing IFRS17 or regulatory reporting requirements across your current data landscape — and how long does that audit trail take to produce?"</div><div class="ind-q">"Are your fraud detection or claims scoring models working from a governed, auditable data foundation?"</div></div></div></div></div>
+    </div>
+
+    <div class="ind-detail" id="ind-health">
+      <div class="cblock mb10"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain signals</span><span class="cblock-title">Healthcare — what to listen for</span><span class="cblock-preview">Patient data siloed across EMR, billing, ops · HIPAA compliance tool-by-tool…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-2col"><div class="ind-block pain"><div class="ind-block-title">Pain signals</div><ul><li>Patient data siloed across EMR, billing, and operational systems</li><li>Clinical and operational metrics calculated differently across departments</li><li>HIPAA / GDPR compliance for AI and analytics workloads</li><li>Research and clinical ops on entirely different data stacks</li><li>AI for diagnostics or patient risk requires certified, traceable data</li></ul></div><div class="ind-block value"><div class="ind-block-title">Mosaic value</div><ul><li>Unified patient, clinical, and operational metrics across all teams</li><li>Sentinel for HIPAA-compliant audit trails and access governance</li><li>AI Agents on governed clinical data — diagnostics, readmission risk</li><li>Connects EMR, EHR, and cloud data lakes without replication</li><li>LLM shielding — sensitive patient data never exposed to AI models</li></ul></div></div><div class="ind-cost" style="margin-top:14px;margin-bottom:0;">Cost angle: HIPAA compliance administered tool-by-tool is an enormous hidden cost. Sentinel centralises that governance — one policy applied automatically, one audit trail generated, one compliance process instead of five separate manual workflows.</div></div></div></div>
+      <div class="cblock"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Questions</span><span class="cblock-title">Healthcare — discovery questions</span><span class="cblock-preview">Clinical metric consistency, HIPAA AI compliance, patient risk data governance…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-qs"><div class="ind-q">"Do your clinical and operational teams work from the same patient outcome definitions — or is there reconciliation every time the numbers are compared?"</div><div class="ind-q">"How are you managing HIPAA compliance for analytics and AI workloads where data spans multiple systems?"</div><div class="ind-q">"Are your AI or predictive models for patient risk working from a governed, auditable data layer — or querying raw clinical tables directly?"</div></div></div></div></div>
+    </div>
+
+    <div class="ind-detail" id="ind-energy">
+      <div class="cblock mb10"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-orange">Pain signals</span><span class="cblock-title">Energy — what to listen for</span><span class="cblock-preview">OT and IT data siloed · ESG reporting manual consolidation · asset AI blocked…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-2col"><div class="ind-block pain"><div class="ind-block-title">Pain signals</div><ul><li>Operational (SCADA/IoT) and financial data completely siloed</li><li>ESG and sustainability reporting requires unified data across emissions, energy, and financials</li><li>Asset performance metrics differ between engineering and finance</li><li>Predictive maintenance AI blocked by ungoverned operational data</li><li>Regulatory reporting across multiple jurisdictions with different requirements</li></ul></div><div class="ind-block value"><div class="ind-block-title">Mosaic value</div><ul><li>Bridges OT (operational) and IT (financial) data in one semantic layer</li><li>Certified ESG metrics for regulatory and sustainability reporting</li><li>AI Agents on Mosaic for asset health scoring and outage prediction</li><li>Sentinel: governance across regulator, investor, and operational access</li><li>No data movement — live query across operational and financial sources</li></ul></div></div><div class="ind-cost" style="margin-top:14px;margin-bottom:0;">Cost angle: ESG reporting typically requires expensive data consolidation projects — moving operational data into a central warehouse. Mosaic eliminates that by querying operational systems live and creating a certified ESG metric layer without replication.</div></div></div></div>
+      <div class="cblock"><div class="cblock-hdr" onclick="toggleCB(this)"><div class="cblock-left"><span class="cbadge b-blue">Questions</span><span class="cblock-title">Energy — discovery questions</span><span class="cblock-preview">Asset performance consistency, ESG consolidation, predictive maintenance data…</span></div><span class="cchev">▼</span></div><div class="cblock-body"><div class="cinner"><div class="ind-qs"><div class="ind-q">"Do your engineering and finance teams report the same asset performance and cost numbers — or does reconciliation happen every quarter?"</div><div class="ind-q">"How are you managing ESG data and sustainability reporting across your operational and financial systems — is that a manual consolidation exercise?"</div><div class="ind-q">"Are your predictive maintenance or asset monitoring AI tools working from governed, reliable operational data?"</div></div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S5 — VALUE PROPS
+═══════════════════════════════════ -->
+<div class="sec-panel" id="panel-s5">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 05</div>
+    <h2>Value propositions &amp; <em>talk tracks</em></h2>
+    <p class="sec-desc">Twelve value propositions — filter by Cost savings, AI+BI, Governance, or Architecture. Hover to lift, filter to focus.</p>
+  </div>
+  <div class="sec-body">
+    <div class="fpills reveal"><span class="fpill active" onclick="filterVal('all',this)">All</span><span class="fpill" onclick="filterVal('cost',this)">Cost savings</span><span class="fpill" onclick="filterVal('ai',this)">AI+BI</span><span class="fpill" onclick="filterVal('gov',this)">Governance</span><span class="fpill" onclick="filterVal('arch',this)">Architecture</span></div>
+    <div class="val-grid" id="val-grid">
+      <div class="val-card" data-vtag="cost"><span class="val-tag t-cost">Compute reduction</span><div class="val-title">~40% off your warehouse bill</div><div class="val-desc">Intelligent caching and query pushdown reduce how often you hit Snowflake or Databricks directly. Every repeat query served from cache. The in-memory engine offloads expensive warehouse operations entirely.</div><div class="val-cost-note">Often offsets Mosaic's own seat cost from day one.</div></div>
+      <div class="val-card" data-vtag="cost"><span class="val-tag t-cost">Cost arbitrage</span><div class="val-title">Switch vendors without rebuilding</div><div class="val-desc">Business logic, security, and metric definitions live in Mosaic — not in your warehouse. Move between cloud vendors or databases when pricing changes. No re-architecture, no downstream rebuilds. True cost arbitrage.</div><div class="val-cost-note">Prevents the migration tax that locks enterprises into expensive vendors.</div></div>
+      <div class="val-card" data-vtag="cost"><span class="val-tag t-cost">Analyst efficiency</span><div class="val-title">87% faster modelling, 10× throughput</div><div class="val-desc">Mosaic Studio AI cuts data modelling from weeks to minutes. Automated profiling, relationship detection, ETL-free preparation. Data engineers focus on value-add work — not pipeline maintenance.</div><div class="val-cost-note">Fewer analyst hours per dashboard. Faster time-to-insight organisation-wide.</div></div>
+      <div class="val-card" data-vtag="cost"><span class="val-tag t-cost">Seat-based pricing</span><div class="val-title">Predictable costs as you scale</div><div class="val-desc">Mosaic pricing is per seat — not per query or compute unit. No surprise bills as dashboard usage grows or AI agent calls increase. Budgetable and decoupled from your warehouse usage curve entirely.</div><div class="val-cost-note">Eliminates consumption-based cost spikes that plague Snowflake and Fabric deployments.</div></div>
+      <div class="val-card" data-vtag="ai"><span class="val-tag t-ai">MCP · Feb 2026</span><div class="val-title">Any AI. Same governed data.</div><div class="val-desc">Strategy Agents accessible from ChatGPT, Claude, Copilot Studio, and Gemini via Model Context Protocol. Bring your preferred AI tool — your governance layer stays intact. Feb 2026 preview: direct Mosaic model access via MCP without needing an agent first.</div></div>
+      <div class="val-card" data-vtag="ai"><span class="val-tag t-ai">Zero hallucinations</span><div class="val-title">AI on certified metrics, not raw tables</div><div class="val-desc">Mosaic places a semantic abstraction between LLMs and raw data. AI reads certified metrics with business context. Hallucination risk drops structurally. AI-generated answers are explainable and auditable with full lineage.</div></div>
+      <div class="val-card" data-vtag="ai"><span class="val-tag t-ai">LLM shielding</span><div class="val-title">Sensitive data never reaches the AI</div><div class="val-desc">Mosaic's architecture shares only metadata, object names, and data types with LLMs — never your full dataset. AI features work with governed context, not raw sensitive data. Built-in protection across every AI interaction.</div></div>
+      <div class="val-card" data-vtag="gov"><span class="val-tag t-gov">Mosaic Sentinel</span><div class="val-title">One governance policy. Every tool.</div><div class="val-desc">Risk Management, Audit &amp; Compliance, and Usage Insights — three modules, one platform. Real-time risk alerts, full audit trail, usage visibility. Applied once across Tableau, Power BI, Excel, and AI agents. GDPR, HIPAA, SOX ready.</div><div class="val-cost-note">One compliance process instead of five separate per-tool workflows.</div></div>
+      <div class="val-card" data-vtag="gov"><span class="val-tag t-gov">Single source of truth</span><div class="val-title">One definition. Every tool. Always.</div><div class="val-desc">Revenue, churn, margin, inventory — certified once in Mosaic. Consumed identically by Power BI, Tableau, Excel, AI agents, and custom applications. The board meeting reconciliation problem disappears permanently.</div></div>
+      <div class="val-card" data-vtag="arch"><span class="val-tag t-arch">200+ connectors</span><div class="val-title">One layer across everything</div><div class="val-desc">Cloud warehouses, on-prem databases, SaaS applications, files, and big data platforms. SQL, DAX, REST, Python interfaces. Connects to Power BI, Tableau, Excel, Google Sheets with tool-specific optimised connectors. No proprietary drivers.</div></div>
+      <div class="val-card" data-vtag="arch"><span class="val-tag t-arch">No vendor lock-in</span><div class="val-title">Your stack. Your choice.</div><div class="val-desc">Business logic and security decoupled from storage. Mosaic runs on AWS, Azure, GCP, StackIT, and hybrid environments. Swap cloud providers, add BI tools, or migrate databases — without rebuilding models, reports, or security policies.</div></div>
+      <div class="val-card" data-vtag="arch"><span class="val-tag t-arch">Fully managed cloud</span><div class="val-title">Zero infrastructure overhead</div><div class="val-desc">Available through Strategy Cloud with no customer-side installation. Instantly accessible as a modelling workspace and universal semantic endpoint once provisioned. No containers, no infrastructure to stand up or maintain.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S6 — COMPETE
+═══════════════════════════════════ -->
+<div class="sec-panel" id="panel-s6">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 06</div>
+    <h2>Competitive <em>positioning</em></h2>
+    <p class="sec-desc">Nine competitors across five categories — each with a sharp positioning response and a cost angle. Filter by category, click to expand.</p>
+    <div class="sec-meta"><button class="expand-btn" onclick="toggleAll('s6',this)">Expand all</button></div>
+  </div>
+  <div class="sec-body">
+    <div class="fpills reveal"><span class="fpill active" onclick="filterComp('all',this)">All</span><span class="fpill" onclick="filterComp('allinone',this)">All-in-one</span><span class="fpill" onclick="filterComp('virt',this)">Data virtualisation</span><span class="fpill" onclick="filterComp('etl',this)">ETL / Transform</span><span class="fpill" onclick="filterComp('semantic',this)">Semantic layer</span><span class="fpill" onclick="filterComp('bespoke',this)">Bespoke</span></div>
+    <div id="comp-list" class="reveal rd1">
+      <div class="comp-item" data-ccat="allinone"><div class="comp-q" onclick="toggleComp(this)"><span>Microsoft Fabric</span><div class="comp-meta"><span class="comp-cat">All-in-one</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Fabric promises end-to-end — but locks you into the Microsoft stack. Every tool outside Microsoft (Tableau, Python, external AI) loses consistency immediately.</li><li>Mosaic is cloud and tool agnostic — one semantic layer across any BI tool, any AI, any cloud. Fabric works within Mosaic's architecture, not the other way around.</li><li>Fabric's consumption-based pricing spikes with usage. Mosaic is seat-based — predictable regardless of query volume growth.</li><li>Key question to ask: "What happens to your data governance and metric consistency the moment someone outside the Microsoft ecosystem needs access?"</li></ul><div class="comp-cost">Cost angle: Fabric consumption costs escalate non-linearly as adoption grows. Mosaic's seat-based model is predictable for finance teams. The ~40% warehouse cost reduction often makes Mosaic net-neutral or better in total.</div></div></div></div>
+      <div class="comp-item" data-ccat="allinone"><div class="comp-q" onclick="toggleComp(this)"><span>Databricks + Unity Catalog</span><div class="comp-meta"><span class="comp-cat">All-in-one</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Databricks excels at data engineering and ML — Unity Catalog is governance within that ecosystem only. Outside it, you lose consistency.</li><li>Mosaic is a truly independent semantic layer that spans Databricks, Snowflake, on-prem, and every BI tool simultaneously.</li><li>Mosaic's in-memory engine reduces Databricks compute spend — often paying for Mosaic through the savings it generates on the Databricks bill.</li><li>They're complementary: Databricks does transformation and ML. Mosaic makes results available to the business — governed, consistent, and accessible to any tool or AI.</li></ul><div class="comp-cost">Cost angle: "Our customers regularly find that Mosaic's caching layer reduces their Databricks compute spend enough to offset Mosaic's cost entirely. Happy to model that for your environment."</div></div></div></div>
+      <div class="comp-item" data-ccat="allinone"><div class="comp-q" onclick="toggleComp(this)"><span>Salesforce Data Cloud</span><div class="comp-meta"><span class="comp-cat">All-in-one</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Strong for Salesforce-centric customer data — but a closed garden. Data defined and governed inside Salesforce doesn't travel consistently to your warehouse, BI tools, or AI agents.</li><li>Mosaic provides a single source of truth for all business metrics — not just customer data — across every tool and environment.</li><li>True vendor-agnostic governance and portability. Your business logic lives in Mosaic, not inside a vendor's platform.</li></ul></div></div></div>
+      <div class="comp-item" data-ccat="virt"><div class="comp-q" onclick="toggleComp(this)"><span>Denodo</span><div class="comp-meta"><span class="comp-cat">Data virtualisation</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Denodo focuses on data federation — live querying across sources. Its semantic layer is not the product — it's a feature sitting inside SQL views with no independent existence.</li><li>In Denodo, KPIs live inside SQL views. In Mosaic, metrics are first-class certified objects — with lineage, governance, and AI-readiness built in from the ground up.</li><li>When an AI agent or MCP client queries Denodo, it queries a SQL view. When it queries Mosaic, it resolves against a certified metric definition with business context, security, and full auditability.</li><li>Denodo's primary cache uses an external JDBC database — not in-memory. Mosaic's in-memory engine is significantly faster for complex cross-source analytics.</li><li>Mosaic adds AI-readiness, business logic, non-technical self-service, and Sentinel governance. Denodo's semantic layer is a feature. Mosaic's is the entire product.</li></ul><div class="comp-cost">Cost angle: Denodo's federation model still hits source systems for every live query with no intelligent in-memory layer. Mosaic's caching and hybrid execution protect warehouse compute costs in a way Denodo's architecture structurally cannot.</div></div></div></div>
+      <div class="comp-item" data-ccat="virt"><div class="comp-q" onclick="toggleComp(this)"><span>Starburst (Trino)</span><div class="comp-meta"><span class="comp-cat">Data virtualisation</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Starburst is a high-performance distributed SQL query engine — developer-centric and query-focused. Its semantic layer is developer-facing, not a business-ready layer.</li><li>Mosaic sits on top of Starburst — giving the business certified metrics, governed access, and AI-readiness on top of Starburst's query speed.</li><li>Enterprise-wide metric consistency, self-service for non-technical users, and AI agent integration are capabilities Starburst doesn't address.</li></ul></div></div></div>
+      <div class="comp-item" data-ccat="etl"><div class="comp-q" onclick="toggleComp(this)"><span>dbt Semantic Layer</span><div class="comp-meta"><span class="comp-cat">ETL / Transform</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>dbt's semantic layer is warehouse-bound and code-first. It cannot span multiple platforms or serve metrics directly to BI tools without dbt Cloud.</li><li>Business teams cannot use dbt directly — every change requires engineering. It makes engineers more productive, not the business more self-sufficient.</li><li>No native BI consumption connectors, no AI agent integration, no row-level security enforcement across tools, no governance platform equivalent to Sentinel.</li><li>Mosaic turns dbt outputs into a business-friendly universal semantic layer — accessible to any tool, any AI, any user. They're complementary, not competing.</li></ul><div class="comp-cost">Cost angle: dbt Cloud is an additional consumption cost layer on top of your warehouse. Mosaic's seat-based model covers the entire semantic layer, BI connectivity, and AI agent integration in one predictable cost.</div></div></div></div>
+      <div class="comp-item" data-ccat="semantic"><div class="comp-q" onclick="toggleComp(this)"><span>AtScale</span><div class="comp-meta"><span class="comp-cat">Semantic layer</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>AtScale focuses on BI acceleration through virtual cubes — strong at speeding up MDX and DAX queries. Limited as an enterprise-wide intelligence and AI layer.</li><li>Mosaic delivers AI-powered modelling (Studio), deeper governance (Sentinel), and broader tool compatibility — across BI, AI agents, and productivity tools.</li><li>MCP integration and certified AI-ready metrics are capabilities AtScale doesn't match. Built for scale across BI + AI + applications, not just BI query speed.</li></ul><div class="comp-cost">Cost angle: Both reduce warehouse query load. Mosaic adds the AI-readiness, governance, and self-service layers — making it a broader TCO story, not just a performance play.</div></div></div></div>
+      <div class="comp-item" data-ccat="semantic"><div class="comp-q" onclick="toggleComp(this)"><span>Cube</span><div class="comp-meta"><span class="comp-cat">Semantic layer</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Cube is a developer-first semantic layer for data applications — not enterprise analytics. Code-first approach restricts usage to engineering teams only.</li><li>Mosaic automates modelling and delivers a semantic layer the entire enterprise can use — from data architects to business analysts to AI agents.</li><li>No equivalent to Mosaic Studio's AI-powered modelling, Sentinel's governance platform, or MCP-based AI agent integration. Not built for enterprise scale or non-technical users.</li></ul></div></div></div>
+      <div class="comp-item" data-ccat="bespoke"><div class="comp-q" onclick="toggleComp(this)"><span>Palantir</span><div class="comp-meta"><span class="comp-cat">Bespoke</span><span class="comp-chev">▼</span></div></div><div class="comp-a"><div class="comp-body"><ul class="comp-bullets"><li>Powerful for complex operational use cases — but consulting-heavy, extremely expensive, and often requires replatforming the entire data architecture.</li><li>Mosaic is a productised, self-service intelligence layer your teams own and operate. No vendor dependence, no re-architecture, no consulting lock-in.</li><li>Predictable seat-based pricing versus Palantir's engagement model. Governed AI and semantic layer capability without the multi-year commitment.</li></ul><div class="comp-cost">Cost angle: Palantir's total cost of ownership is typically 5–10× higher when professional services are included. Mosaic delivers governed AI and universal semantic layer capability at a fraction of that cost.</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     S7 — CLOSE
+═══════════════════════════════════ -->
+<div class="sec-panel" id="panel-s7">
+  <div class="sec-hero">
+    <div class="sec-eyebrow">Section 07</div>
+    <h2>Closing the call &amp; <em>next steps</em></h2>
+    <p class="sec-desc">Six sequenced close moves — from anchoring their pain to leaving a resource. Plus a qualify-in / qualify-out guide so you know when to push and when to walk.</p>
+  </div>
+  <div class="sec-body">
+    <div class="ssec-label reveal"><div class="sl-bar"></div>Six sequenced close moves<div class="sl-line"></div></div>
+    <div class="close-list" id="close-list">
+      <div class="close-item"><span class="close-num" style="background:var(--orange-light);color:var(--orange);border-color:var(--orange-border);">01</span><div><div class="close-lbl">Anchor the pain they named</div><div class="close-q">"You mentioned [metric inconsistency / rising compute costs / AI trust issues]. If we solved that specifically — what does that unlock for your team in the next 6 months?"</div></div></div>
+      <div class="close-item"><span class="close-num" style="background:var(--amber-light);color:var(--amber);border-color:var(--amber-border);">02</span><div><div class="close-lbl">Offer a TCO model — fastest path to a second meeting</div><div class="close-q">"Many of our customers find that Mosaic's warehouse compute savings — typically around 40% — offset the platform cost on their own. Would it be worth putting together a quick TCO estimate for your environment so you have a concrete number to take internally?"</div></div></div>
+      <div class="close-item"><span class="close-num" style="background:var(--teal-light);color:var(--teal);border-color:var(--teal-border);">03</span><div><div class="close-lbl">Offer a stack-specific demo</div><div class="close-q">"I'd like to show you exactly how Mosaic connects to [Snowflake / Databricks / Oracle] and surfaces certified metrics to [their BI tool / AI tool]. 30 minutes, very specific to your setup — not a generic product tour."</div></div></div>
+      <div class="close-item"><span class="close-num" style="background:var(--blue-light);color:var(--blue);border-color:var(--blue-border);">04</span><div><div class="close-lbl">Map the stakeholders</div><div class="close-q">"Who else would need to be involved in evaluating something like this — is there a data architect, infrastructure lead, or AI owner we should bring into the next conversation?"</div></div></div>
+      <div class="close-item"><span class="close-num" style="background:var(--purple-light);color:var(--purple);border-color:var(--purple-border);">05</span><div><div class="close-lbl">Anchor to a business event</div><div class="close-q">"Is there a regulatory deadline, board review, AI rollout, or project milestone in the next quarter that makes solving this more urgent for your team?"</div></div></div>
+      <div class="close-item"><span class="close-num" style="background:var(--green-light);color:var(--green);border-color:var(--green-border);">06</span><div><div class="close-lbl">Leave a resource</div><div class="close-q">"I'll send across our Universal Semantic Layer Advantage document — concise read on why traditional approaches fall short and what makes Mosaic different. Useful to have if you're having an internal conversation about this."</div></div></div>
+    </div>
+    <div class="ssec-label reveal"><div class="sl-bar"></div>Qualify in / qualify out<div class="sl-line"></div></div>
+    <div class="disq-grid reveal rd1">
+      <div class="disq-card disq-no"><div class="disq-title">Walk away signals</div><ul class="disq-list"><li>Fully committed to a single-vendor all-in-one — no appetite for vendor diversity</li><li>No budget cycle active — data costs genuinely not a concern for this period</li><li>Single BI tool, single data source, single team — no multi-tool or multi-source complexity</li><li>No governance or AI agenda — purely a simple reporting shop with stable, unchanging needs</li></ul></div>
+      <div class="disq-card disq-yes"><div class="disq-title">Strong qualify signals</div><ul class="disq-list"><li>Multiple BI tools across departments with no unified metric definitions</li><li>Snowflake or Databricks in production with growing or unpredictable compute costs</li><li>Active AI or agent initiative needing a governed, trusted data foundation</li><li>Regulatory or compliance pressure requiring audit trails and access governance</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const pb = document.getElementById('progress-bar');
+const bt = document.getElementById('back-to-top');
+
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  const dh = document.documentElement.scrollHeight - window.innerHeight;
+  pb.style.width = (dh > 0 ? (sy / dh) * 100 : 0) + '%';
+  bt.classList.toggle('visible', sy > 500);
+  checkReveals();
+  checkLabels();
+}, { passive: true });
+bt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// ── Section switching ──
+function showSec(id, btn) {
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sec-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => { checkReveals(); checkLabels(); animateCloseItems(); animateValCards(); }, 50);
+}
+
+// ── Sub tabs (S1 only) ──
+function showSub(section, id, btn) {
+  const panel = document.getElementById('panel-' + section);
+  panel.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+  panel.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(section + '-' + id).classList.add('active');
+}
+
+// ── Collapsible blocks ──
+function toggleCB(hdr) {
+  const body = hdr.nextElementSibling;
+  const chev = hdr.querySelector('.cchev');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  hdr.classList.toggle('open', !isOpen);
+  chev.classList.toggle('open', !isOpen);
+}
+
+// ── Expand / collapse all ──
+function toggleAll(sid, btn) {
+  const panel = document.getElementById('panel-' + sid);
+  const bodies = panel.querySelectorAll('.cblock-body');
+  const chevs = panel.querySelectorAll('.cchev');
+  const hdrs = panel.querySelectorAll('.cblock-hdr');
+  const anyOpen = Array.from(bodies).some(b => b.classList.contains('open'));
+  bodies.forEach(b => b.classList.toggle('open', !anyOpen));
+  chevs.forEach(c => c.classList.toggle('open', !anyOpen));
+  hdrs.forEach(h => h.classList.toggle('open', !anyOpen));
+  btn.textContent = anyOpen ? 'Expand all' : 'Collapse all';
+}
+
+// ── Scenario ──
+function showScene(id, btn) {
+  document.querySelectorAll('.scene-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.scene-card').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const det = document.getElementById('sc-' + id);
+  if (det) det.classList.add('open');
+}
+
+// ── Persona switch ──
+function switchP(p, btn) {
+  document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pd-tech').style.display = p === 'tech' ? 'block' : 'none';
+  document.getElementById('pd-biz').style.display = p === 'biz' ? 'block' : 'none';
+}
+
+// ── Filter Q ──
+function filterQ(persona, cat, pill) {
+  const container = document.getElementById('pd-' + persona);
+  container.querySelectorAll('.fpill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  container.querySelectorAll('.q-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+  const vis = container.querySelectorAll('.q-item:not([style*="none"]) .q-num');
+  vis.forEach((n, i) => n.textContent = String(i + 1).padStart(2, '0'));
+}
+
+// ── Expand Q ──
+function expandQ(el) {
+  const tip = el.querySelector('.q-tip');
+  const sub = el.querySelector('.q-sub');
+  const isOpen = tip.classList.contains('open');
+  tip.classList.toggle('open');
+  if (sub) sub.style.display = isOpen ? 'none' : 'block';
+}
+
+// ── Reaction accordion ──
+function toggleR(el) {
+  const a = el.nextElementSibling;
+  const c = el.querySelector('.rchev');
+  a.classList.toggle('open');
+  c.classList.toggle('open');
+}
+
+// ── Industry ──
+function showInd(id, btn) {
+  document.querySelectorAll('.ind-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ind-detail').forEach(d => d.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ind-' + id).classList.add('active');
+}
+
+// ── Value filter ──
+function filterVal(tag, pill) {
+  document.querySelectorAll('#panel-s5 .fpill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  document.querySelectorAll('#val-grid .val-card').forEach(c => {
+    const show = tag === 'all' || c.dataset.vtag === tag;
+    c.style.display = show ? '' : 'none';
+    if (show) setTimeout(() => c.classList.add('val-in'), 30);
+  });
+}
+
+// ── Compete filter + accordion ──
+function filterComp(cat, pill) {
+  document.querySelectorAll('#panel-s6 .fpill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+  document.querySelectorAll('#comp-list .comp-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.ccat === cat) ? '' : 'none';
+  });
+}
+function toggleComp(el) {
+  const a = el.nextElementSibling;
+  const c = el.querySelector('.comp-chev');
+  const isOpen = a.classList.contains('open');
+  document.querySelectorAll('.comp-a.open').forEach(x => x.classList.remove('open'));
+  document.querySelectorAll('.comp-chev.open').forEach(x => x.classList.remove('open'));
+  if (!isOpen) { a.classList.add('open'); c.classList.add('open'); }
+}
+
+// ── Scroll reveal ──
+function checkReveals() {
+  document.querySelectorAll('.sec-panel.active .reveal:not(.vis)').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight * 0.92) el.classList.add('vis');
+  });
+}
+
+// ── Section label animation ──
+function checkLabels() {
+  document.querySelectorAll('.sec-panel.active .ssec-label:not(.vis)').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight * 0.88) el.classList.add('vis');
+  });
+}
+
+// ── Close items stagger ──
+function animateCloseItems() {
+  const list = document.getElementById('close-list');
+  if (!list) return;
+  list.querySelectorAll('.close-item').forEach((item, i) => {
+    item.classList.remove('cl-in');
+    setTimeout(() => item.classList.add('cl-in'), i * 80);
+  });
+}
+
+// ── Val cards stagger ──
+function animateValCards() {
+  document.querySelectorAll('#val-grid .val-card').forEach((card, i) => {
+    card.classList.remove('val-in');
+    setTimeout(() => card.classList.add('val-in'), i * 50);
+  });
+}
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', e => {
+  const n = parseInt(e.key);
+  if (n >= 1 && n <= 7 && !e.ctrlKey && !e.metaKey) {
+    const tabs = document.querySelectorAll('.stab');
+    if (tabs[n - 1]) tabs[n - 1].click();
+  }
+});
+
+// ── Init ──
+window.addEventListener('load', () => {
+  checkReveals();
+  checkLabels();
+  animateCloseItems();
+  animateValCards();
+});
+</script>
+</body>
+</html>
