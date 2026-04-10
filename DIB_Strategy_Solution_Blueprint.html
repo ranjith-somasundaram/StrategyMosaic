@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategy for Dubai Islamic Bank — Data Intelligence Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────── */
+:root {
+  /* DIB palette — drawn from dib.ae */
+  --dib-green:      #006B3F;
+  --dib-green-mid:  #007A47;
+  --dib-green-lite: #E8F5EE;
+  --dib-green-pale: #F2FAF6;
+  --dib-gold:       #B8962E;
+  --dib-gold-lite:  #FDF6E3;
+
+  /* Strategy orange — drawn from strategy.com */
+  --str-orange:     #FA660F;
+  --str-orange-mid: #FC7C35;
+  --str-orange-lite:#FEF0E7;
+  --str-orange-pale:#FFF7F3;
+
+  /* Neutrals */
+  --white:    #FFFFFF;
+  --bg:       #F7F8FA;
+  --bg-2:     #F0F2F5;
+  --border:   #E4E7ED;
+  --border-2: #D0D5DE;
+  --ink:      #0D1117;
+  --ink-2:    #1E2632;
+  --ink-3:    #374151;
+  --grey:     #6B7280;
+  --grey-2:   #9CA3AF;
+  --grey-3:   #D1D5DB;
+
+  /* Semantic */
+  --teal:     #0D9488;
+  --teal-lite:#E6F7F6;
+  --violet:   #6D28D9;
+  --violet-lt:#EDE9FE;
+  --blue:     #1D4ED8;
+  --blue-lt:  #EFF6FF;
+  --rose:     #E11D48;
+  --rose-lt:  #FFF1F2;
+
+  /* Typography */
+  --font-head: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  /* Radius */
+  --r-sm:  6px;
+  --r-md:  10px;
+  --r-lg:  16px;
+  --r-xl:  22px;
+  --r-2xl: 32px;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.09), 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-xl:  0 24px 64px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.06);
+}
+
+/* ─── RESET ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--ink);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; }
+a { text-decoration: none; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--dib-green); border-radius: 999px; }
+
+/* ─── NAV ────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 16px;
+}
+.brand-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.brand-logo {
+  display: block;
+  width: auto;
+  object-fit: contain;
+}
+.dib-logo {
+  height: 38px;
+  max-width: 190px;
+}
+.strategy-logo {
+  height: 30px;
+  max-width: 190px;
+}
+.nav-sep { width: 1px; height: 28px; background: var(--border-2); }
+.brand-fallback {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-family: var(--font-head);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.dib-fallback {
+  font-size: 24px;
+  color: var(--dib-green);
+}
+.strategy-fallback {
+  font-size: 24px;
+  color: var(--ink);
+}
+.nav-links { display: flex; gap: 0; list-style: none; }
+.nav-links a {
+  display: block; padding: 0 18px; height: 64px; line-height: 64px;
+  font-size: 14px; font-weight: 500; color: var(--grey);
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-links a:hover { color: var(--dib-green); border-bottom-color: var(--dib-green); }
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--dib-green); color: var(--white);
+  font-size: 13px; font-weight: 600;
+  padding: 8px 20px; border-radius: var(--r-md);
+  transition: background 0.2s;
+}
+.nav-cta:hover { background: var(--dib-green-mid); }
+
+/* ─── HERO ───────────────────────────────────── */
+.hero {
+  background: var(--white);
+  padding: 90px 64px 80px;
+  position: relative; overflow: hidden;
+}
+.hero-bg-geo {
+  position: absolute; right: 0; top: 0; width: 55%; height: 100%;
+  background: linear-gradient(135deg, var(--dib-green-pale) 0%, var(--bg) 60%, var(--white) 100%);
+  clip-path: polygon(12% 0, 100% 0, 100% 100%, 0 100%);
+}
+.hero-geo-circle {
+  position: absolute; right: 72px; top: 50%; transform: translateY(-50%);
+  width: min(38vw, 560px); height: min(30vw, 400px);
+  min-width: 420px; min-height: 300px;
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid rgba(0,107,63,0.08);
+  box-shadow: 0 28px 70px rgba(0, 62, 38, 0.18);
+  background: linear-gradient(145deg, rgba(0,107,63,0.08), rgba(255,255,255,0.95));
+}
+.hero-geo-circle::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,107,63,0.20) 0%, rgba(0,107,63,0.02) 42%, rgba(255,255,255,0.02) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+.hero-geo-circle::after {
+  content: 'Together, as ONE';
+  position: absolute; left: 24px; bottom: 22px;
+  z-index: 3;
+  display: inline-flex; align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,107,63,0.12);
+  color: var(--dib-green);
+  font-family: var(--font-head);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
+}
+.hero-geo-circle img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.hero-inner { position: relative; z-index: 2; max-width: 640px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--dib-green-lite); color: var(--dib-green);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: var(--r-sm);
+  margin-bottom: 28px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.1s;
+}
+.hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(36px, 4.5vw, 58px);
+  font-weight: 800; line-height: 1.08;
+  letter-spacing: -0.025em; color: var(--ink);
+  margin-bottom: 22px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.25s;
+}
+.hero-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--dib-green) 0%, #00A86B 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 17px; color: var(--grey); line-height: 1.7;
+  max-width: 520px; margin-bottom: 42px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.4s;
+}
+.hero-stats {
+  display: flex; gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  max-width: 540px;
+  opacity: 0; animation: slideUp 0.7s ease forwards 0.55s;
+}
+.hero-stat {
+  flex: 1; padding: 20px 22px;
+  border-right: 1px solid var(--border);
+}
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num {
+  font-family: var(--font-head);
+  font-size: 28px; font-weight: 800;
+  color: var(--dib-green); line-height: 1;
+  margin-bottom: 4px;
+}
+.hero-stat-label { font-size: 11.5px; color: var(--grey-2); line-height: 1.3; }
+
+/* ─── SECTION BASICS ─────────────────────────── */
+.sec { padding: 88px 64px; }
+.sec-alt { background: var(--bg); }
+.sec-inner { max-width: 1220px; margin: 0 auto; }
+.sec-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--str-orange);
+  margin-bottom: 12px;
+}
+.sec-title {
+  font-family: var(--font-head);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 800; letter-spacing: -0.02em;
+  color: var(--ink); line-height: 1.15;
+  margin-bottom: 14px;
+}
+.sec-title em { font-style: normal; color: var(--dib-green); }
+.sec-sub {
+  font-size: 16px; color: var(--grey);
+  max-width: 580px; line-height: 1.7;
+  margin-bottom: 52px;
+}
+
+/* ─── PAIN CARDS ─────────────────────────────── */
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.pain-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 26px 24px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+.pain-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--dib-green); opacity: 0;
+  transition: opacity 0.25s;
+}
+.pain-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(0,107,63,0.2);
+}
+.pain-card:hover::before { opacity: 1; }
+.pain-icon {
+  width: 42px; height: 42px; border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 16px; flex-shrink: 0;
+}
+.icon-data  { background: var(--violet-lt); }
+.icon-gov   { background: var(--teal-lite); }
+.icon-perf  { background: var(--str-orange-lite); }
+.icon-ai    { background: var(--dib-green-lite); }
+.icon-int   { background: var(--blue-lt); }
+
+.pain-title {
+  font-family: var(--font-head);
+  font-size: 14.5px; font-weight: 700;
+  color: var(--ink-2); margin-bottom: 8px;
+  line-height: 1.35;
+}
+.pain-desc {
+  font-size: 13px; color: var(--grey);
+  line-height: 1.6; margin-bottom: 16px;
+}
+/* Tooltip */
+.tt-trigger {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--str-orange);
+  background: var(--str-orange-lite);
+  border: 1px solid rgba(250,102,15,0.2);
+  border-radius: var(--r-sm); padding: 5px 10px;
+  cursor: help; position: relative;
+}
+.tt-trigger .tt-icon {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid rgba(250,102,15,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+}
+/* Tooltip box — fixed position via JS, shown as a global overlay */
+#tt-global {
+  position: fixed;
+  width: 300px; background: var(--ink-2);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s, visibility 0.18s;
+  pointer-events: none; z-index: 9999;
+  box-shadow: var(--shadow-xl);
+}
+#tt-global.visible { opacity: 1; visibility: visible; }
+#tt-global::after {
+  content: '';
+  position: absolute; top: 100%; left: 18px;
+  border: 7px solid transparent;
+  border-top-color: var(--ink-2);
+}
+#tt-global.flip-down::after {
+  top: auto; bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--ink-2);
+}
+.tt-box { display: none; } /* Hide inline boxes — used only as data source */
+.tt-box-head {
+  font-family: var(--font-head);
+  font-size: 12px; font-weight: 700;
+  color: var(--str-orange); margin-bottom: 7px;
+}
+.tt-box-body { font-size: 12.5px; color: rgba(255,255,255,0.8); line-height: 1.55; }
+
+/* ─── SOLUTION FLOW ──────────────────────────── */
+.flow-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px 64px;
+}
+.flow-item {
+  display: flex; gap: 22px;
+  padding: 32px 28px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-sm);
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.flow-item.in-view { opacity: 1; transform: translateY(0); }
+.flow-num {
+  flex-shrink: 0; width: 42px; height: 42px; border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--dib-green), #00A86B);
+  color: var(--white); font-family: var(--font-head);
+  font-size: 17px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.flow-body {}
+.flow-layer {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--str-orange);
+  margin-bottom: 7px;
+}
+.flow-title {
+  font-family: var(--font-head);
+  font-size: 17px; font-weight: 700;
+  color: var(--ink); line-height: 1.3; margin-bottom: 10px;
+}
+.flow-desc { font-size: 13.5px; color: var(--grey); line-height: 1.65; margin-bottom: 16px; }
+.flow-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.flow-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; color: var(--ink-3);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 4px 10px;
+}
+.flow-pill::before {
+  content: '';
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--dib-green); flex-shrink: 0;
+}
+
+/* ─── ARCHITECTURE DIAGRAM ───────────────────── */
+.arch-canvas {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  position: relative;
+}
+.arch-canvas::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    rgba(0,107,63,0.025) 0%, transparent 30%,
+    transparent 70%, rgba(250,102,15,0.02) 100%);
+  pointer-events: none;
+}
+.arch-layer {
+  padding: 24px 32px 20px;
+  position: relative; z-index: 2;
+}
+.arch-layer + .arch-layer { border-top: 1px solid rgba(228,231,237,0.7); }
+.arch-layer.arch-alt { background: rgba(247,248,250,0.6); }
+.arch-lhead {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+}
+.arch-lline {
+  flex: 1; height: 1px; max-width: 120px;
+  background: linear-gradient(90deg, transparent, var(--border));
+}
+.arch-lnum {
+  font-family: var(--font-mono);
+  font-size: 11.5px; font-weight: 500; letter-spacing: 0.2em;
+  color: var(--grey-2);
+  background: var(--bg); border: 1px solid var(--border-2);
+  border-radius: 999px; padding: 2px 10px;
+}
+.arch-ltitle {
+  font-family: var(--font-mono);
+  font-size: 13.5px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--grey);
+  white-space: nowrap;
+}
+.arch-lbadge {
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 2px 10px;
+  border-radius: 999px; border: 1px solid;
+}
+.ab-mosaic { color: var(--str-orange); border-color: rgba(250,102,15,0.3); background: var(--str-orange-lite); }
+.ab-gov    { color: var(--teal);      border-color: rgba(13,148,136,0.3);  background: var(--teal-lite); }
+.ab-shared { color: var(--violet);    border-color: rgba(109,40,217,0.25); background: var(--violet-lt); }
+.ab-source { color: var(--grey);      border-color: var(--border-2);       background: var(--bg); }
+
+/* Source cards */
+.arch-src-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+  margin-bottom: 10px;
+}
+.arch-src-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 12px 12px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: default;
+}
+.arch-src-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(0,107,63,0.25);
+}
+.arch-src-icon {
+  width: 34px; height: 34px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px; font-size: 18px;
+}
+.arch-src-name { font-size: 14.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 3px; }
+.arch-src-sub  { font-size: 12.5px; color: var(--grey-2); line-height: 1.5; }
+
+/* Flow arrow */
+.arch-arrow {
+  display: flex; justify-content: center; align-items: center;
+  height: 44px; position: relative; z-index: 2;
+}
+.arch-arrow-line {
+  position: absolute; width: 2px; height: 40px;
+  background: linear-gradient(180deg, var(--dib-green), var(--str-orange));
+  border-radius: 999px;
+}
+.arch-arrow-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--white); border: 1.5px solid var(--border-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--grey);
+  position: relative; z-index: 2;
+  box-shadow: var(--shadow-sm);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: var(--shadow-sm); }
+  50% { transform: scale(1.06); box-shadow: 0 0 0 6px rgba(0,107,63,0.07); }
+}
+
+/* Mosaic core block */
+.mosaic-core {
+  background: linear-gradient(145deg, rgba(250,102,15,0.04), var(--white));
+  border: 1.5px solid rgba(250,102,15,0.25);
+  border-radius: var(--r-lg);
+  padding: 22px 24px 18px;
+  margin-bottom: 12px;
+  position: relative; overflow: hidden;
+}
+.mosaic-core::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--dib-green), var(--str-orange), var(--dib-green));
+}
+.mosaic-core-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--str-orange);
+  background: var(--str-orange-lite); border: 1px solid rgba(250,102,15,0.2);
+  border-radius: var(--r-sm); padding: 3px 10px; margin-bottom: 10px;
+}
+.mosaic-core-title {
+  font-family: var(--font-head);
+  font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 6px;
+}
+.mosaic-core-sub { font-size: 14px; color: var(--grey); line-height: 1.7; margin-bottom: 16px; }
+.mosaic-caps {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.mosaic-cap {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 12px 14px;
+  transition: border-color 0.2s;
+}
+.mosaic-cap:hover { border-color: rgba(250,102,15,0.3); }
+.mosaic-cap-icon { font-size: 16px; margin-bottom: 6px; }
+.mosaic-cap-name { font-size: 13px; font-weight: 700; color: var(--ink-2); margin-bottom: 3px; }
+.mosaic-cap-desc { font-size: 12px; color: var(--grey-2); line-height: 1.45; }
+
+.mosaic-focus-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+.mosaic-focus-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 14px 12px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.mosaic-focus-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.mosaic-focus-card.hybrid {
+  border-color: rgba(250,102,15,0.22);
+  background: linear-gradient(145deg, rgba(250,102,15,0.03), var(--white));
+}
+.mosaic-focus-card.sentinel {
+  border-color: rgba(109,40,217,0.18);
+  background: linear-gradient(145deg, rgba(237,233,254,0.16), var(--white));
+}
+.mosaic-focus-card.mcp {
+  border-color: rgba(13,148,136,0.18);
+  background: linear-gradient(145deg, rgba(230,247,246,0.22), var(--white));
+}
+.mosaic-focus-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 17px;
+}
+.mosaic-focus-card.hybrid .mosaic-focus-icon { background: var(--str-orange-lite); color: var(--str-orange); }
+.mosaic-focus-card.sentinel .mosaic-focus-icon { background: var(--violet-lt); color: var(--violet); }
+.mosaic-focus-card.mcp .mosaic-focus-icon { background: var(--teal-lite); color: var(--teal); }
+.mosaic-focus-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+.mosaic-focus-list {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.mosaic-focus-list li {
+  position: relative;
+  padding-left: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--grey);
+}
+.mosaic-focus-list li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--grey-2);
+  font-weight: 700;
+}
+@media (max-width: 1000px) {
+  .mosaic-focus-grid { grid-template-columns: 1fr; }
+}
+
+/* Sentinel block */
+.sentinel-block {
+  background: linear-gradient(145deg, var(--teal-lite), var(--white));
+  border: 1px solid rgba(13,148,136,0.2);
+  border-radius: var(--r-lg); padding: 18px 20px;
+}
+.sentinel-title { font-size: 13px; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
+.sentinel-mods { display: flex; gap: 8px; flex-wrap: wrap; }
+.sentinel-mod {
+  font-size: 11.5px; color: var(--teal);
+  background: rgba(13,148,136,0.08); border: 1px solid rgba(13,148,136,0.2);
+  border-radius: var(--r-sm); padding: 4px 10px; font-weight: 600;
+}
+
+/* Consumption grid */
+.arch-cons-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+}
+.arch-cons-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 16px 14px;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: default;
+  text-align: center;
+}
+.arch-cons-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--dib-green); opacity: 0;
+  transition: opacity 0.2s;
+}
+.arch-cons-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.arch-cons-card:hover::after { opacity: 1; }
+.arch-cons-card.mosaic-native {
+  border-color: rgba(250,102,15,0.25);
+  background: linear-gradient(145deg, rgba(250,102,15,0.04), var(--white));
+}
+.arch-cons-card.mosaic-native::after { background: var(--str-orange); opacity: 1; }
+.arch-cons-icon { font-size: 20px; margin-bottom: 8px; }
+.arch-cons-name { font-size: 13.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 3px; }
+.arch-cons-sub  { font-size: 12px; color: var(--grey-2); line-height: 1.45; }
+.arch-cons-badge {
+  display: inline-block; margin-top: 6px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--str-orange);
+  background: var(--str-orange-lite); border: 1px solid rgba(250,102,15,0.2);
+  border-radius: var(--r-sm); padding: 2px 7px;
+}
+
+/* Query Engine strip */
+.qe-strip {
+  display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;
+}
+.qe-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 8px 14px;
+  font-size: 13px; color: var(--ink-3); font-weight: 500;
+}
+.qe-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--dib-green); flex-shrink: 0;
+}
+
+/* ─── CAPABILITY CARDS ───────────────────────── */
+.cap-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+}
+.cap-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 30px 26px;
+  transition: transform 0.25s, box-shadow 0.25s;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s;
+}
+.cap-card.in-view {
+  opacity: 1; transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.cap-card:hover { box-shadow: var(--shadow-lg); }
+.cap-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.cap-icon { width: 48px; height: 48px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.cap-badge {
+  font-family: var(--font-mono);
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 9px;
+  border-radius: 999px; border: 1px solid;
+}
+.badge-core  { color: var(--dib-green); border-color: rgba(0,107,63,0.3); background: var(--dib-green-lite); }
+.badge-ai    { color: var(--str-orange); border-color: rgba(250,102,15,0.3); background: var(--str-orange-lite); }
+.badge-gov   { color: var(--teal); border-color: rgba(13,148,136,0.3); background: var(--teal-lite); }
+.badge-perf  { color: var(--violet); border-color: rgba(109,40,217,0.25); background: var(--violet-lt); }
+
+.cap-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.cap-body  { font-size: 13.5px; color: var(--grey); line-height: 1.65; margin-bottom: 18px; }
+.cap-checks { display: flex; flex-direction: column; gap: 8px; }
+.cap-check {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: var(--ink-3); line-height: 1.45;
+}
+.cap-check-mark {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--dib-green-lite); border: 1px solid rgba(0,107,63,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--dib-green); flex-shrink: 0; margin-top: 1px;
+}
+
+/* ─── VS TABLE ───────────────────────────────── */
+.vs-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.vs-table { width: 100%; border-collapse: collapse; }
+.vs-table thead th {
+  padding: 18px 24px; text-align: left;
+  font-family: var(--font-head); font-size: 14.5px; font-weight: 700;
+  color: var(--grey); background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.vs-table thead th.col-req { width: 200px; }
+.vs-table thead th.col-str { color: var(--str-orange); background: rgba(250,102,15,0.04); }
+.vs-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; height: 72px; }
+.vs-table tbody tr:last-child { border-bottom: none; }
+.vs-table tbody tr:hover td { background: var(--dib-green-pale); }
+.vs-table td {
+  padding: 18px 24px; font-size: 14.5px; color: var(--ink-3);
+  vertical-align: top; line-height: 1.7;
+}
+.vs-table td.col-req {
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--grey); letter-spacing: 0.03em; width: 190px;
+  font-weight: 600;
+}
+.vs-table td.col-str { background: rgba(250,102,15,0.025); }
+.tick  { color: var(--dib-green); font-weight: 700; }
+.cross { color: var(--rose); }
+.half  { color: var(--dib-gold); }
+
+/* ─── CTA ────────────────────────────────────── */
+.cta-sec {
+  background: linear-gradient(135deg, var(--dib-green) 0%, #00854C 60%, #006B3F 100%);
+  padding: 80px 64px; text-align: center; position: relative; overflow: hidden;
+}
+.cta-sec::before {
+  content: ''; position: absolute;
+  top: -80px; right: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.cta-sec::after {
+  content: ''; position: absolute;
+  bottom: -60px; left: -60px;
+  width: 300px; height: 300px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.cta-inner { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+.cta-title {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 800; color: var(--white);
+  letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px;
+}
+.cta-sub { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.65; margin-bottom: 36px; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--white); color: var(--dib-green);
+  font-family: var(--font-head); font-weight: 700; font-size: 15px;
+  padding: 16px 36px; border-radius: var(--r-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,0.2); }
+
+/* ─── FOOTER ─────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12.5px; color: var(--grey-2);
+}
+.footer-brand { font-family: var(--font-head); font-weight: 700; font-size: 14px; color: var(--dib-green); }
+.footer-str   { font-family: var(--font-head); font-weight: 700; font-size: 13px; color: var(--str-orange); }
+
+/* ─── ANIMATIONS ─────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── STRATEGY BADGE (subtle branding strip) ── */
+.str-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--str-orange); background: var(--str-orange-lite);
+  border: 1px solid rgba(250,102,15,0.2);
+  border-radius: var(--r-sm); padding: 3px 10px;
+}
+.str-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--str-orange); }
+
+/* ─── LEGEND ─────────────────────────────────── */
+.arch-legend {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 10px 16px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-md); margin-bottom: 20px;
+}
+.legend-label {
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--grey-2); margin-right: 4px;
+}
+.legend-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--white);
+  font-size: 12px; font-weight: 600; color: var(--grey);
+}
+.legend-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 1000px) {
+  nav, .hero, .sec, .cta-sec, footer { padding-left: 24px; padding-right: 24px; }
+  .pain-grid { grid-template-columns: 1fr 1fr; }
+  .cap-grid  { grid-template-columns: 1fr 1fr; }
+  .arch-src-grid  { grid-template-columns: repeat(3, 1fr); }
+  .arch-cons-grid { grid-template-columns: repeat(2, 1fr); }
+  .mosaic-caps { grid-template-columns: 1fr 1fr; }
+  .flow-container { grid-template-columns: 1fr; }
+  nav .nav-links { display: none; }
+  .hero-geo-circle {
+    right: 24px;
+    width: 42vw;
+    min-width: 320px;
+    height: 280px;
+    min-height: 0;
+  }
+  .dib-logo {
+    height: 34px;
+    max-width: 160px;
+  }
+  .strategy-logo {
+    height: 26px;
+    max-width: 160px;
+  }
+  .nav-sep {
+    height: 24px;
+  }
+}
+@media (max-width: 640px) {
+  .pain-grid { grid-template-columns: 1fr; }
+  .cap-grid  { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; }
+  .hero-geo-circle {
+    position: relative; right: auto; top: auto; transform: none;
+    width: 100%; min-width: 0; height: 260px; min-height: 0;
+    margin-top: 28px;
+  }
+  .hero { padding-bottom: 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────── -->
+<nav>
+  <div class="nav-brand">
+    <div class="brand-logo-wrap">
+      <img src="https://bv.world/wp-content/uploads/2020/12/DubaiIslamicBankDIB.jpg"
+           alt="Dubai Islamic Bank"
+           class="brand-logo dib-logo"
+           onload="this.nextElementSibling.style.display='none';"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';">
+      <span class="brand-fallback dib-fallback">DIB</span>
+    </div>
+
+    <span class="nav-sep"></span>
+
+    <div class="brand-logo-wrap">
+      <img src="https://images.contentstack.io/v3/assets/bltf8d808d9b8cebd37/bltb585439c8353e389/67905f9d58fb6d4dd481146e/strategy_logo_black.svg"
+           alt="Strategy"
+           class="brand-logo strategy-logo"
+           onload="this.nextElementSibling.style.display='none';"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline-flex';">
+      <span class="brand-fallback strategy-fallback">Strategy</span>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#pain">Challenges</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#capabilities">Capabilities</a></li>
+    <li><a href="#competitive">vs Denodo</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Request POC →</a>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg-geo"></div>
+  <div class="hero-geo-circle">
+    <img src="https://www.dib.ae/images/default-source/spotlight/7166-myhome-corporate-campaign-hpsl-enb7ea542fb5e34c0c80e3f79cb80a1daf.jpg?sfvrsn=95823b48_6" alt="Dubai Islamic Bank visual"
+      onerror="this.onerror=null;this.src='https://www.dib.ae/images/default-source/default-album/service-promise.jpg?sfvrsn=87a70388_7';">
+  </div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span>&#9679;</span> Data Intelligence Blueprint — Confidential
+    </div>
+    <h1 class="hero-title">
+      One Semantic Layer.<br><em>Every Tool. Trusted AI.</em>
+    </h1>
+    <p class="hero-sub">
+      A purpose-built response to every challenge raised in our discovery sessions with DIB — mapped precisely to Strategy Mosaic, Auto AI Suite, and Strategy One.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">200+</div>
+        <div class="hero-stat-label">Data source connectors</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">10×</div>
+        <div class="hero-stat-label">Faster data modeling</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">0</div>
+        <div class="hero-stat-label">Data duplication needed</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">∞</div>
+        <div class="hero-stat-label">Tool-agnostic access</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PAIN AREAS ───────────────────────────────── -->
+<section id="pain" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">What We Heard from DIB</div>
+    <h2 class="sec-title">Every Challenge <em>Captured & Mapped</em></h2>
+    <p class="sec-sub">All pain areas and questions raised during our discovery sessions — each with a direct Strategy answer. Hover the orange tags to see how we solve it.</p>
+
+    <div class="pain-grid">
+
+      <div class="pain-card">
+        <div class="pain-icon icon-data">🔄</div>
+        <div class="pain-title">Data Duplication & Hopping</div>
+        <div class="pain-desc">Same data copied across CRM, mobile banking, reporting, and warehouse — creating multiple conflicting versions of the truth and significant inefficiency.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Mosaic Universal Semantic Layer</div>
+            <div class="tt-box-body">Publish once, consume everywhere. Mosaic sits between your sources and all tools — without duplicating logic or recreating definitions in each tool. One definition, consistent across Power BI, Qlik, SQL, AI and beyond.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-gov">📐</div>
+        <div class="pain-title">No Enterprise Semantic Layer</div>
+        <div class="pain-desc">Business definitions live inside individual BI tools — Power BI, Qlik, SQL — with no shared, tool-agnostic source of truth outside any single product.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Tool-Agnostic Semantic Layer</div>
+            <div class="tt-box-body">Mosaic defines your metrics, hierarchies, and business logic in one governed layer. Power BI reads from it. Qlik reads from it. Your AI Agents read from it — all getting identical, certified answers.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-perf">📊</div>
+        <div class="pain-title">Inconsistent KPIs Across Tools</div>
+        <div class="pain-desc">"Active Customers" returns different numbers in Power BI vs Qlik vs raw SQL. Different definitions erode business trust and create decision risk.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Single Source of Truth</div>
+            <div class="tt-box-body">Every KPI is defined once inside Mosaic. Any tool querying Mosaic receives the exact same calculation — enforced at the semantic layer, not inside each BI tool's logic.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-data">🗄️</div>
+        <div class="pain-title">Heavy Reliance on DB Viewer / Raw SQL</div>
+        <div class="pain-desc">Business users bypass BI tools and query raw tables directly — creating uncontrolled access, duplicated logic, governance bypass, and compliance risk.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Governed SQL Access via Mosaic</div>
+            <div class="tt-box-body">Mosaic exposes a governed SQL-compatible interface — analysts get familiar query access, routed through the semantic layer with row-level security, definitions, and audit trails enforced automatically.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-gov">🔒</div>
+        <div class="pain-title">No Centralized Governance Layer</div>
+        <div class="pain-desc">Access rules, data definitions, and security policies are maintained separately in each tool — inconsistency, duplication, and massive ongoing operational overhead.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Mosaic Sentinel — Unified Governance</div>
+            <div class="tt-box-body">Three built-in modules: Risk Management (real-time alerts), Audit & Compliance (full trail), Usage Insights (consumption analytics). One platform with unified governance intelligence and no vendor lock-in.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-int">⏱️</div>
+        <div class="pain-title">Time-Consuming Access Provisioning</div>
+        <div class="pain-desc">Significant effort required to grant data access to users — because access is managed independently in each tool without a unified control layer.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Unified Access Control in Mosaic</div>
+            <div class="tt-box-body">Define roles, permissions, row-level security, and masking rules once in Mosaic. Those policies automatically propagate to Power BI, Qlik, SQL, and AI Agents — zero re-configuration per tool.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-perf">⚡</div>
+        <div class="pain-title">Repeated Database Hits & No Caching</div>
+        <div class="pain-desc">Transaction data queried multiple times across tools — unnecessary load, slow performance, and wasted cloud compute with no intelligent caching layer in place.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Query Acceleration Engine</div>
+            <div class="tt-box-body">Mosaic's in-memory engine absorbs repeated workloads. Choose live query, in-memory cache, or hybrid per dataset. Concurrent users, scheduled reports, and AI agents all served from the same cached results.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-gov">🔑</div>
+        <div class="pain-title">Granular Security, PII & Data Masking</div>
+        <div class="pain-desc">Need row-level, column-level, and object-level security — with PII detection, column masking, and fine-grained access control for sensitive banking data.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Centralized Security in Mosaic</div>
+            <div class="tt-box-body">Row-level and object-level security defined once in Mosaic propagates to every connected tool. Column masking, PII controls, and access policies enforced uniformly across Power BI, SQL, and AI agents.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-ai">✏️</div>
+        <div class="pain-title">Writeback & Maker-Checker Workflows</div>
+        <div class="pain-desc">Need to update data, run approval workflows, and support Excel-style data entry — not just read-only analytics. Business workflows require controlled write-back.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Strategy One — Writeback & Workflows</div>
+            <div class="tt-box-body">Strategy One supports controlled data write-back, structured approval flows, and Excel-compatible data entry — extending analytics into full business workflows within the governed platform.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-int">🔗</div>
+        <div class="pain-title">Informatica IDMC Integration Required</div>
+        <div class="pain-desc">Already invested in Informatica IDMC for governance. The new solution must integrate with — not replace — existing governance tooling and investments.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Open Integration Architecture</div>
+            <div class="tt-box-body">Mosaic is API-first and vendor-agnostic. It complements Informatica IDMC by adding semantic, consumption-layer governance on top — not competing with your existing governance investment.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-ai">🤖</div>
+        <div class="pain-title">Governed AI Consumption</div>
+        <div class="pain-desc">AI tools must consume trusted, governed data — not raw tables. Hallucinations from ungoverned AI are unacceptable in a regulated banking environment.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Auto AI Agents + Mosaic = Zero Hallucinations</div>
+            <div class="tt-box-body">Strategy AI Agents are grounded in Mosaic's certified semantic model. AI interprets questions and responds using your exact business definitions — hallucinations eliminated by architectural design.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-icon icon-data">🛒</div>
+        <div class="pain-title">Data Products & Marketplace Vision</div>
+        <div class="pain-desc">Moving toward a data product model — curated, governed datasets users subscribe to — shifting from raw table access toward business-ready, certified datasets.</div>
+        <div class="tt-trigger">
+          Strategy Answer <div class="tt-icon">?</div>
+          <div class="tt-box">
+            <div class="tt-box-head">Mosaic = Your Data Product Catalog</div>
+            <div class="tt-box-body">Each Mosaic model is a self-describing, governed data product with certified metrics, lineage, and subscription-based access built-in. Teams subscribe to semantic models — not raw tables.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SOLUTION FLOW ─────────────────────────────── -->
+<section id="solution" class="sec">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">How Strategy Solves It</div>
+    <h2 class="sec-title">Four Layers. <em>One Governed Platform.</em></h2>
+    <p class="sec-sub">Each layer addresses a distinct cluster of DIB's requirements — working together as a unified, governed stack from source data to AI-powered consumption.</p>
+    <div class="flow-container">
+
+      <div class="flow-item">
+        <div class="flow-num">01</div>
+        <div class="flow-body">
+          <div class="flow-layer">Foundation — Strategy Mosaic</div>
+          <div class="flow-title">Universal Semantic Layer: Publish Once, Use Everywhere</div>
+          <div class="flow-desc">Mosaic sits between DIB's existing data sources — core banking, CRM, warehouse, mobile banking — and every consumption tool. without forcing data duplication or semantic rework. Metrics, hierarchies, and business definitions written once and enforced everywhere.</div>
+          <div class="flow-pills">
+            <div class="flow-pill">200+ source connectors</div>
+            <div class="flow-pill">Power BI + Qlik, same definitions</div>
+            <div class="flow-pill">Existing models reused</div>
+            <div class="flow-pill">IDMC integration preserved</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">02</div>
+        <div class="flow-body">
+          <div class="flow-layer">Governance — Mosaic Sentinel</div>
+          <div class="flow-title">Unified Governance Intelligence</div>
+          <div class="flow-desc">Mosaic Sentinel provides real-time risk alerts, full audit visibility, and usage insights across the semantic layer. Security defined once — row-level, column-level, object-level — propagates to all connected tools simultaneously.</div>
+          <div class="flow-pills">
+            <div class="flow-pill">Real-time risk alerts</div>
+            <div class="flow-pill">Full audit trail</div>
+            <div class="flow-pill">PII detection & masking</div>
+            <div class="flow-pill">Usage insights</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">03</div>
+        <div class="flow-body">
+          <div class="flow-layer">Performance — Query Acceleration</div>
+          <div class="flow-title">Smart Caching: Live, In-Memory, or Hybrid — Your Choice</div>
+          <div class="flow-desc">The Mosaic Query Acceleration Engine eliminates repeated database hits. Choose per-dataset: serve live from source, from in-memory cache, or hybrid. Transaction data cached intelligently; real-time feeds queried live. No trade-off.</div>
+          <div class="flow-pills">
+            <div class="flow-pill">In-memory for hot datasets</div>
+            <div class="flow-pill">Live query for real-time</div>
+            <div class="flow-pill">Pushdown processing</div>
+            <div class="flow-pill">Cross-source calculations</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-num">04</div>
+        <div class="flow-body">
+          <div class="flow-layer">AI Consumption — Auto AI Suite</div>
+          <div class="flow-title">Conversational Analytics Grounded in Certified Data</div>
+          <div class="flow-desc">Strategy Auto AI Agents connect directly to Mosaic models — every AI answer grounded in your certified business definitions. MCP support means DIB can query Mosaic from ChatGPT, Claude, Copilot, or Gemini — true AI freedom.</div>
+          <div class="flow-pills">
+            <div class="flow-pill">Zero hallucinations — Mosaic-grounded</div>
+            <div class="flow-pill">MCP: any AI platform</div>
+            <div class="flow-pill">Auto Voice — multi-step</div>
+            <div class="flow-pill">AI-generated dashboards</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── ARCHITECTURE DIAGRAM ──────────────────────── -->
+<section id="architecture" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Architecture Overview</div>
+    <h2 class="sec-title">How It All <em>Connects for DIB</em></h2>
+    <p class="sec-sub">A purpose-built architecture view derived from the Mosaic platform — mapped to DIB's specific environment, tools, and requirements from the discovery sessions.</p>
+
+    <!-- Legend -->
+    <div class="arch-legend">
+      <span class="legend-label">Legend</span>
+      <span class="legend-pill"><span class="legend-dot" style="background:var(--str-orange)"></span>Mosaic Core</span>
+      <span class="legend-pill"><span class="legend-dot" style="background:var(--teal)"></span>Governance / Sentinel</span>
+      <span class="legend-pill"><span class="legend-dot" style="background:var(--violet)"></span>Shared Capability</span>
+      <span class="legend-pill"><span class="legend-dot" style="background:var(--grey-3)"></span>DIB Sources</span>
+      <span class="legend-pill"><span class="legend-dot" style="background:var(--dib-green)"></span>Consumption</span>
+    </div>
+
+    <div class="arch-canvas">
+
+      <!-- LAYER 1: SOURCES -->
+      <div class="arch-layer arch-alt">
+        <div class="arch-lhead">
+          <div class="arch-lline"></div>
+          <div class="arch-lnum">LAYER 1</div>
+          <div class="arch-ltitle">DIB Data Sources — Connect In Place</div>
+          <div class="arch-lbadge ab-source">Connect In-Place</div>
+          <div class="arch-lline" style="background:linear-gradient(90deg,var(--border),transparent)"></div>
+        </div>
+        <div class="arch-src-grid">
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:#FFF3E0">🏛️</div>
+            <div class="arch-src-name">Core Banking</div>
+            <div class="arch-src-sub">Transactions, accounts, financing products</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:#E3F2FD">👥</div>
+            <div class="arch-src-name">CRM System</div>
+            <div class="arch-src-sub">Customer data, relationships, interactions</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:#F3E5F5">📱</div>
+            <div class="arch-src-name">Mobile Banking DB</div>
+            <div class="arch-src-sub">Digital channel data, app interactions</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:#E8F5E9">🗄️</div>
+            <div class="arch-src-name">Data Warehouse</div>
+            <div class="arch-src-sub">Historical, aggregated, reporting datasets</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--dib-green-lite)">📊</div>
+            <div class="arch-src-name">Reporting Layers</div>
+            <div class="arch-src-sub">Existing Power BI, Qlik, Excel data layers</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--teal-lite)">🔗</div>
+            <div class="arch-src-name">Informatica IDMC</div>
+            <div class="arch-src-sub">Existing governance layer — integrated, not replaced</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--blue-lt)">🏛️</div>
+            <div class="arch-src-name">Risk & Compliance</div>
+            <div class="arch-src-sub">Regulatory, AML, credit risk datasets</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:#FFF3E0">💰</div>
+            <div class="arch-src-name">Treasury Systems</div>
+            <div class="arch-src-sub">FX, money markets, investment data</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--str-orange-pale)">📂</div>
+            <div class="arch-src-name">Other Sources</div>
+            <div class="arch-src-sub">200+ connectors — any format, any location</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--violet-lt)">☁️</div>
+            <div class="arch-src-name">Cloud / On-Prem</div>
+            <div class="arch-src-sub">MCE (cloud) or CMC (on-prem) deployment</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-dot">⇕</div>
+      </div>
+
+      <!-- LAYER 2: MODELING -->
+      <div class="arch-layer">
+        <div class="arch-lhead">
+          <div class="arch-lline"></div>
+          <div class="arch-lnum">LAYER 2</div>
+          <div class="arch-ltitle">Modeling & Preparation Layer</div>
+          <div class="arch-lbadge ab-mosaic">Mosaic Studio</div>
+          <div class="arch-lline" style="background:linear-gradient(90deg,var(--border),transparent)"></div>
+        </div>
+        <div class="arch-src-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--str-orange-lite)">🤖</div>
+            <div class="arch-src-name">AI Data Modeling</div>
+            <div class="arch-src-sub">Auto-generate attributes, hierarchies, metrics. 10× faster.</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--violet-lt)">🔗</div>
+            <div class="arch-src-name">Model Linking</div>
+            <div class="arch-src-sub">Connect models across CRM, Banking, Risk, Treasury.</div>
+          </div>
+          <div class="arch-src-card">
+            <div class="arch-src-icon" style="background:var(--blue-lt)">🧹</div>
+            <div class="arch-src-name">Data Cleansing</div>
+            <div class="arch-src-sub">AI-powered prep — structure, enrich, validate before publish.</div>
+          </div>
+        </div>
+        <div class="qe-strip">
+          <div class="qe-chip"><div class="qe-dot"></div>Live Query Mode — real-time transaction feeds</div>
+          <div class="qe-chip"><div class="qe-dot"></div>In-Memory Cache — repeated workloads, zero re-query</div>
+          <div class="qe-chip"><div class="qe-dot"></div>Hybrid Execution — mix per dataset</div>
+          <div class="qe-chip"><div class="qe-dot"></div>Pushdown Processing — compute at source</div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-dot">⇕</div>
+      </div>
+
+      <!-- LAYER 3: MOSAIC CORE -->
+      <div class="arch-layer arch-alt">
+        <div class="arch-lhead">
+          <div class="arch-lline"></div>
+          <div class="arch-lnum">LAYER 3</div>
+          <div class="arch-ltitle">Strategy Mosaic — Semantic + Governance Core</div>
+          <div class="arch-lbadge ab-mosaic">Central Intelligence</div>
+          <div class="arch-lline" style="background:linear-gradient(90deg,var(--border),transparent)"></div>
+        </div>
+
+        <div class="mosaic-core">
+          <div class="mosaic-core-badge"><span class="str-dot"></span> Strategy Mosaic · Universal Semantic Layer</div>
+          <div class="mosaic-core-title">Single Certified Source of Truth for All of DIB</div>
+          <div class="mosaic-core-sub">Every KPI, metric, hierarchy, and business definition lives here — enforced identically across every tool, AI agent, and user that connects through Mosaic. No definition drift. No governance gaps.</div>
+          <div class="mosaic-caps">
+            <div class="mosaic-cap">
+              <div class="mosaic-cap-icon">🧩</div>
+              <div class="mosaic-cap-name">Universal Semantic Layer</div>
+              <div class="mosaic-cap-desc">Tool-agnostic definitions. Consistent across Power BI, Qlik, SQL, AI.</div>
+            </div>
+            <div class="mosaic-cap">
+              <div class="mosaic-cap-icon">⚡</div>
+              <div class="mosaic-cap-name">Query Acceleration Engine</div>
+              <div class="mosaic-cap-desc">In-memory, live, and hybrid caching. Eliminates repeated DB hits.</div>
+            </div>
+            <div class="mosaic-cap">
+              <div class="mosaic-cap-icon">🔒</div>
+              <div class="mosaic-cap-name">Centralized Security</div>
+              <div class="mosaic-cap-desc">Row-level, column-level, PII masking — defined once, applied everywhere.</div>
+            </div>
+          </div>
+
+          <div class="mosaic-focus-grid">
+            <div class="mosaic-focus-card hybrid">
+              <div class="mosaic-focus-icon">⚡</div>
+              <div class="mosaic-focus-title">Hybrid Execution Engine</div>
+              <ul class="mosaic-focus-list">
+                <li>Intelligent pushdown for live queries</li>
+                <li>In-memory reuse for concurrent workloads</li>
+                <li>50 users → warehouse hit once</li>
+              </ul>
+            </div>
+            <div class="mosaic-focus-card sentinel">
+              <div class="mosaic-focus-icon">🛡️</div>
+              <div class="mosaic-focus-title">Mosaic Sentinel</div>
+              <ul class="mosaic-focus-list">
+                <li>Risk Management — real-time alerts</li>
+                <li>Audit &amp; Compliance — GDPR, HIPAA, SOX</li>
+                <li>Usage Insights — utilisation monitoring</li>
+              </ul>
+            </div>
+            <div class="mosaic-focus-card mcp">
+              <div class="mosaic-focus-icon">💬</div>
+              <div class="mosaic-focus-title">AI-Safe MCP Access</div>
+              <ul class="mosaic-focus-list">
+                <li>Claude, Copilot, Gemini, ChatGPT via MCP</li>
+                <li>LLM shielding — data never over-exposed</li>
+                <li>AI queries certified objects, not raw SQL</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="sentinel-block">
+          <div class="sentinel-title">🛡️ Mosaic Sentinel — Governance Intelligence Platform</div>
+          <div class="sentinel-mods">
+            <span class="sentinel-mod">Risk Management — real-time alerts</span>
+            <span class="sentinel-mod">Audit & Compliance — full trail</span>
+            <span class="sentinel-mod">Usage Insights — consumption analytics</span>
+                        <span class="sentinel-mod">Integrates with Informatica IDMC</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arrow">
+        <div class="arch-arrow-line"></div>
+        <div class="arch-arrow-dot">⇕</div>
+      </div>
+
+      <!-- LAYER 4: CONSUMPTION -->
+      <div class="arch-layer">
+        <div class="arch-lhead">
+          <div class="arch-lline"></div>
+          <div class="arch-lnum">LAYER 4</div>
+          <div class="arch-ltitle">Consumption Layer</div>
+          <div class="arch-lbadge ab-shared">Shared + Mosaic-Native</div>
+          <div class="arch-lline" style="background:linear-gradient(90deg,var(--border),transparent)"></div>
+        </div>
+        <div class="arch-cons-grid">
+          <div class="arch-cons-card mosaic-native">
+            <div class="arch-cons-icon">📊</div>
+            <div class="arch-cons-name">Strategy One Dashboards</div>
+            <div class="arch-cons-sub">Native BI, scorecards, reports, mobile</div>
+            <div class="arch-cons-badge">Mosaic-Native</div>
+          </div>
+          <div class="arch-cons-card mosaic-native">
+            <div class="arch-cons-icon">🤖</div>
+            <div class="arch-cons-name">Auto AI Agents</div>
+            <div class="arch-cons-sub">Conversational analytics grounded in Mosaic</div>
+            <div class="arch-cons-badge">Mosaic-Native</div>
+          </div>
+          <div class="arch-cons-card">
+            <div class="arch-cons-icon">🟦</div>
+            <div class="arch-cons-name">Power BI</div>
+            <div class="arch-cons-sub">Connects via DAX/MDX to Mosaic definitions</div>
+          </div>
+          <div class="arch-cons-card">
+            <div class="arch-cons-icon">🟩</div>
+            <div class="arch-cons-name">Qlik</div>
+            <div class="arch-cons-sub">Governed SQL access via Mosaic layer</div>
+          </div>
+          <div class="arch-cons-card">
+            <div class="arch-cons-icon">🗄️</div>
+            <div class="arch-cons-name">SQL / DB Viewer</div>
+            <div class="arch-cons-sub">Governed & audited — not raw table access</div>
+          </div>
+          <div class="arch-cons-card">
+            <div class="arch-cons-icon">📋</div>
+            <div class="arch-cons-name">Excel / Sheets</div>
+            <div class="arch-cons-sub">Live Mosaic-connected data in familiar tools</div>
+          </div>
+          <div class="arch-cons-card">
+            <div class="arch-cons-icon">🌐</div>
+            <div class="arch-cons-name">Applications & APIs</div>
+            <div class="arch-cons-sub">REST, Python, embedded analytics</div>
+          </div>
+          <div class="arch-cons-card mosaic-native">
+            <div class="arch-cons-icon">🎙️</div>
+            <div class="arch-cons-name">Auto Voice + MCP</div>
+            <div class="arch-cons-sub">ChatGPT, Claude, Copilot, Gemini — any AI</div>
+            <div class="arch-cons-badge">AI Freedom</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /arch-canvas -->
+  </div>
+</section>
+
+<!-- ── CAPABILITIES ──────────────────────────────── -->
+<section id="capabilities" class="sec">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Platform Capabilities</div>
+    <h2 class="sec-title">What Strategy <em>Delivers for DIB</em></h2>
+    <p class="sec-sub">Each capability mapped directly to a requirement raised in the discovery sessions — with specific feature-level evidence from Strategy's current platform.</p>
+
+    <div class="cap-grid">
+
+      <div class="cap-card">
+        <div class="cap-header">
+          <div class="cap-icon icon-data">🧩</div>
+          <div class="cap-badge badge-core">Core</div>
+        </div>
+        <div class="cap-title">Universal Semantic Layer</div>
+        <div class="cap-body">The central nervous system for DIB's data — connect every source, define every metric once, let every tool consume the same certified truth.</div>
+        <div class="cap-checks">
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Eliminates data duplication across all systems</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Tool-agnostic — Power BI, Qlik, SQL, Excel, AI simultaneously</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Reuse existing DIB data models — no rebuild from scratch</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Publish once, consume from any tool or AI agent</div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-header">
+          <div class="cap-icon icon-gov">🛡️</div>
+          <div class="cap-badge badge-gov">Governance</div>
+        </div>
+        <div class="cap-title">Mosaic Sentinel — Governance Intelligence</div>
+        <div class="cap-body">Real-time risk alerts, comprehensive audit trails, and usage insights — without moving a single byte of data from its source.</div>
+        <div class="cap-checks">
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Row, column, object-level security — defined once, enforced everywhere</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>PII detection and data masking across all tools</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Full audit trail — who accessed what, when, from where</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Integrates with Informatica IDMC — not a replacement</div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-header">
+          <div class="cap-icon icon-perf">⚡</div>
+          <div class="cap-badge badge-perf">Performance</div>
+        </div>
+        <div class="cap-title">Query Acceleration Engine</div>
+        <div class="cap-body">Eliminate repeated database hits with intelligent in-memory caching, live query routing, and cross-source computation — configurable per dataset.</div>
+        <div class="cap-checks">
+          <div class="cap-check"><div class="cap-check-mark">✓</div>In-memory caching for frequently queried DIB datasets</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Live query mode for real-time transaction feeds</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Hybrid mode — mix live and cached in one dashboard</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Pushdown processing — heavy compute stays at source</div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-header">
+          <div class="cap-icon icon-ai">🤖</div>
+          <div class="cap-badge badge-ai">AI Layer</div>
+        </div>
+        <div class="cap-title">Auto AI Suite — Governed Conversational Analytics</div>
+        <div class="cap-body">AI agents grounded in Mosaic's certified data — eliminating hallucinations and delivering trustworthy, explainable answers for banking decisions.</div>
+        <div class="cap-checks">
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Answers grounded in Mosaic's certified definitions</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>MCP: query from ChatGPT, Claude, Copilot, Gemini</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Auto Voice — conversational, multi-step, parallel actions</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Statistical Key Driver Analysis for root-cause insights</div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-header">
+          <div class="cap-icon icon-data">🔧</div>
+          <div class="cap-badge badge-ai">AI Modeling</div>
+        </div>
+        <div class="cap-title">Mosaic Studio — AI-Powered Data Modeling</div>
+        <div class="cap-body">Build and maintain data models up to 10× faster — accessible to business analysts, not just data engineers. AI-suggested relationships across DIB's systems.</div>
+        <div class="cap-checks">
+          <div class="cap-check"><div class="cap-check-mark">✓</div>AI-generated attributes, hierarchies, and metrics</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Model linking — connect DIB departments' datasets</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>AI-suggested relationships between source systems</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Time metrics auto-created from date attributes</div>
+        </div>
+      </div>
+
+      <div class="cap-card">
+        <div class="cap-header">
+          <div class="cap-icon icon-gov">📦</div>
+          <div class="cap-badge badge-core">Data Products</div>
+        </div>
+        <div class="cap-title">Mosaic as DIB's Data Product Catalog</div>
+        <div class="cap-body">Each Mosaic model is a governed data product — with certified metrics, lineage, and subscription-based access — directly enabling DIB's data marketplace vision.</div>
+        <div class="cap-checks">
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Teams subscribe to governed models, not raw tables</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Built-in lineage and metadata for full discoverability</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Controlled data access aligned to marketplace vision</div>
+          <div class="cap-check"><div class="cap-check-mark">✓</div>Full audit of data product consumption across DIB</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── VS DENODO ──────────────────────────────────── -->
+<section id="competitive" class="sec sec-alt">
+  <div class="sec-inner">
+    <div class="sec-eyebrow">Competitive Perspective</div>
+    <h2 class="sec-title">Strategy Mosaic <em>vs Denodo</em></h2>
+    <p class="sec-sub">A factual, head-to-head view — based on the exact requirements raised in the DIB discovery sessions.</p>
+
+    <div class="vs-wrap">
+      <table class="vs-table">
+        <thead>
+          <tr>
+            <th class="col-req">Requirement</th>
+            <th class="col-str">⭐ Strategy Mosaic</th>
+            <th>Denodo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-req">Semantic Layer</td>
+            <td class="col-str"><span class="tick">✓</span> Universal semantic layer — tool-agnostic, AI-ready, governed business definitions accessible to any tool or agent</td>
+            <td><span class="half">◑</span> Data virtualization focus; semantic layer capabilities less mature for modern AI workloads and conversational analytics</td>
+          </tr>
+          <tr>
+            <td class="col-req">AI Integration</td>
+            <td class="col-str"><span class="tick">✓</span> Auto AI Agents grounded in Mosaic. MCP support from ChatGPT, Claude, Copilot, Gemini. Auto Voice with parallel multi-step actions.</td>
+            <td><span class="cross">✗</span> Limited native AI agent capabilities. No equivalent conversational analytics grounded in semantic layer. MCP available but ecosystem shallow.</td>
+          </tr>
+          <tr>
+            <td class="col-req">Governance Intelligence</td>
+            <td class="col-str"><span class="tick">✓</span> Mosaic Sentinel — built-in Risk Management, Audit & Compliance, Usage Insights as a unified governance intelligence platform</td>
+            <td><span class="half">◑</span> Governance relies heavily on external tooling. Less unified intelligence — risk, audit, and usage are separate concerns requiring separate products</td>
+          </tr>
+          <tr>
+            <td class="col-req">Performance & Caching</td>
+            <td class="col-str"><span class="tick">✓</span> Query Acceleration Engine: in-memory, live, and hybrid per dataset. Concurrent users, AI agents, and scheduled reports served from same cached results.</td>
+            <td><span class="half">◑</span> Virtualization-first approach. Caching available but less granular hybrid control. Architecture remains fundamentally push-to-source oriented.</td>
+          </tr>
+          <tr>
+            <td class="col-req">AI-Powered Modeling</td>
+            <td class="col-str"><span class="tick">✓</span> Mosaic Studio: AI-powered modeling, 10× faster. Model linking with AI-suggested relationships across disparate DIB systems.</td>
+            <td><span class="half">◑</span> Primarily manual modeling workflow. Limited AI assistance in model creation or relationship discovery.</td>
+          </tr>
+          <tr>
+            <td class="col-req">Business User Access</td>
+            <td class="col-str"><span class="tick">✓</span> Auto Answers chatbot, Auto Voice, HyperIntelligence, AI Agents — zero-code analytics for business users without SQL knowledge</td>
+            <td><span class="cross">✗</span> Primarily IT/developer oriented. Business user self-service is limited without additional BI tool investment.</td>
+          </tr>
+          <tr>
+            <td class="col-req">Data Product Vision</td>
+            <td class="col-str"><span class="tick">✓</span> Mosaic models are governed data products with lineage, metadata, and subscription-based access built-in — matches DIB's marketplace direction</td>
+            <td><span class="half">◑</span> Data marketplace concept requires additional tooling. Full data product lifecycle management not native to the platform.</td>
+          </tr>
+          <tr>
+            <td class="col-req">Native BI Platform</td>
+            <td class="col-str"><span class="tick">✓</span> Full BI platform (Strategy One) + semantic layer in one vendor. Dashboards, reports, mobile, embedded — all governed by the same Mosaic model.</td>
+            <td><span class="cross">✗</span> Pure middleware. No native BI layer — requires separate BI tools for visualization, meaning a second governance gap between semantic layer and delivery.</td>
+          </tr>
+          <tr>
+            <td class="col-req">IDMC Integration</td>
+            <td class="col-str"><span class="tick">✓</span> API-first, vendor-agnostic. Complements Informatica IDMC — adds semantic consumption-layer governance on top without replacing existing investment</td>
+            <td><span class="half">◑</span> Integration possible but virtualization-layer focus creates potential overlap with IDMC rather than clean complementarity</td>
+          </tr>
+          <tr>
+            <td class="col-req">Cloud + On-Prem</td>
+            <td class="col-str"><span class="tick">✓</span> MCE (cloud-native) and CMC (on-premises) deployment options. DIB's question on MCE vs CMC directly addressed with flexibility.</td>
+            <td><span class="tick">✓</span> Both deployment models available. Comparable flexibility on deployment architecture.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────── -->
+<section id="cta" class="cta-sec" style="padding:40px 64px;">
+  <div class="cta-inner" style="min-height:0;padding:32px 40px;">
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer>
+  <div class="footer-brand">Dubai Islamic Bank</div>
+  <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;color:var(--grey-2)">
+    CONFIDENTIAL — SOLUTION BLUEPRINT — APRIL 2026
+  </div>
+  <div class="footer-str">Strategy Software</div>
+</footer>
+
+<!-- Global Tooltip Overlay -->
+<div id="tt-global">
+  <div id="tt-global-head" class="tt-box-head"></div>
+  <div id="tt-global-body" class="tt-box-body"></div>
+</div>
+
+<script>
+// Intersection Observer — Flow items
+const flowItems = document.querySelectorAll('.flow-item');
+const flowObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in-view'), i * 90);
+    }
+  });
+}, { threshold: 0.12 });
+flowItems.forEach(el => flowObs.observe(el));
+
+// Intersection Observer — Cap cards
+const capCards = document.querySelectorAll('.cap-card');
+const capObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      const delay = (Array.from(capCards).indexOf(e.target) % 3) * 100;
+      setTimeout(() => e.target.classList.add('in-view'), delay);
+    }
+  });
+}, { threshold: 0.1 });
+capCards.forEach(el => capObs.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Global tooltip — fixed positioning, never clipped
+const ttGlobal = document.getElementById('tt-global');
+const ttHead   = document.getElementById('tt-global-head');
+const ttBody   = document.getElementById('tt-global-body');
+
+document.querySelectorAll('.tt-trigger').forEach(trigger => {
+  const box  = trigger.querySelector('.tt-box');
+  if (!box) return;
+  const head = box.querySelector('.tt-box-head')?.innerHTML || '';
+  const body = box.querySelector('.tt-box-body')?.innerHTML || '';
+
+  trigger.addEventListener('mouseenter', () => {
+    ttHead.innerHTML = head;
+    ttBody.innerHTML = body;
+
+    const rect = trigger.getBoundingClientRect();
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const showAbove = spaceAbove > 180 || spaceAbove > spaceBelow;
+
+    ttGlobal.classList.remove('flip-down');
+    if (showAbove) {
+      ttGlobal.style.left  = Math.max(8, Math.min(rect.left, window.innerWidth - 316)) + 'px';
+      ttGlobal.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+      ttGlobal.style.top   = 'auto';
+    } else {
+      ttGlobal.classList.add('flip-down');
+      ttGlobal.style.left  = Math.max(8, Math.min(rect.left, window.innerWidth - 316)) + 'px';
+      ttGlobal.style.top   = (rect.bottom + 10) + 'px';
+      ttGlobal.style.bottom = 'auto';
+    }
+    ttGlobal.classList.add('visible');
+  });
+
+  trigger.addEventListener('mouseleave', () => {
+    ttGlobal.classList.remove('visible');
+  });
+});
+</script>
+</body>
+</html>
