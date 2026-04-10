@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wehkamp · Semantic Layer Decision Framework</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<style>
+    /* ─── DESIGN SYSTEM — WEHKAMP BRAND ─────────────── */
+    :root {
+      /* Wehkamp exact brand palette */
+      --ink:          #1A1A1A;   /* near-black — Wehkamp's primary text */
+      --ink-2:        #2D2D2D;   /* secondary dark */
+      --ink-3:        #5C5C5C;   /* tertiary / muted text */
+      --ink-4:        #767676;   /* very muted / labels */
+
+      --paper:        #FAFAFA;   /* Wehkamp off-white page bg */
+      --surface-0:    #FFFFFF;   /* card base — pure white */
+      --surface-1:    #F5F5F5;   /* subtle fill */
+      --surface-2:    #EBEBEB;   /* stronger fill */
+
+      --border:       #E8E8E8;
+      --border-strong:#D0D0D0;
+
+      /* ★ Wehkamp brand coral — HEX #FF5A5F — exact from logo */
+      --brand:        #FF5A5F;
+      --brand-dark:   #E04045;   /* pressed / hover state */
+      --brand-light:  #FFF0F0;   /* soft coral tint for backgrounds */
+      --brand-mid:    #FFBCBE;   /* mid coral for borders / accents */
+      --brand-rgb:    255,90,95;
+      --brand-text:   #B02020;   /* accessible coral text on light backgrounds */ /* for rgba() usage */
+
+      /* Strategy accent — used for Strategy-specific win badges */
+      --strat:        #FF5A5F;   /* same coral — Strategy & Wehkamp share warmth */
+      --strat-light:  #FFF0F0;
+      --strat-mid:    #FFBCBE;
+
+      /* POV validated green — kept neutral to not clash */
+      --win-green:    #1A7A4A;
+      --win-green-bg: #EAF7EE;
+
+      /* Caution amber */
+      --caution:      #9A5F00;
+      --caution-bg:   #FFF6E6;
+      --amber:        #9A5F00;
+      --amber-light:  #FFF6E6;
+
+      /* Databricks blue — for Databricks advantage badges */
+      --db-blue:      #1460B8;
+      --db-blue-bg:   #EBF3FF;
+
+      --shadow-xs: 0 1px 4px rgba(26,26,26,.05);
+      --shadow-sm: 0 3px 12px rgba(26,26,26,.07);
+      --shadow-md: 0 8px 30px rgba(26,26,26,.09);
+      --shadow-lg: 0 20px 60px rgba(26,26,26,.12);
+
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 18px;
+      --r-xl: 24px;
+      --r-xxl: 32px;
+
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-body:    'Plus Jakarta Sans', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+
+      --max: 1240px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-0);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────── */
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 40px; }
+
+    section { padding: 80px 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ─── TYPOGRAPHY ─────────────────────────────────── */
+    .display {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 800;
+      line-height: 1.03;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+    .h2 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 2.8vw, 40px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+    }
+    .h3 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+    }
+    .lead { font-size: 16px; color: var(--ink-3); line-height: 1.72; max-width: 760px; }
+    .mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+
+    /* ─── TAGS / PILLS ───────────────────────────────── */
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 11px; border-radius: 999px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+      letter-spacing: .14em; text-transform: uppercase;
+    }
+    .tag-brand  { background: var(--brand-light); color: #B02020; }
+    .tag-strat  { background: var(--strat-light); color: var(--strat); }
+    .tag-amber  { background: var(--amber-light); color: var(--amber); }
+    .tag-green  { background: var(--win-green-bg); color: var(--win-green); }
+    .tag-caution{ background: var(--caution-bg);  color: var(--caution); }
+    .tag-ink    { background: var(--surface-2);   color: var(--ink-3); }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--brand-light); color: #B02020;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+      letter-spacing: .16em; text-transform: uppercase; margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex-shrink: 0;
+    }
+
+    /* ─── NAV BAR ────────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: var(--max); margin: 0 auto; padding: 0 40px;
+      height: 72px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px; justify-self: start;
+    }
+    .nav-logo {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--brand); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 16px; font-weight: 800; color: #fff;
+      letter-spacing: -.02em; flex-shrink: 0;
+    }
+    .nav-title {
+      font-family: var(--font-display); font-size: 15px; font-weight: 700;
+      color: var(--ink); letter-spacing: -.02em;
+    }
+    .nav-sub { font-size: 11px; color: var(--ink-4); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .1em; }
+    .nav-links {
+      display: flex; gap: 0; justify-self: center;
+      position: relative;
+    }
+    .nav-links a {
+      padding: 8px 16px; font-size: 13px; font-weight: 500;
+      color: var(--ink-3); white-space: nowrap;
+      text-decoration: none; position: relative;
+      transition: color .22s ease;
+    }
+    .nav-links a:hover { color: var(--ink); background: none; }
+    .nav-links a.active { color: var(--ink); font-weight: 600; }
+    .nav-indicator {
+      position: absolute;
+      bottom: 0px; height: 2px;
+      background: var(--brand);
+      border-radius: 999px;
+      transition: left .38s cubic-bezier(.4,0,.2,1), width .38s cubic-bezier(.4,0,.2,1), opacity .28s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .nav-spacer { justify-self: end; width: 1px; height: 1px; }
+
+    /* ─── HERO ───────────────────────────────────────── */
+    .hero {
+      padding: 84px 0 72px;
+      background:
+        radial-gradient(circle at 82% 22%, rgba(var(--brand-rgb), .10) 0%, rgba(var(--brand-rgb), 0) 32%),
+        linear-gradient(180deg, #FCFAF8 0%, #F8F4F1 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='700' height='700' viewBox='0 0 700 700' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.35'%3E%3Cpath d='M620 120C560 60 470 30 380 40C280 52 198 112 160 198C122 284 138 382 202 446C260 504 344 528 428 514C510 500 582 448 614 374C646 300 642 194 620 120Z' stroke='%23FF5A5F' stroke-width='1.2'/%3E%3Cpath d='M592 144C540 92 462 68 386 76C302 86 232 138 198 212C164 286 178 370 230 422C280 472 352 494 424 484C496 474 558 428 588 364C618 300 620 212 592 144Z' stroke='%23FF5A5F' stroke-width='1.2'/%3E%3Cpath d='M560 174C514 128 448 108 386 116C316 126 256 170 226 232C196 294 208 362 252 406C294 448 354 468 416 460C480 452 534 412 560 356C586 300 588 228 560 174Z' stroke='%23FF5A5F' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right -80px top -10px;
+      background-size: 560px;
+      opacity: .14;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(var(--brand-rgb),0) 0%, rgba(var(--brand-rgb),.35) 50%, rgba(var(--brand-rgb),0) 100%);
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 56px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(var(--brand-rgb), .08);
+      color: var(--brand-dark);
+      border: 1px solid rgba(var(--brand-rgb), .16);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero .display {
+      color: var(--ink);
+      margin-bottom: 18px;
+      max-width: 700px;
+    }
+    .hero .lead {
+      font-size: 17px;
+      color: var(--ink-3);
+      max-width: 580px;
+    }
+    .hero-stats {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      backdrop-filter: none;
+    }
+    .hstat {
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(26,26,26,.06);
+      border-radius: 20px;
+      padding: 22px 22px 20px;
+      box-shadow: 0 10px 24px rgba(26,26,26,.055);
+      position: relative;
+      backdrop-filter: none;
+    }
+    .hstat::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 22px;
+      right: 22px;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(var(--brand-rgb), .75);
+    }
+    .hstat:nth-child(1),
+    .hstat:nth-child(2),
+    .hstat:nth-child(3),
+    .hstat:nth-child(4) { background: rgba(255,255,255,.9); }
+    .hstat-val {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -.04em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .hstat-label {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .hero-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(26,26,26,.08);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #3F3F3F;
+      background: rgba(255,255,255,.82);
+      backdrop-filter: none;
+      transition: all .15s ease;
+    }
+    .hero-chip:hover {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ─── CONTEXT BAND ───────────────────────────────── */
+    .context-band {
+      background: var(--surface-0); border-bottom: 1px solid var(--border);
+    }
+    .context-inner {
+      max-width: var(--max); margin: 0 auto; padding: 32px 40px;
+      display: grid; grid-template-columns: 1.38fr 1fr; gap: 44px; align-items: center;
+    }
+    .context-copy p { font-size: 15px; color: var(--ink-3); line-height: 1.75; }
+    .context-copy strong { color: var(--ink); }
+    .context-pillars { display: grid; gap: 10px; }
+    .cpillar {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 16px 18px;
+    }
+    .cpillar-icon {
+      width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+      background: var(--brand-light); display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .cpillar strong { font-size: 13px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 4px; }
+    .cpillar span { font-size: 13px; color: var(--ink-3); line-height: 1.55; }
+
+    /* ─── CARD BASE ──────────────────────────────────── */
+    .card {
+      background: var(--surface-0); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 24px; box-shadow: var(--shadow-xs);
+      transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+    }
+    .card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+
+    /* ─── SECTION HEADERS ────────────────────────────── */
+    .sec-header { margin-bottom: 44px; }
+    .sec-header .h2 { margin-bottom: 12px; }
+
+    /* ─── PROBLEM GRID ───────────────────────────────── */
+    .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .pcard { border-left: 3px solid var(--brand); }
+    .pcard-icon { font-size: 22px; margin-bottom: 12px; }
+    .pcard .h3 { font-size: 17px; margin-bottom: 8px; }
+    .pcard p { font-size: 14px; color: var(--ink-3); line-height: 1.65; }
+
+    /* ─── ARCHITECTURE FLOW ──────────────────────────── */
+    .arch-shell {
+      background: var(--surface-0); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 32px; box-shadow: var(--shadow-sm);
+    }
+    .arch-title { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--ink-3); margin-bottom: 24px; letter-spacing: .02em; }
+    .arch-row { display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; gap: 12px; align-items: stretch; margin-bottom: 16px; }
+    .arch-node {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 16px 18px;
+    }
+    .arch-node.highlight {
+      background: var(--brand-light); border-color: var(--brand-mid);
+    }
+    .arch-node.legacy {
+      background: var(--amber-light); border-color: #F0C080;
+    }
+    .arch-arrow {
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(26,26,26,.25); font-size: 18px; font-weight: 700;
+    }
+    .arch-node .tag { margin-bottom: 8px; }
+    .arch-node-title { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .arch-node p { font-size: 13.5px; color: var(--ink-3); line-height: 1.62; }
+
+    /* ─── REQUIREMENTS ───────────────────────────────── */
+    .req-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .req-card { border-top: 3px solid var(--brand); }
+    .req-card .h3 { font-size: 16px; margin-bottom: 14px; color: #B02020; }
+    .req-card ul { list-style: none; display: grid; gap: 8px; }
+    .req-card li {
+      font-size: 13.5px; color: var(--ink-3); line-height: 1.58;
+      padding-left: 16px; position: relative;
+    }
+    .req-card li::before {
+      content: ''; position: absolute; left: 0; top: .55em;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--brand-mid);
+    }
+
+    /* ─── POV ────────────────────────────────────────── */
+    .pov-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .pov-card { overflow: hidden; border-top: 3px solid var(--win-green); }
+    .pov-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+    }
+    .pov-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.25; }
+    .pov-card ul { list-style: none; display: grid; gap: 9px; }
+    .pov-card li {
+      font-size: 13.5px; color: var(--ink-3); line-height: 1.62;
+      padding-left: 18px; position: relative;
+    }
+    .pov-card li::before {
+      content: '✓'; position: absolute; left: 0; top: 0;
+      color: var(--win-green); font-weight: 700; font-size: 12px;
+    }
+    .pov-highlight {
+      margin-top: 16px; padding: 12px 14px;
+      background: var(--win-green-bg); border-radius: var(--r-sm);
+      font-size: 12.5px; font-weight: 600; color: var(--win-green); line-height: 1.48;
+    }
+
+    /* ─── HESITATION ─────────────────────────────────── */
+    .hesitation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .hes-card { }
+    .hes-card .h3 { font-size: 18px; margin-bottom: 16px; }
+    .hes-item {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 14px 16px; margin-bottom: 10px;
+    }
+    .hes-item strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .hes-item span { font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+    .hes-response {
+      margin-top: 8px; padding: 11px 13px;
+      background: rgba(var(--brand-rgb), .07); border-radius: var(--r-sm); border-left: 2px solid rgba(var(--brand-rgb), .55);
+      font-size: 12.5px; color: var(--brand-dark); line-height: 1.55; font-weight: 500;
+    }
+    .hes-response::before { content: '→ '; font-weight: 700; }
+
+    /* ─── OPTIONS ────────────────────────────────────── */
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .opt-card {  }
+    .opt-card.preferred { border-color: rgba(var(--brand-rgb), .45); box-shadow: 0 0 0 1px rgba(var(--brand-rgb), .18), var(--shadow-sm); }
+    .opt-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border);
+    }
+    .opt-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--ink); }
+    .opt-items { display: grid; gap: 10px; }
+    .opt-item {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 12px 14px;
+    }
+    .opt-item.highlight { background: var(--brand-light); border-color: var(--brand-mid); }
+    .opt-item strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+    .opt-item span { font-size: 13.5px; color: var(--ink-3); line-height: 1.58; }
+    .opt-item.highlight strong { color: #B02020; }
+    .opt-item.highlight span { color: var(--ink-2); }
+
+    /* ─── ARCHITECTURE DIAGRAM (NEW) ─────────────────── */
+    .arch-diagram {
+      background: var(--ink); border-radius: var(--r-xxl);
+      padding: 36px; margin-top: 32px; position: relative; overflow: hidden;
+    }
+    .arch-diagram::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,90,95,.2) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .arch-diagram-title {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(255,255,255,.4); margin-bottom: 28px; position: relative; z-index: 1;
+    }
+    .arch-layers {
+      display: grid; gap: 8px; position: relative; z-index: 1;
+    }
+    .arch-layer {
+      border-radius: var(--r-md); padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .arch-layer.l-db { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+    .arch-layer.l-mosaic { background: rgba(255,90,95,.2); border: 1px solid rgba(255,90,95,.4); }
+    .arch-layer.l-consume { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); }
+    .arch-layer.l-ai { background: rgba(255,90,95,.1); border: 1px solid rgba(255,90,95,.25); }
+    .arch-layer-name {
+      font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #fff;
+    }
+    .arch-layer-desc { font-size: 13px; color: rgba(255,255,255,.62); margin-top: 4px; line-height: 1.55; }
+    .arch-layer-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .arch-pill {
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      border-radius: 999px; padding: 4px 10px; font-size: 11px; color: rgba(255,255,255,.7);
+      font-family: var(--font-mono); white-space: nowrap;
+    }
+    .arch-layer.l-mosaic .arch-pill {
+      background: rgba(255,90,95,.25); border-color: rgba(255,90,95,.5); color: #FFBCBE;
+    }
+    .arch-layer.l-ai .arch-pill {
+      background: rgba(255,90,95,.15); border-color: rgba(255,90,95,.3); color: #FFBCBE;
+    }
+    .arch-divider {
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,.2); font-size: 13px; padding: 2px 0;
+    }
+
+    /* ─── COMPARISON TABLE ───────────────────────────── */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .cmp-card {}
+    .cmp-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    }
+    .cmp-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--ink); }
+    .winner-badge {
+      padding: 5px 10px; border-radius: 999px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .winner-db   { background: var(--db-blue-bg); color: var(--db-blue); }
+    .winner-st   { background: var(--brand-light); color: #B02020; }
+    .winner-dep  { background: var(--caution-bg); color: var(--caution); }
+    .cmp-body { font-size: 13.5px; color: var(--ink-3); line-height: 1.7; margin-bottom: 14px; }
+    .cmp-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cmp-box {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 12px 14px;
+    }
+    .cmp-box h4 {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-4); margin-bottom: 8px;
+    }
+    .cmp-box ul { list-style: none; display: grid; gap: 6px; }
+    .cmp-box li { font-size: 13.5px; color: var(--ink-3); line-height: 1.58; padding-left: 12px; position: relative; }
+    .cmp-box li::before { content: ''; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--border-strong); }
+
+    /* ─── VALUE SPLIT ────────────────────────────────── */
+    .value-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .val-card { }
+    .val-card.preferred { border-color: var(--brand); }
+    .val-card .h3 { font-size: 17px; margin-bottom: 16px; line-height: 1.3; }
+    .val-items { display: grid; gap: 10px; }
+    .val-item {
+      background: var(--surface-1); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 12px 14px;
+    }
+    .val-item.preferred-item { background: var(--brand-light); border-color: var(--brand-mid); }
+    .val-item strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+    .val-item span { font-size: 13.5px; color: var(--ink-3); line-height: 1.58; }
+    .val-item.preferred-item strong { color: #B02020; }
+    .val-item.preferred-item span { color: var(--ink-2); }
+
+    /* ─── RISK GRID ──────────────────────────────────── */
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .risk-card {}
+    .risk-card .h3 { font-size: 17px; margin-bottom: 14px; }
+    .risk-card ul { list-style: none; display: grid; gap: 9px; }
+    .risk-card li {
+      font-size: 13.5px; color: var(--ink-3); line-height: 1.62;
+      padding-left: 16px; position: relative;
+    }
+    .risk-card li::before {
+      content: ''; position: absolute; left: 0; top: .6em;
+      width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong);
+    }
+    .risk-card.ours li::before { background: var(--brand-mid); }
+
+    /* ─── RECOMMENDATION ─────────────────────────────── */
+    .rec-card {
+      background: var(--ink); border-radius: var(--r-xxl);
+      padding: 48px; position: relative; overflow: hidden;
+    }
+    .rec-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 20%, rgba(255,90,95,.25) 0%, transparent 55%),
+                  radial-gradient(ellipse at 5% 90%, rgba(255,90,95,.1) 0%, transparent 45%);
+      pointer-events: none;
+    }
+    .rec-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: start; }
+    .rec-eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(255,90,95,.2); color: var(--brand-mid);
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
+      margin-bottom: 20px; border: 1px solid rgba(255,90,95,.35);
+    }
+    .rec-card .display { color: #fff; font-size: clamp(28px, 3vw, 42px); margin-bottom: 20px; max-width: 680px; }
+    .rec-card p { font-size: 15px; color: rgba(255,255,255,.62); line-height: 1.78; margin-bottom: 20px; max-width: 680px; }
+    .rec-card p strong { color: rgba(255,255,255,.92); }
+    .rec-takeaways { display: grid; gap: 12px; }
+    .rec-takeaway {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--r-md); padding: 16px 18px;
+    }
+    .rec-takeaway strong {
+      display: block; font-size: 10px; font-family: var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+      color: var(--brand); margin-bottom: 6px;
+    }
+    .rec-takeaway span { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.5; }
+    .rec-verdict {
+      margin-top: 24px; padding: 18px 20px;
+      background: rgba(255,90,95,.18); border: 1px solid rgba(255,90,95,.4);
+      border-radius: var(--r-md);
+    }
+    .rec-verdict p { font-size: 14px !important; color: rgba(255,255,255,.85) !important; margin-bottom: 0 !important; }
+
+    /* ─── AI FORWARD SECTION ─────────────────────────── */
+    .ai-section {
+      background: var(--ink); border-radius: var(--r-xxl);
+      padding: 40px; position: relative; overflow: hidden; margin-top: 20px;
+    }
+    .ai-section::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(255,90,95,.18) 0%, transparent 55%);
+    }
+    .ai-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .ai-card {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--r-lg); padding: 20px;
+    }
+    .ai-card-icon { font-size: 20px; margin-bottom: 10px; }
+    .ai-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .ai-card-text { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .ai-badge {
+      display: inline-flex; margin-top: 10px;
+      padding: 3px 9px; border-radius: 4px;
+      background: rgba(255,90,95,.25); border: 1px solid rgba(255,90,95,.45);
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em; color: #FFBCBE; text-transform: uppercase;
+    }
+
+    /* ─── NEXT STEPS ─────────────────────────────────── */
+    .next-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .next-card { border-top: 3px solid var(--brand); }
+    .next-num {
+      font-family: var(--font-display); font-size: 36px; font-weight: 800;
+      color: var(--border); line-height: 1; margin-bottom: 12px;
+    }
+    .next-card .h3 { font-size: 16px; margin-bottom: 8px; }
+    .next-card p { font-size: 13.5px; color: var(--ink-3); line-height: 1.62; }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    .footer {
+      background: var(--ink); padding: 32px 0;
+      border-top: 3px solid var(--brand);
+    }
+    .footer-inner {
+      max-width: var(--max); margin: 0 auto; padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    }
+    .footer-brand { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: rgba(255,255,255,.7); }
+    .footer-meta { font-size: 12px; color: rgba(255,255,255,.35); font-family: var(--font-mono); letter-spacing: .06em; }
+
+    /* ─── SCROLL ANIMATIONS ──────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes pulseOnce {
+      0%   { box-shadow: 0 0 0 0 rgba(255,90,95,.35); }
+      60%  { box-shadow: 0 0 0 7px rgba(255,90,95,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,90,95,0); }
+    }
+    /* Elements start invisible, JS adds .anim-ready after intersection */
+    .anim-fade-up {
+      opacity: 0; transform: translateY(14px);
+      transition: opacity .45s ease, transform .45s ease;
+    }
+    .anim-fade-up.anim-ready {
+      opacity: 1; transform: translateY(0);
+    }
+    .anim-scale {
+      opacity: 0; transform: scale(.96);
+      transition: opacity .38s ease, transform .38s ease;
+    }
+    .anim-scale.anim-ready {
+      opacity: 1; transform: scale(1);
+    }
+    .anim-slide-left {
+      opacity: 0; transform: translateX(-16px);
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    .anim-slide-left.anim-ready {
+      opacity: 1; transform: translateX(0);
+    }
+    /* Hero stat cards load animation */
+    .hstat {
+      animation: scaleIn .5s ease both;
+    }
+    .hstat:nth-child(1) { animation-delay: .1s; }
+    .hstat:nth-child(2) { animation-delay: .2s; }
+    .hstat:nth-child(3) { animation-delay: .3s; }
+    .hstat:nth-child(4) { animation-delay: .4s; }
+    /* Hero copy load */
+    .hero-eyebrow { animation: fadeIn .5s ease .05s both; }
+    .hero .display { animation: fadeUp .55s ease .1s both; }
+    .hero .lead    { animation: fadeUp .55s ease .18s both; }
+    .hero-chips    { animation: fadeUp .5s ease .28s both; }
+    /* POV badge pulse on entry (added via JS) */
+    .pov-badge-pulse { animation: pulseOnce .9s ease .3s both; }
+    .divider {
+      border: none; border-top: 1px solid var(--border); margin: 0;
+    }
+
+
+    /* ─── LANGUAGE TOGGLE ───────────────────────────── */
+    .lang-toggle {
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: var(--shadow-xs);
+    }
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: var(--ink-3);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 7px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+    .lang-btn:hover { color: var(--ink); background: var(--surface-1); }
+    .lang-btn.active {
+      background: var(--brand-light);
+      color: var(--brand-dark);
+      box-shadow: inset 0 0 0 1px rgba(var(--brand-rgb), .14);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 960px) {
+      .topbar-inner { grid-template-columns: 1fr; height: auto; padding-top: 14px; padding-bottom: 14px; gap: 12px; }
+      .nav-brand, .nav-links, .lang-toggle { justify-self: start; }
+      .nav-links { flex-wrap: wrap; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero .display, .hero .lead { max-width: 100%; }
+    }
+    @media (max-width: 1100px) {
+      .hero-grid, .arch-row, .req-grid, .compare-grid,
+      .risk-grid, .rec-inner, .ai-inner, .value-split,
+      .options-grid, .hesitation-grid { grid-template-columns: 1fr 1fr; }
+      .problem-grid, .pov-grid, .next-grid { grid-template-columns: 1fr 1fr; }
+      .context-inner { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .wrap { padding: 0 20px; }
+      section { padding: 56px 0; }
+      .hero { padding: 52px 0 44px; }
+      .hero-grid, .arch-row, .req-grid, .compare-grid, .cmp-mini,
+      .risk-grid, .rec-inner, .ai-inner, .value-split,
+      .options-grid, .hesitation-grid, .problem-grid, .pov-grid, .next-grid { grid-template-columns: 1fr; }
+      .arch-arrow { display: none; }
+      .topbar-inner { padding: 14px 20px; }
+      .rec-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+<!-- ── NAV ─────────────────────────────────────────── -->
+<header class="topbar">
+<div class="topbar-inner">
+<div class="nav-brand">
+<div class="nav-logo">W</div>
+<div>
+<div class="nav-sub" id="nav-subtitle">Executive Decision Framework</div>
+<div class="nav-title" id="nav-title">Wehkamp · Semantic Layer</div>
+</div>
+</div>
+<nav class="nav-links" id="navLinks">
+<div class="nav-indicator" id="navIndicator"></div>
+<a href="#problem" id="nav-problem">Problem</a>
+<a href="#pov" id="nav-pov">POV Results</a>
+<a href="#options" id="nav-options">Options</a>
+<a href="#comparison" id="nav-comparison">Comparison</a>
+<a href="#recommendation" id="nav-recommendation">Recommendation</a>
+</nav>
+<div aria-label="Language toggle" class="lang-toggle" role="group"><button class="lang-btn active" id="langBtnEn" type="button">EN</button><button class="lang-btn" id="langBtnNl" type="button">NL</button></div>
+</div>
+</header>
+<!-- ── HERO ────────────────────────────────────────── -->
+<section class="hero">
+<div class="wrap">
+<div class="hero-grid">
+<div>
+<div class="hero-eyebrow" id="hero-eyebrow">Wehkamp · Strategy · Confidential</div>
+<h1 class="display" id="hero-title">One semantic layer.<br/>The right operating model.</h1>
+<p class="lead" id="hero-lead" style="margin-top:16px">
+          Wehkamp has an established data platform and a clear problem to solve. This document provides a structured framework for making the right semantic layer decision — grounded in the proof of value Wehkamp has already seen.
+        </p>
+<div class="hero-chips">
+<span class="hero-chip" id="hero-chip-1">🛍 Online-only retailer · NL</span>
+<span class="hero-chip" id="hero-chip-2">📦 300k+ SKUs</span>
+<span class="hero-chip" id="hero-chip-3">🏅 12th company in Europe on Databricks</span>
+<span class="hero-chip" id="hero-chip-4">📊 Post-POV decision</span>
+</div>
+</div>
+<div class="hero-stats">
+<div class="hstat">
+<div class="hstat-val">150+</div>
+<div class="hstat-label" id="hero-stat-1-label">Business users manipulating data in Excel every day</div>
+</div>
+<div class="hstat">
+<div class="hstat-val">300k+</div>
+<div class="hstat-label" id="hero-stat-2-label">SKUs across womenswear, kidswear and homewares</div>
+</div>
+<div class="hstat">
+<div class="hstat-val">3</div>
+<div class="hstat-label" id="hero-stat-3-label">Tooling gaps: Databricks, Tableau, Excel/MSAS</div>
+</div>
+<div class="hstat">
+<div class="hstat-val">1</div>
+<div class="hstat-label" id="hero-stat-4-label">Question: which semantic model solves the whole problem?</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── CONTEXT BAND ─────────────────────────────────── -->
+<div class="context-band">
+<div class="context-inner">
+<div class="context-copy">
+<p id="context-p1">
+<strong>Wehkamp came to Strategy with a clear brief:</strong> they had independently decided they needed a Universal Semantic Layer. The question was never <em>whether</em> one was needed — it was which operating model would solve the full business problem, not just the engineering layer.
+      </p>
+<p id="context-p2" style="margin-top:12px">
+        The real decision is: <strong>Databricks only</strong> (staying close to current engineering patterns) vs. <strong>Databricks + Strategy</strong> (solving semantic reuse, Excel reduction, governed reporting, and MSAS modernisation together).
+      </p>
+</div>
+<div class="context-pillars">
+<div class="cpillar">
+<div class="cpillar-icon">🧱</div>
+<div><strong id="pillar-1-title">Engineering-first culture</strong><span id="pillar-1-text">Strong Databricks foundation — the 12th company in Europe on the platform. Medallion architecture is mature and trusted.</span></div>
+</div>
+<div class="cpillar">
+<div class="cpillar-icon">⚠️</div>
+<div><strong id="pillar-2-title">Downstream friction is the real pain</strong><span id="pillar-2-text">The problem is not where data lives. It is how business logic is reused, how Excel is used daily, and how MSAS still anchors finance.</span></div>
+</div>
+<div class="cpillar">
+<div class="cpillar-icon">🎯</div>
+<div><strong id="pillar-3-title">What Strategy must prove</strong><span id="pillar-3-text">Not that Mosaic can model data — Wehkamp already saw that. But that it solves the full operating problem without adding overhead.</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- ── PROBLEM ──────────────────────────────────────── -->
+<section id="problem">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="problem-eyebrow">Why Wehkamp started this journey</div>
+<h2 class="h2" id="problem-title">The business problem came first</h2>
+<p class="lead" id="problem-lead">Retail complexity, semantic fragmentation, and downstream reporting behaviour that no longer fits the scale of the business.</p>
+</div>
+<div class="problem-grid">
+<article class="card pcard anim-fade-up" style="transition-delay:.05s">
+<div class="pcard-icon">🛍</div>
+<h3 class="h3" id="problem-card-1-title">Retail complexity at scale</h3>
+<p id="problem-card-1-text">Online-only with 300k+ SKUs, high returns overhead, and pressure across buying, merchandising, and financial reporting. Every insight drives an operational decision.</p>
+</article>
+<article class="card pcard anim-fade-up" style="transition-delay:.1s">
+<div class="pcard-icon">🧠</div>
+<h3 class="h3" id="problem-card-2-title">Strong engineering foundation</h3>
+<p id="problem-card-2-text">Wehkamp's Databricks investment is mature. Bronze, silver, and gold medallion architecture is established. Any solution must sit on top of — not replace — this.</p>
+</article>
+<article class="card pcard">
+<div class="pcard-icon">📉</div>
+<h3 class="h3" id="problem-card-3-title">The friction is downstream</h3>
+<p id="problem-card-3-text">The biggest pain is not where data lives. It is how business logic is reused, how Tableau drives Databricks cost, how Excel is used as a daily processing layer, and how MSAS anchors finance.</p>
+</article>
+</div>
+<!-- Current Architecture -->
+<div class="arch-shell" style="margin-top:28px">
+<div class="arch-title" id="arch-current-title">Current operating model · Multiple semantic surfaces</div>
+<div class="arch-row">
+<div class="arch-node">
+<div class="tag tag-brand" id="arch-tag-1">Foundation</div>
+<div class="arch-node-title" id="arch-node-1-title">Databricks medallion</div>
+<p id="arch-node-1-text">Bronze, silver, and gold layers provide the engineering backbone. Central to the current data platform strategy.</p>
+</div>
+<div class="arch-arrow">→</div>
+<div class="arch-node">
+<div class="tag tag-ink" id="arch-tag-2">BI delivery</div>
+<div class="arch-node-title" id="arch-node-2-title">Tableau datasets and dashboards</div>
+<p id="arch-node-2-text">Operational, buying, and merchandising reporting. Each filter click can fire multiple queries to Databricks — cost unpredictability grows with user volume.</p>
+</div>
+<div class="arch-arrow">→</div>
+<div class="arch-node highlight">
+<div class="tag tag-amber" id="arch-tag-3">Business workaround</div>
+<div class="arch-node-title" id="arch-node-3-title">Excel as a processing layer</div>
+<p id="arch-node-3-text">Merchandisers export from Tableau into Excel and manipulate data manually. <strong>A daily activity for 150+ users.</strong> Semantic drift and overhead result.</p>
+</div>
+</div>
+<div class="arch-row">
+<div class="arch-node legacy">
+<div class="tag tag-amber" id="arch-tag-4">Legacy path</div>
+<div class="arch-node-title" id="arch-node-4-title">MSAS cubes</div>
+<p id="arch-node-4-text">Analysis Services supports ad hoc reporting in Excel and remains a critical dependency for finance and P&amp;L reporting.</p>
+</div>
+<div class="arch-arrow">→</div>
+<div class="arch-node">
+<div class="tag tag-ink" id="arch-tag-5">Finance users</div>
+<div class="arch-node-title" id="arch-node-5-title">Excel-driven P&amp;L and ad hoc</div>
+<p id="arch-node-5-text">The legacy pattern still works, but creates a modernisation gap between old and new reporting models.</p>
+</div>
+<div class="arch-arrow">→</div>
+<div class="arch-node">
+<div class="tag tag-caution" id="arch-tag-6">Outcome</div>
+<div class="arch-node-title" id="arch-node-6-title">Multiple semantic surfaces</div>
+<p id="arch-node-6-text">Definitions and calculations are not governed through one reusable semantic layer. The same metrics exist in different forms across Tableau, MSAS, and Excel.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── REQUIREMENTS ─────────────────────────────────── -->
+<section id="requirements" style="background: #F7F7F7;">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="req-eyebrow">What Wehkamp asked for</div>
+<h2 class="h2" id="req-title">Four requirement clusters — not a feature checklist</h2>
+<p class="lead" id="req-lead">Understanding what Wehkamp actually needs, grouped the right way for a real decision.</p>
+</div>
+<div class="req-grid">
+<article class="card req-card">
+<h3 class="h3" id="req-card-1-title">Consistency &amp; reuse</h3>
+<ul>
+<li id="req-li-1">One central reusable model</li>
+<li id="req-li-2">Unified business logic and definitions</li>
+<li id="req-li-3">Reuse of existing Databricks structure — no rebuild</li>
+<li id="req-li-4">No repeated semantic recreation per dashboard</li>
+</ul>
+</article>
+<article class="card req-card">
+<h3 class="h3" id="req-card-2-title">Performance &amp; cost control</h3>
+<ul>
+<li id="req-li-5">More predictable Databricks cost</li>
+<li id="req-li-6">Automatic, usage-driven optimisation</li>
+<li id="req-li-7">Strong performance without predefined use cases</li>
+<li id="req-li-8">Hybrid support: live and in-memory acceleration</li>
+<li id="req-li-9">High transparency into cache and refresh behaviour</li>
+</ul>
+</article>
+<article class="card req-card">
+<h3 class="h3" id="req-card-3-title">Low operating overhead</h3>
+<ul>
+<li id="req-li-10">Manageable by a very small team (&lt; 5 people)</li>
+<li id="req-li-11">Minimal manual tuning or upfront performance design</li>
+<li id="req-li-12">System-led intelligence, not user-driven control</li>
+<li id="req-li-13">Engineering-friendly: YAML/SQL, Git versioning, bulk ops</li>
+</ul>
+</article>
+<article class="card req-card">
+<h3 class="h3" id="req-card-4-title">Business-user enablement</h3>
+<ul>
+<li id="req-li-14">Reduce daily Excel manipulation for 150+ users</li>
+<li id="req-li-15">Seamless integration with Tableau</li>
+<li id="req-li-16">Excel self-service without MSAS dependency</li>
+<li id="req-li-17">Modernise ad hoc and finance P&amp;L reporting</li>
+</ul>
+</article>
+</div>
+</div>
+</section>
+<!-- ── POV RESULTS ──────────────────────────────────── -->
+<section id="pov">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="pov-eyebrow">What the POV proved</div>
+<h2 class="h2" id="pov-title">Strategy already demonstrated meaningful value</h2>
+<p class="lead" id="pov-lead">Before comparing final architectural preferences, re-establish what Wehkamp already validated. These are facts from the POV — not product claims.</p>
+</div>
+<div class="pov-grid">
+<article class="card pov-card anim-fade-up" style="transition-delay:.05s">
+<div class="pov-head">
+<div class="pov-title" id="pov-card-1-title">Trading report · Daily performance</div>
+<span class="tag tag-green pov-badge-pulse" id="pov-card-1-badge">Validated</span>
+</div>
+<ul>
+<li id="pov-li-1">Mosaic replaced wide, dashboard-specific table patterns with a reusable semantic model</li>
+<li id="pov-li-2">Single point of truth and governance was demonstrated from day one</li>
+<li id="pov-li-3">Calls to Databricks from 20+ Tableau filters were reduced</li>
+<li id="pov-li-4">Semantic models were built in Mosaic in hours — zero code required</li>
+</ul>
+<div class="pov-highlight" id="pov-highlight-1">⚡ Proved that Databricks cost pressure from Tableau is directly addressable via Mosaic's query acceleration layer.</div>
+</article>
+<article class="card pov-card anim-fade-up" style="transition-delay:.12s">
+<div class="pov-head">
+<div class="pov-title" id="pov-card-2-title">Buying &amp; Merchandising · Daily performance</div>
+<span class="tag tag-green pov-badge-pulse" id="pov-card-2-badge">Validated</span>
+</div>
+<ul>
+<li id="pov-li-5">One Mosaic model replaced two Tableau dashboards plus related query patterns</li>
+<li id="pov-li-6">Manual export-to-Excel activity was directly addressed</li>
+<li id="pov-li-7">Multiple Tableau datasets unified into a single Mosaic model</li>
+<li id="pov-li-8">Demonstrated a path to eliminating thousands of hours of Excel processing annually</li>
+</ul>
+<div class="pov-highlight" id="pov-highlight-2">⚡ This is the 150-user Excel problem in action — and Mosaic solved it during the POV.</div>
+</article>
+<article class="card pov-card anim-fade-up" style="transition-delay:.19s">
+<div class="pov-head">
+<div class="pov-title" id="pov-card-3-title">Finance P&amp;L · Excel self-service</div>
+<span class="tag tag-green pov-badge-pulse" id="pov-card-3-badge">Validated</span>
+</div>
+<ul>
+<li id="pov-li-9">Mosaic with Excel add-in presented a direct path away from MSAS cubes</li>
+<li id="pov-li-10">Business-friendly selection, filtering, and on-demand refresh — no SSAS knowledge needed</li>
+<li id="pov-li-11">Finance users demonstrated self-service P&amp;L without legacy dependency</li>
+<li id="pov-li-12">MSAS retirement became part of the same strategic motion — not a side project</li>
+</ul>
+<div class="pov-highlight" id="pov-highlight-3">⚡ This is the use case Databricks Unity Catalog alone cannot match. Finance needs a consumption layer — not just a data platform.</div>
+</article>
+</div>
+</div>
+</section>
+<!-- ── HESITATION ───────────────────────────────────── -->
+<section id="hesitation" style="background: #F7F7F7;">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="hes-eyebrow">Where the conversation broke down</div>
+<h2 class="h2" id="hes-title">What Wehkamp wanted — and how Strategy can respond</h2>
+<p class="lead" id="hes-lead">The final objection was less about whether Mosaic delivered value, and more about whether it matched the engineering shape Wehkamp wanted. Here is each concern — and the direct response.</p>
+</div>
+<div class="hesitation-grid">
+<div>
+<div class="hes-item">
+<strong id="hes-item-1-title">Automatic, usage-driven optimisation</strong>
+<span id="hes-item-1-span">System should learn from query patterns and adapt — no upfront caching or aggregation decisions.</span>
+<div class="hes-response" id="hes-item-1-resp">Mosaic's Query Acceleration Engine provides pushdown processing, intelligent caching, and cross-source calculation — usage-aware, not pre-configured. The AI Sync for Linked Models (Feb 2026) further automates maintenance across connected semantic models.</div>
+</div>
+<div class="hes-item">
+<strong id="hes-item-2-title">Engineering-friendly workflows</strong>
+<span id="hes-item-2-span">Support for YAML/SQL-based work, Git versioning, and bulk operations aligned to how the team already works.</span>
+<div class="hes-response" id="hes-item-2-resp">Mosaic Studio supports code-based model creation alongside its AI-powered tooling, including YAML/SQL-based workflows. Engineers are not restricted to a GUI-only paradigm, and the AI assistant for Python query generation automates much of the technical integration work.</div>
+</div>
+<div class="hes-item">
+<strong id="hes-item-3-title">Low operating burden for a team of &lt; 5</strong>
+<span id="hes-item-3-span">No new heavy platform footprint requiring a dedicated admin function.</span>
+<div class="hes-response" id="hes-item-3-resp">Mosaic Studio accelerates model creation up to 10x with AI assistance — the engineering burden is front-loaded during model creation, not ongoing. The AI assistant handles Python query generation automatically, reducing day-to-day operational effort.</div>
+</div>
+</div>
+<div>
+<div class="hes-item">
+<strong id="hes-item-4-title">Reuse of existing Databricks structure — no rebuild</strong>
+<span id="hes-item-4-span">Leverage their already well-modelled Unity Catalog / Delta Lake structure without starting over.</span>
+<div class="hes-response" id="hes-item-4-resp">Mosaic connects directly to Databricks as a data source. It does not replace the medallion architecture — it sits above it. The gold layer becomes Mosaic's input, not a layer to redesign.</div>
+</div>
+<div class="hes-item">
+<strong id="hes-item-5-title">"Another platform layer" concern</strong>
+<span id="hes-item-5-span">Even when strategically valuable, a second major platform can feel like added operating surface.</span>
+<div class="hes-response" id="hes-item-5-resp">The right frame is separation of concerns — not added overhead. Unity Catalog governs data. Mosaic governs business meaning. These are different jobs. Engineers who have lived through logic scattered across Tableau datasets, SSAS cubes, and Excel formulas understand why they belong in different layers.</div>
+</div>
+<div class="hes-item">
+<strong id="hes-item-6-title">High transparency into memory, refresh, and cache behaviour</strong>
+<span id="hes-item-6-span">Clear visibility into what is accelerated, model state, and performance behaviour.</span>
+<div class="hes-response" id="hes-item-6-resp">Mosaic Sentinel's Usage Insights module provides visibility into semantic layer utilisation, consumption patterns, most-used models, and performance data — without data movement or vendor lock-in.</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── OPTIONS ──────────────────────────────────────── -->
+<section id="options">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="opt-eyebrow">The real choice</div>
+<h2 class="h2" id="opt-title">This is not Databricks vs. Strategy.<br/>It is Databricks only vs. Databricks + Strategy.</h2>
+<p class="lead" id="opt-lead">The decision becomes clearer when framed as two operating models rather than a product-to-product replacement. Databricks is the foundation in both scenarios.</p>
+</div>
+<div class="options-grid">
+<article class="card opt-card">
+<div class="opt-header">
+<div class="opt-title" id="opt-card-1-title">Option A · Databricks only</div>
+<span class="tag tag-brand" id="opt-card-1-tag">Engineering fit</span>
+</div>
+<div class="opt-items">
+<div class="opt-item">
+<strong id="opt-item-1-title">Databricks + Unity Catalog</strong>
+<span id="opt-item-1-text">Engineering continuity and native governance alignment. Maximum reuse of current operating patterns.</span>
+</div>
+<div class="opt-item">
+<strong id="opt-item-2-title">Tableau remains downstream BI</strong>
+<span id="opt-item-2-text">Existing reporting layer stays in place. Databricks cost pattern from Tableau refresh remains.</span>
+</div>
+<div class="opt-item">
+<strong id="opt-item-3-title">Excel manipulation continues</strong>
+<span id="opt-item-3-text">150+ merchandisers continue daily export-to-Excel workflows. Semantic drift risk persists.</span>
+</div>
+<div class="opt-item">
+<strong id="opt-item-4-title">MSAS retirement handled separately</strong>
+<span id="opt-item-4-text">Requires a separately designed path for finance and ad hoc Excel reporting — outside the semantic layer decision.</span>
+</div>
+</div>
+</article>
+<article class="card opt-card preferred">
+<div class="opt-header">
+<div class="opt-title" id="opt-card-2-title">Option B · Databricks + Strategy</div>
+<span class="tag tag-strat" id="opt-card-2-tag">Enterprise completeness</span>
+</div>
+<div class="opt-items">
+<div class="opt-item highlight">
+<strong id="opt-item-5-title">Databricks stays foundational</strong>
+<span id="opt-item-5-text">No displacement of the medallion investment. Mosaic connects to the gold layer as its data source.</span>
+</div>
+<div class="opt-item highlight">
+<strong id="opt-item-6-title">Mosaic as the semantic layer</strong>
+<span id="opt-item-6-text">Reusable business logic governed across Tableau, Excel, and all consumption surfaces from a single model.</span>
+</div>
+<div class="opt-item highlight">
+<strong id="opt-item-7-title">Excel burden solved — not maintained</strong>
+<span id="opt-item-7-text">Merchandisers get governed, refreshable data in Excel directly from Mosaic. Daily export activity is eliminated.</span>
+</div>
+<div class="opt-item highlight">
+<strong id="opt-item-8-title">Finance modernisation gets a real path</strong>
+<span id="opt-item-8-text">MSAS replacement is part of the same strategy. Excel add-in with Mosaic replaces SSAS dependency — demonstrated in the POV.</span>
+</div>
+</div>
+</article>
+</div>
+<!-- Architecture Diagram NEW -->
+<div class="arch-diagram">
+<div class="arch-diagram-title" id="arch-proposed-title">Option B · Proposed three-layer architecture</div>
+<div class="arch-layers">
+<div class="arch-layer l-db anim-slide-left" style="transition-delay:.04s">
+<div>
+<div class="arch-layer-name" id="layer-1-name">Data Platform Layer — Databricks</div>
+<div class="arch-layer-desc" id="layer-1-desc">Untouched. Bronze → Silver → Gold medallion. Unity Catalog governs data access and lineage.</div>
+</div>
+<div class="arch-layer-pills">
+<span class="arch-pill" id="pill-1">Bronze</span>
+<span class="arch-pill" id="pill-2">Silver</span>
+<span class="arch-pill" id="pill-3">Gold</span>
+<span class="arch-pill" id="pill-4">Unity Catalog</span>
+<span class="arch-pill" id="pill-5">Delta Lake</span>
+</div>
+</div>
+<div class="arch-divider">↓</div>
+<div class="arch-layer l-mosaic anim-slide-left" style="transition-delay:.12s">
+<div>
+<div class="arch-layer-name" id="layer-2-name">Semantic Layer — Strategy Mosaic</div>
+<div class="arch-layer-desc" id="layer-2-desc">Business logic, certified metrics, governance. Intercepts queries — cached metrics never hit Databricks compute. Mosaic Sentinel governs access and usage.</div>
+</div>
+<div class="arch-layer-pills">
+<span class="arch-pill" id="pill-6">Query Acceleration</span>
+<span class="arch-pill" id="pill-7">Intelligent Cache</span>
+<span class="arch-pill" id="pill-8">Mosaic Studio (10× faster model build)</span>
+<span class="arch-pill" id="pill-9">Mosaic Sentinel</span>
+<span class="arch-pill" id="pill-10">200+ connectors</span>
+</div>
+</div>
+<div class="arch-divider">↓</div>
+<div class="arch-layer l-consume anim-slide-left" style="transition-delay:.20s">
+<div>
+<div class="arch-layer-name" id="layer-3-name">Consumption Layer — All surfaces, one semantic truth</div>
+<div class="arch-layer-desc" id="layer-3-desc">Every tool reads from the same governed Mosaic model. Definitions cannot drift. Excel manipulation is replaced by governed refresh.</div>
+</div>
+<div class="arch-layer-pills">
+<span class="arch-pill" id="pill-11">Tableau</span>
+<span class="arch-pill" id="pill-12">Excel add-in (replaces MSAS)</span>
+<span class="arch-pill" id="pill-13">Strategy One dashboards</span>
+<span class="arch-pill" id="pill-14">Power BI</span>
+</div>
+</div>
+<div class="arch-divider">↓</div>
+<div class="arch-layer l-ai anim-slide-left" style="transition-delay:.28s">
+<div>
+<div class="arch-layer-name" id="layer-4-name">AI Layer — MCP &amp; AI Agents <span style="font-size:11px;opacity:.6">(Preview — March 2026 onwards)</span></div>
+<div class="arch-layer-desc" id="layer-4-desc">Any LLM — Claude, Copilot, ChatGPT, Gemini — can query governed Wehkamp metrics directly via MCP. No custom integration. No hallucination risk. Grounded in the same Mosaic semantic layer.</div>
+</div>
+<div class="arch-layer-pills">
+<span class="arch-pill" id="pill-15">Claude via MCP</span>
+<span class="arch-pill" id="pill-16">Copilot Studio</span>
+<span class="arch-pill" id="pill-17">ChatGPT</span>
+<span class="arch-pill" id="pill-18">Gemini</span>
+<span class="arch-pill" id="pill-19">AWS Quick Suite</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── COMPARISON ───────────────────────────────────── -->
+<section id="comparison" style="background: #F7F7F7;">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="cmp-eyebrow">Decision-by-decision comparison</div>
+<h2 class="h2" id="cmp-title">Where Databricks leads, where Strategy leads, and where it depends</h2>
+<p class="lead" id="cmp-lead">An honest assessment — not a product pitch. This is the comparison that matters for Wehkamp's actual decision.</p>
+</div>
+<div class="compare-grid">
+<article class="card cmp-card anim-fade-up" style="transition-delay:.04s">
+<div class="cmp-head">
+<div class="cmp-title" id="cmp-card-1-title">Data platform fit</div>
+<span class="winner-badge winner-db" id="cmp-card-1-badge">Databricks advantage</span>
+</div>
+<p class="cmp-body" id="cmp-card-1-body">Databricks is already the trusted engineering base. Unity Catalog aligns closely with the current operating model. Strategy does not compete here — it sits above.</p>
+<div class="cmp-mini">
+<div class="cmp-box"><h4 id="cmp-h4-1">Databricks</h4><ul><li id="cmp-li-1">Native fit with the medallion architecture</li><li id="cmp-li-2">Aligned to current engineering ownership</li><li id="cmp-li-3">Lower perceived disruption</li></ul></div>
+<div class="cmp-box"><h4 id="cmp-h4-2">Strategy</h4><ul><li id="cmp-li-4">Not positioned as the data platform</li><li id="cmp-li-5">Best positioned above the data platform</li><li id="cmp-li-6">Must be framed as additive value</li></ul></div>
+</div>
+</article>
+<article class="card cmp-card anim-fade-up" style="transition-delay:.09s">
+<div class="cmp-head">
+<div class="cmp-title" id="cmp-card-2-title">Semantic reuse across tools</div>
+<span class="winner-badge winner-dep" id="cmp-card-2-badge">Depends on priority</span>
+</div>
+<p class="cmp-body" id="cmp-card-2-body">Databricks is stronger for governance inside the platform. Strategy is stronger for governed reuse across actual business consumption surfaces — Tableau, Excel, and downstream tools.</p>
+<div class="cmp-mini">
+<div class="cmp-box"><h4 id="cmp-h4-3">Databricks</h4><ul><li id="cmp-li-7">Strong if the goal is semantic governance inside Databricks</li><li id="cmp-li-8">Closer to existing engineering assets</li></ul></div>
+<div class="cmp-box"><h4 id="cmp-h4-4">Strategy</h4><ul><li id="cmp-li-9">Stronger when downstream semantic consistency matters as much as upstream</li><li id="cmp-li-10">One model reused across all tools</li></ul></div>
+</div>
+</article>
+<article class="card cmp-card anim-fade-up" style="transition-delay:.14s">
+<div class="cmp-head">
+<div class="cmp-title" id="cmp-card-3-title">Tableau and Excel operating model</div>
+<span class="winner-badge winner-st" id="cmp-card-3-badge">Strategy advantage</span>
+</div>
+<p class="cmp-body" id="cmp-card-3-body">This is where the Strategy story becomes materially stronger. Wehkamp's problem is not only semantic modelling — it is the downstream operating model. Strategy already proved value here during the POV.</p>
+<div class="cmp-mini">
+<div class="cmp-box"><h4 id="cmp-h4-5">Databricks</h4><ul><li id="cmp-li-11">Strong platform alignment</li><li id="cmp-li-12">Still leaves Excel manipulation and governed consumption unresolved</li></ul></div>
+<div class="cmp-box"><h4 id="cmp-h4-6">Strategy</h4><ul><li id="cmp-li-13">Addresses semantic reuse and business-user consumption together</li><li id="cmp-li-14">Directly tackles the 150-user daily Excel workflow</li></ul></div>
+</div>
+</article>
+<article class="card cmp-card anim-fade-up" style="transition-delay:.19s">
+<div class="cmp-head">
+<div class="cmp-title" id="cmp-card-4-title">MSAS retirement path</div>
+<span class="winner-badge winner-st" id="cmp-card-4-badge">Strategy advantage</span>
+</div>
+<p class="cmp-body" id="cmp-card-4-body">Strategy has the cleaner and only credible story here. The POV explicitly demonstrated Excel-based self-service without MSAS. Databricks alone cannot replace MSAS for finance users who live in Excel.</p>
+<div class="cmp-mini">
+<div class="cmp-box"><h4 id="cmp-h4-7">Databricks</h4><ul><li id="cmp-li-15">Solid data foundation</li><li id="cmp-li-16">Requires a separately designed Excel and finance path — not part of Unity Catalog</li></ul></div>
+<div class="cmp-box"><h4 id="cmp-h4-8">Strategy</h4><ul><li id="cmp-li-17">Combines semantic modernisation with an actual Excel-facing operating model</li><li id="cmp-li-18">MSAS retirement becomes part of one motion</li></ul></div>
+</div>
+</article>
+<article class="card cmp-card anim-fade-up" style="transition-delay:.24s">
+<div class="cmp-head">
+<div class="cmp-title" id="cmp-card-5-title">Operational simplicity</div>
+<span class="winner-badge winner-db" id="cmp-card-5-badge">Databricks advantage</span>
+</div>
+<p class="cmp-body" id="cmp-card-5-body">Wehkamp clearly prefers a model that feels more native, more automatic, and lighter for a team of fewer than five people. Databricks has the more intuitive answer if operating-model simplicity is the primary criterion.</p>
+<div class="cmp-mini">
+<div class="cmp-box"><h4 id="cmp-h4-9">Databricks</h4><ul><li id="cmp-li-19">Closer to current team skills and platform habits</li><li id="cmp-li-20">Lower resistance from an engineering-led evaluation lens</li></ul></div>
+<div class="cmp-box"><h4 id="cmp-h4-10">Strategy</h4><ul><li id="cmp-li-21">Broader platform value</li><li id="cmp-li-22">Front-loaded effort — not ongoing overhead; AI-assisted model creation reduces burden significantly</li></ul></div>
+</div>
+</article>
+<article class="card cmp-card anim-fade-up" style="transition-delay:.29s">
+<div class="cmp-head">
+<div class="cmp-title" id="cmp-card-6-title">Comprehensiveness of the full solution</div>
+<span class="winner-badge winner-st" id="cmp-card-6-badge">Strategy advantage</span>
+</div>
+<p class="cmp-body" id="cmp-card-6-body">If the question is which option better solves the full original business problem, Databricks + Strategy is the more comprehensive answer. Databricks may be the more natural platform fit. Strategy is the stronger semantic-to-consumption fit.</p>
+<div class="cmp-mini">
+<div class="cmp-box"><h4 id="cmp-h4-11">Databricks</h4><ul><li id="cmp-li-23">Best if Wehkamp wants to stay close to its engineering centre of gravity</li></ul></div>
+<div class="cmp-box"><h4 id="cmp-h4-12">Strategy</h4><ul><li id="cmp-li-24">Best if Wehkamp wants to solve semantic reuse, Excel reduction, governed reporting, and MSAS modernisation together</li></ul></div>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- ── VALUE ────────────────────────────────────────── -->
+<section id="value">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="value-eyebrow">Value for money</div>
+<h2 class="h2" id="value-title">Best value depends on what Wehkamp is optimising for</h2>
+<p class="lead" id="value-lead">A formal ROI cannot be calculated without Wehkamp's quantitative inputs. The better frame is operating-model value — which option solves more of the original problem, sustainably.</p>
+</div>
+<div class="value-split">
+<article class="card val-card">
+<h3 class="h3" id="value-card-1-title" style="color:var(--ink-3)">Databricks only delivers best value if the priority is:</h3>
+<div class="val-items">
+<div class="val-item"><strong id="value-item-1-title">Architectural continuity</strong><span id="value-item-1-text">Maximum reuse of current Databricks patterns and team familiarity. No new platform surface.</span></div>
+<div class="val-item"><strong id="value-item-2-title">Perceived simplicity</strong><span id="value-item-2-text">Lowest resistance to adding another major platform.</span></div>
+<div class="val-item"><strong id="value-item-3-title">Engineering-first optimisation</strong><span id="value-item-3-text">The decision lens is driven more by platform fit than by downstream business-consumption redesign.</span></div>
+</div>
+</article>
+<article class="card val-card preferred">
+<h3 class="h3" id="value-card-2-title" style="color:var(--brand)">Databricks + Strategy delivers best value if the priority is:</h3>
+<div class="val-items">
+<div class="val-item preferred-item"><strong id="value-item-4-title">Reducing Excel-heavy downstream work</strong><span id="value-item-4-text">Especially where Tableau is currently used as a download mechanism into Excel for 150+ daily users.</span></div>
+<div class="val-item preferred-item"><strong id="value-item-5-title">Unified semantic logic across consumption</strong><span id="value-item-5-text">Not just at the data platform layer, but across Tableau, Excel, and governed reporting — using one model.</span></div>
+<div class="val-item preferred-item"><strong id="value-item-6-title">Modernising finance reporting as part of the same motion</strong><span id="value-item-6-text">MSAS retirement happens alongside the semantic layer decision, not as a later side project.</span></div>
+<div class="val-item preferred-item"><strong id="value-item-7-title">AI readiness for the future</strong><span id="value-item-7-text">Governed Mosaic models become the foundation for any AI agent — no hallucination, no custom integration.</span></div>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- ── RISKS ────────────────────────────────────────── -->
+<section id="risks" style="background: #F7F7F7;">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="risk-eyebrow">Risks and reservations</div>
+<h2 class="h2" id="risk-title">Both options have real strengths and real trade-offs</h2>
+<p class="lead" id="risk-lead">A balanced decision needs both sides stated clearly. These are the risks, honestly assessed.</p>
+</div>
+<div class="risk-grid">
+<article class="card risk-card anim-fade-up" style="transition-delay:.05s">
+<h3 class="h3" id="risk-card-1-title">Risks with a Databricks-only direction</h3>
+<ul>
+<li id="risk-li-1">The solution may align more strongly to engineering preference than to downstream business-consumption redesign.</li>
+<li id="risk-li-2">Tableau and Excel friction may remain partially unresolved even if governance is improved upstream.</li>
+<li id="risk-li-3">The daily Excel manipulation issue for 150+ users may persist unless specifically addressed outside the data platform.</li>
+<li id="risk-li-4">MSAS retirement requires additional design work outside the main semantic layer decision.</li>
+<li id="risk-li-5">The semantic story remains stronger for the platform team than for business-user adoption.</li>
+<li id="risk-li-6">AI agents querying Databricks directly carry hallucination and governance risks without a semantic layer between them.</li>
+</ul>
+</article>
+<article class="card risk-card ours">
+<h3 class="h3" id="risk-card-2-title">Risks with a Databricks + Strategy direction</h3>
+<ul>
+<li id="risk-li-7">Wehkamp may perceive another platform layer as overhead if the value is not framed clearly as complementarity, not replacement.</li>
+<li id="risk-li-8">The team may perceive Mosaic as requiring more explicit semantic modeling decisions than the fully automated model they prefer.</li>
+<li id="risk-li-9">Operational acceptance depends on proving the platform remains manageable for a team of fewer than five engineers.</li>
+<li id="risk-li-10">Performance expectations need to be explained carefully to avoid mismatch with system-driven optimisation preferences.</li>
+<li id="risk-li-11">Without a clear role split (Databricks governs data; Mosaic governs business meaning), the architecture can be misunderstood as overlap rather than complementarity.</li>
+</ul>
+</article>
+</div>
+</div>
+</section>
+<!-- ── AI FORWARD ───────────────────────────────────── -->
+<section id="ai-forward">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="ai-eyebrow">Looking forward · AI readiness</div>
+<h2 class="h2" id="ai-title">The platform that serves your AI future</h2>
+<p class="lead" id="ai-lead">The semantic layer decision made today is also the AI foundation decision for tomorrow. This dimension is absent in a Databricks-only path.</p>
+</div>
+<div class="ai-section">
+<div class="ai-inner">
+<div class="ai-card anim-slide-left" style="transition-delay:.05s">
+<div class="ai-card-icon">🤖</div>
+<div class="ai-card-title" id="ai-card-1-title">MCP: AI Freedom</div>
+<div class="ai-card-text" id="ai-card-1-text">Any AI agent — Claude, Microsoft Copilot, ChatGPT, Gemini, or AWS Quick Suite — can now query Strategy Agents from any MCP-compatible platform. Enterprise governance applies automatically.</div>
+<span class="ai-badge" id="ai-card-1-badge">GA · Jan 2026</span>
+</div>
+<div class="ai-card anim-slide-left" style="transition-delay:.14s">
+<div class="ai-card-icon">🧩</div>
+<div class="ai-card-title" id="ai-card-2-title">Direct Mosaic access via MCP</div>
+<div class="ai-card-text" id="ai-card-2-text">AI models can query Wehkamp's governed semantic layer directly via MCP — no agent required, no custom integration. Ask "What drove margin decline in womenswear this week?" and get a governed, trusted answer.</div>
+<span class="ai-badge" id="ai-card-2-badge">Preview · Mar 2026</span>
+</div>
+<div class="ai-card anim-slide-left" style="transition-delay:.23s">
+<div class="ai-card-icon">🛡</div>
+<div class="ai-card-title" id="ai-card-3-title">Governed AI — no hallucination</div>
+<div class="ai-card-text" id="ai-card-3-text">Because AI agents are grounded in Mosaic's certified metrics, there is no hallucination risk. The same definitions used in Tableau and Excel power the AI response. One source of truth across every surface.</div>
+<span class="ai-badge" id="ai-card-3-badge">GA · 2025</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── RECOMMENDATION ───────────────────────────────── -->
+<section id="recommendation">
+<div class="wrap">
+<div class="rec-card">
+<div class="rec-inner">
+<div>
+<div class="rec-eyebrow" id="rec-eyebrow">Final recommendation</div>
+<h2 class="display" id="rec-title">Databricks + Strategy is the more complete answer to the problem Wehkamp walked in with.</h2>
+<p id="rec-p-1">If Wehkamp is optimising primarily for native engineering alignment and minimum architectural change, a <strong>Databricks-only direction</strong> will feel more natural. It is the right choice if engineering simplicity is the single deciding criterion.</p>
+<p id="rec-p-2">If Wehkamp is optimising for the full enterprise problem it originally defined — semantic consistency across tools, elimination of Excel manipulation for 150+ users, governed downstream consumption, and a credible MSAS modernisation path — then <strong>Databricks plus Strategy is the more comprehensive solution.</strong></p>
+<p id="rec-p-3">The strongest Strategy position is not to argue against Databricks as the data platform. It is to show that Databricks and Strategy together can solve more of the real business problem than a Databricks-only semantic strategy.</p>
+<div class="rec-verdict">
+<p id="rec-p-4"><strong>The verdict:</strong> Databricks governs your data. Mosaic governs your business meaning. These are different jobs — and both need to be done for Wehkamp to retire MSAS, solve the Excel problem, and build an AI-ready analytics operating model.</p>
+</div>
+</div>
+<div class="rec-takeaways">
+<div class="rec-takeaway anim-scale" style="transition-delay:.08s">
+<strong id="rec-take-1-title">Executive takeaway 1</strong>
+<span id="rec-take-1-text">Databricks is the more natural engineering fit. Strategy agrees — and is not asking Wehkamp to change it.</span>
+</div>
+<div class="rec-takeaway anim-scale" style="transition-delay:.16s">
+<strong id="rec-take-2-title">Executive takeaway 2</strong>
+<span id="rec-take-2-text">Strategy is the more complete semantic-to-consumption fit. Three use cases proved this in the POV — trading, merchandising, and finance.</span>
+</div>
+<div class="rec-takeaway anim-scale" style="transition-delay:.24s">
+<strong id="rec-take-3-title">Executive takeaway 3</strong>
+<span id="rec-take-3-text">The decision is whether Wehkamp wants to optimise for engineering simplicity or enterprise operating-model completeness. The original brief asked for the latter.</span>
+</div>
+<div class="rec-takeaway anim-scale" style="transition-delay:.32s">
+<strong id="rec-take-4-title">Executive takeaway 4</strong>
+<span id="rec-take-4-text">The AI future runs on governed semantics. Mosaic is that foundation. A Databricks-only path requires a separate answer to that question later.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ── NEXT STEPS ───────────────────────────────────── -->
+<section id="next" style="background: #F7F7F7;">
+<div class="wrap">
+<div class="sec-header">
+<div class="eyebrow" id="next-eyebrow">Proposed next steps</div>
+<h2 class="h2" id="next-title">Three actions to move from framework to decision</h2>
+</div>
+<div class="next-grid">
+<article class="card next-card anim-fade-up" style="transition-delay:.05s">
+<div class="next-num">01</div>
+<h3 class="h3" id="next-card-1-title">Joint architecture session</h3>
+<p id="next-card-1-text">A 2-hour working session with Wehkamp's data engineering lead and a finance stakeholder together. Engineers validate the Databricks integration story. Finance sees the MSAS exit path and becomes an internal champion.</p>
+</article>
+<article class="card next-card anim-fade-up" style="transition-delay:.12s">
+<div class="next-num">02</div>
+<h3 class="h3" id="next-card-2-title">Quantify the Excel overhead</h3>
+<p id="next-card-2-text">Work with Wehkamp to estimate the real cost of 150+ users performing daily Excel manipulation. Translate the POV results ("thousands of hours eliminated") into a specific, credible operating-model saving for this team.</p>
+</article>
+<article class="card next-card anim-fade-up" style="transition-delay:.19s">
+<div class="next-num">03</div>
+<h3 class="h3" id="next-card-3-title">Demonstrate Mosaic on Databricks</h3>
+<p id="next-card-3-text">Run a focused 90-minute demo using Wehkamp's actual Databricks environment (or a sandbox equivalent) — show how Mosaic connects to the gold layer, creates a certified metric in under an hour, and serves it to both Tableau and Excel simultaneously.</p>
+</article>
+</div>
+</div>
+</section>
+<!-- ── FOOTER ───────────────────────────────────────── -->
+<footer class="footer">
+<div class="footer-inner">
+<div class="nav-brand">
+<div class="nav-logo">W</div>
+<div>
+<div class="footer-brand" id="footer-brand">Wehkamp · Semantic Layer Decision Framework</div>
+<div class="footer-meta" id="footer-meta-left">Prepared by Strategy Software · Confidential · 2026</div>
+</div>
+</div>
+<div class="footer-meta" id="footer-meta-right">Executive presentation build · v5</div>
+</div>
+</footer>
+<script>
+(function() {
+
+  /* ── NAV SLIDING INDICATOR ─────────────────────────── */
+  const nav       = document.getElementById('navLinks');
+  const indicator = document.getElementById('navIndicator');
+  const navLinks  = Array.from(nav.querySelectorAll('a'));
+
+  // Section IDs that correspond to nav links (in order)
+  const sectionIds = ['problem', 'pov', 'options', 'comparison', 'recommendation'];
+  // Map each nav link to all the section IDs it "owns" while scrolling
+  const linkSectionMap = {
+    'problem':        ['problem', 'requirements'],
+    'pov':            ['pov', 'hesitation'],
+    'options':        ['options', 'value', 'ai-forward'],
+    'comparison':     ['comparison', 'risks'],
+    'recommendation': ['recommendation', 'next']
+  };
+
+  function moveIndicatorTo(link) {
+    if (!link) { indicator.style.opacity = '0'; return; }
+    const navRect  = nav.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+    indicator.style.left    = (linkRect.left - navRect.left) + 'px';
+    indicator.style.width   = linkRect.width + 'px';
+    indicator.style.opacity = '1';
+  }
+
+  function getActiveLink() {
+    const scrollY   = window.scrollY;
+    const winHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+    const atBottom  = (scrollY + winHeight) >= (docHeight - 40);
+
+    // If at bottom — last link
+    if (atBottom) return navLinks[navLinks.length - 1];
+
+    // Find which section is currently in view (uses top of viewport + offset)
+    const offset = 100;
+    let activeHref = null;
+
+    // Build a flat list of all sections with their nav href
+    const allSections = [];
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href').replace('#', '');
+      const owned = linkSectionMap[href] || [href];
+      owned.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) allSections.push({ el, href });
+      });
+    });
+
+    // Walk from bottom to top — last section whose top is above offset wins
+    for (let i = allSections.length - 1; i >= 0; i--) {
+      const top = allSections[i].el.getBoundingClientRect().top;
+      if (top <= offset) {
+        activeHref = allSections[i].href;
+        break;
+      }
+    }
+
+    if (!activeHref) return null;
+    return navLinks.find(a => a.getAttribute('href') === '#' + activeHref) || null;
+  }
+
+  let currentActive = null;
+  let rafPending    = false;
+
+  function updateNav() {
+    rafPending = false;
+    const active = getActiveLink();
+    if (active === currentActive) return;
+    currentActive = active;
+
+    navLinks.forEach(a => a.classList.remove('active'));
+    if (active) active.classList.add('active');
+    moveIndicatorTo(active);
+  }
+
+  // Throttle scroll via rAF
+  window.addEventListener('scroll', function() {
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(updateNav);
+    }
+  }, { passive: true });
+
+  // Initial position
+  updateNav();
+
+  // On click — snap indicator immediately
+  navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      setTimeout(() => {
+        navLinks.forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        moveIndicatorTo(link);
+      }, 60);
+    });
+  });
+
+
+  /* ── SCROLL-TRIGGERED CARD ANIMATIONS ──────────────── */
+  const animEls = document.querySelectorAll(
+    '.anim-fade-up, .anim-scale, .anim-slide-left'
+  );
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('anim-ready');
+          observer.unobserve(entry.target); // fire once only
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    animEls.forEach(function(el) { observer.observe(el); });
+
+    // Also animate pov-badge-pulse elements when parent card enters view
+    document.querySelectorAll('.pov-badge-pulse').forEach(function(badge) {
+      // pulse fires via CSS animation — reset it when card enters view
+      const card = badge.closest('.pov-card');
+      if (card) {
+        const badgeObs = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting) {
+            badge.style.animation = 'none';
+            requestAnimationFrame(function() {
+              badge.style.animation = '';
+            });
+            badgeObs.disconnect();
+          }
+        }, { threshold: 0.3 });
+        badgeObs.observe(card);
+      }
+    });
+
+  } else {
+    // Fallback: show all immediately
+    animEls.forEach(function(el) { el.classList.add('anim-ready'); });
+  }
+
+  /* ── SECTION EYEBROW STAGGER ────────────────────────── */
+  document.querySelectorAll('.eyebrow').forEach(function(el) {
+    el.style.opacity  = '0';
+    el.style.transform = 'translateY(8px)';
+    el.style.transition = 'opacity .4s ease, transform .4s ease';
+    const obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        el.style.opacity   = '1';
+        el.style.transform = 'translateY(0)';
+        obs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    obs.observe(el);
+  });
+
+  /* ── SEC-HEADER H2 FADE UP ──────────────────────────── */
+  document.querySelectorAll('.sec-header .h2').forEach(function(el) {
+    el.style.opacity   = '0';
+    el.style.transform = 'translateY(10px)';
+    el.style.transition = 'opacity .45s ease .1s, transform .45s ease .1s';
+    const obs = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        el.style.opacity   = '1';
+        el.style.transform = 'translateY(0)';
+        obs.disconnect();
+      }
+    }, { threshold: 0.3 });
+    obs.observe(el);
+  });
+
+})();
+</script>
+<script>
+(function() {
+  const nlTranslations = {"nav-subtitle": "Besluitvormingskader voor de directie","nav-title": "Wehkamp · Semantische laag","nav-problem": "Probleem","nav-pov": "POV-resultaten","nav-options": "Opties","nav-comparison": "Vergelijking","nav-recommendation": "Aanbeveling","hero-eyebrow": "Wehkamp · Strategy · Vertrouwelijk","hero-title": "Eén semantische laag.<br>De juiste werkwijze.","hero-lead": "Wehkamp heeft een volwassen dataplatform en een duidelijk probleem om op te lossen. Dit document biedt een gestructureerd kader om de juiste beslissing rond de semantische laag te nemen, gebaseerd op de proof of value die Wehkamp al heeft gezien.","hero-chip-1": "🛍 Volledig online retailer · NL","hero-chip-2": "📦 300.000+ artikelen","hero-chip-3": "🏅 12e bedrijf in Europa dat gebruikmaakt van Databricks","hero-chip-4": "📊 Beslissing na POV","hero-stat-1-label": "Zakelijke gebruikers die dagelijks gegevens in Excel bewerken","hero-stat-2-label": "SKU's binnen damesmode, kinderkleding en woonartikelen","hero-stat-3-label": "Tooling-gaten: Databricks, Tableau, Excel/MSAS","hero-stat-4-label": "Vraag: welk semantisch model lost het volledige probleem op?","context-p1": "<strong>Wehkamp kwam naar Strategy met een duidelijke opdracht:</strong> ze hadden zelfstandig al besloten dat ze een universele semantische laag nodig hadden. De vraag was nooit <em>of</em> die nodig was, maar welke werkwijze het volledige zakelijke probleem zou oplossen, niet alleen de engineeringlaag.","context-p2": "De echte beslissing is: <strong>alleen Databricks</strong> (dicht bij de huidige engineeringpatronen blijven) versus <strong>Databricks + Strategy</strong> (semantisch hergebruik, minder Excel-afhankelijkheid, beheerste rapportage en modernisering van MSAS samen aanpakken).","pillar-1-title": "Engineeringgedreven cultuur","pillar-1-text": "Sterke Databricks-basis, het 12e bedrijf in Europa op het platform. De medallion-architectuur is volwassen en vertrouwd.","pillar-2-title": "De echte frictie zit aan de afnamekant","pillar-2-text": "Het probleem is niet waar data staat. Het gaat erom hoe businesslogica wordt hergebruikt, hoe Excel dagelijks wordt gebruikt en hoe MSAS finance nog steeds ondersteunt.","pillar-3-title": "Wat Strategy moet bewijzen","pillar-3-text": "Niet dat Mosaic data kan modelleren, dat heeft Wehkamp al gezien. Maar dat het het volledige operationele probleem oplost zonder extra overhead toe te voegen.","problem-eyebrow": "Waarom Wehkamp deze reis is gestart","problem-title": "Het businessprobleem kwam eerst","problem-lead": "Retailcomplexiteit, semantische fragmentatie en rapportagegedrag in de afnameketen dat niet langer past bij de schaal van het bedrijf.","problem-card-1-title": "Retailcomplexiteit op schaal","problem-card-1-text": "Volledig online, met 300.000+ artikelen, hoge retourdruk en druk op inkoop, merchandising en financiële rapportage. Elk inzicht stuurt een operationele beslissing.","problem-card-2-title": "Sterke engineeringbasis","problem-card-2-text": "De investering van Wehkamp in Databricks is volwassen. Bronze, silver en gold medallion-architectuur zijn ingeburgerd. Elke oplossing moet hier bovenop zitten, niet dit vervangen.","problem-card-3-title": "De frictie zit aan de afnamekant","problem-card-3-text": "De grootste pijn zit niet in waar data staat. Het gaat erom hoe businesslogica wordt hergebruikt, hoe Tableau Databricks-kosten aanjaagt, hoe Excel als dagelijkse verwerkingslaag wordt gebruikt en hoe MSAS finance nog steeds ondersteunt.","arch-current-title": "Huidige werkwijze · Meerdere semantische oppervlakken","arch-tag-1": "Fundament","arch-node-1-title": "Databricks medallion","arch-node-1-text": "Bronze-, silver- en gold-lagen vormen de engineeringruggengraat. Centraal in de huidige dataplatformstrategie.","arch-tag-2": "BI-levering","arch-node-2-title": "Tableau-datasets en dashboards","arch-node-2-text": "Operationele rapportage voor inkoop en merchandising. Elke filterklik kan meerdere query's naar Databricks sturen, waardoor kosten minder voorspelbaar worden naarmate het gebruik toeneemt.","arch-tag-3": "Zakelijke omleiding","arch-node-3-title": "Excel als verwerkingslaag","arch-node-3-text": "Merchandisers exporteren vanuit Tableau naar Excel en bewerken data handmatig. <strong>Dagelijkse activiteit voor 150+ gebruikers.</strong> Het resultaat is semantische drift en extra overhead.","arch-tag-4": "Legacy-pad","arch-node-4-title": "MSAS-cubes","arch-node-4-text": "Analysis Services ondersteunt ad-hocrapportage in Excel en blijft een kritische afhankelijkheid voor finance en P&amp;L-rapportage.","arch-tag-5": "Finance-gebruikers","arch-node-5-title": "P&amp;L en ad hoc in Excel","arch-node-5-text": "Het legacy-patroon werkt nog steeds, maar creëert een moderniseringskloof tussen oude en nieuwe rapportagemodellen.","arch-tag-6": "Resultaat","arch-node-6-title": "Meerdere semantische oppervlakken","arch-node-6-text": "Definities en berekeningen worden niet beheerd vanuit één herbruikbare semantische laag. Dezelfde meetwaarden bestaan in verschillende vormen in Tableau, MSAS en Excel.","req-eyebrow": "Wat Wehkamp vroeg","req-title": "Vier requirement-clusters, geen featurechecklist","req-lead": "Begrijpen wat Wehkamp echt nodig heeft, gegroepeerd op de juiste manier voor een echte beslissing.","req-card-1-title": "Consistentie en hergebruik","req-li-1": "Eén centraal herbruikbaar model","req-li-2": "Geünificeerde businesslogica en definities","req-li-3": "Hergebruik van bestaande Databricks-structuur — geen heropbouw","req-li-4": "Geen herhaald opnieuw opbouwen van semantiek per dashboard","req-card-2-title": "Performance en kostenbeheersing","req-li-5": "Beter voorspelbare Databricks-kosten","req-li-6": "Automatische, gebruiksgedreven optimalisatie","req-li-7": "Sterke prestaties zonder vooraf gedefinieerde toepassingsscenario's","req-li-8": "Hybride ondersteuning: live en in-memory acceleratie","req-li-9": "Hoge transparantie in cache- en verversingsgedrag","req-card-3-title": "Lage operationele overhead","req-li-10": "Beheerbaar door een zeer klein team (&lt; 5 mensen)","req-li-11": "Minimale handmatige fijnafstelling of vooraf ontworpen prestatie-optimalisatie","req-li-12": "Systeemgestuurde intelligentie, niet door gebruikers gestuurde controle","req-li-13": "Geschikt voor engineers: YAML/SQL, Git-versiebeheer en bulkbewerkingen","req-card-4-title": "Ondersteuning voor zakelijke gebruikers","req-li-14": "Dagelijkse Excel-bewerking voor 150+ gebruikers verminderen","req-li-15": "Naadloze integratie met Tableau","req-li-16": "Excel-selfservice zonder MSAS-afhankelijkheid","req-li-17": "Ad-hoc- en finance-P&L-rapportage moderniseren","pov-eyebrow": "Wat de POV bewees","pov-title": "Strategy heeft al betekenisvolle waarde aangetoond","pov-lead": "Voordat de uiteindelijke architectuurvoorkeuren worden vergeleken, is het belangrijk om opnieuw te bevestigen wat Wehkamp al heeft gevalideerd. Dit zijn feiten uit de POV, geen productclaims.","pov-card-1-title": "Tradingrapport · Dagelijkse prestaties","pov-card-1-badge": "Gevalideerd","pov-li-1": "Mosaic verving brede, dashboardspecifieke tabelpatronen door een herbruikbaar semantisch model","pov-li-2": "Eén versie van de waarheid en governance werden vanaf dag één aangetoond","pov-li-3": "Query's naar Databricks vanuit 20+ Tableau-filters werden verminderd","pov-li-4": "Semantische modellen werden in Mosaic in enkele uren gebouwd, zonder code","pov-highlight-1": "⚡ Bewees dat kostendruk op Databricks vanuit Tableau direct kan worden aangepakt via de query-acceleratielaag van Mosaic.","pov-card-2-title": "Inkoop &amp; Merchandising · Dagelijkse prestaties","pov-card-2-badge": "Gevalideerd","pov-li-5": "Eén Mosaic-model verving twee Tableau-dashboards plus de bijbehorende querypatronen","pov-li-6": "Handmatig exporteren naar Excel werd direct aangepakt","pov-li-7": "Meerdere Tableau-datasets werden samengebracht in één Mosaic-model","pov-li-8": "Toonde een pad om jaarlijks duizenden uren Excel-verwerking te elimineren","pov-highlight-2": "⚡ Dit is het Excel-probleem van 150 gebruikers in de praktijk, en Mosaic loste het op tijdens de POV.","pov-card-3-title": "Finance P&amp;L · Excel-selfservice","pov-card-3-badge": "Gevalideerd","pov-li-9": "Mosaic met Excel-add-in bood een direct pad weg van MSAS-cubes","pov-li-10": "Gebruiksvriendelijke selectie, filtering en verversing op aanvraag, zonder SSAS-kennis","pov-li-11": "Financegebruikers demonstreerden selfservice-P&L zonder afhankelijkheid van verouderde systemen","pov-li-12": "Uitfasering van MSAS werd onderdeel van dezelfde strategische beweging, geen zijproject","pov-highlight-3": "⚡ Dit is het toepassingsscenario dat Databricks Unity Catalog alleen niet kan afdekken. Finance heeft een consumptielaag nodig, niet alleen een dataplatform.","hes-eyebrow": "Waar het gesprek stokte","hes-title": "Wat Wehkamp wilde, en hoe Strategy kan reageren","hes-lead": "De uiteindelijke bezwaren gingen minder over de vraag of Mosaic waarde leverde en meer over de vraag of het aansloot op de technische werkwijze die Wehkamp voor ogen had. Hieronder elk punt en de directe reactie.","hes-item-1-title": "Automatische, gebruiksgedreven optimalisatie","hes-item-1-span": "Het systeem moet leren van querypatronen en zich aanpassen, zonder voorafgaande cache- of aggregatiebeslissingen.","hes-item-1-resp": "→ De Query Acceleration Engine van Mosaic biedt pushdown-verwerking, intelligente caching en berekeningen over meerdere bronnen heen — gebruiksbewust, niet vooraf geconfigureerd. AI Sync for Linked Models (februari 2026) automatiseert het onderhoud van gekoppelde semantische modellen verder.","hes-item-2-title": "Engineeringvriendelijke workflows","hes-item-2-span": "Ondersteuning voor YAML-/SQL-gebaseerd werk, Git-versiebeheer en bulkbewerkingen die aansluiten op hoe het team nu werkt.","hes-item-2-resp": "Mosaic Studio ondersteunt codegebaseerde modelcreatie naast AI-gedreven tooling, inclusief YAML-/SQL-workflows. Engineers zijn niet beperkt tot uitsluitend een GUI-aanpak, en de AI-assistent voor Python-querygeneratie automatiseert een groot deel van het technische integratiewerk.","hes-item-3-title": "Lage operationele belasting voor een team van &lt; 5","hes-item-3-span": "Geen nieuw zwaar platform dat een aparte beheerfunctie vereist.","hes-item-3-resp": "Mosaic Studio versnelt modelcreatie tot 10x met AI-ondersteuning. De engineeringbelasting zit vooral aan de voorkant tijdens modelbouw, niet in het dagelijks beheer. De AI-assistent ondersteunt Python-querygeneratie automatisch en verlaagt zo de dagelijkse inspanning.","hes-item-4-title": "Hergebruik van bestaande Databricks-structuur — geen heropbouw","hes-item-4-span": "Gebruikmaken van de reeds goed gemodelleerde Unity Catalog / Delta Lake-structuur zonder opnieuw te beginnen.","hes-item-4-resp": "Mosaic verbindt direct met Databricks als databron. Het vervangt de medallion-architectuur niet, maar zit erboven. De gold-laag wordt de input voor Mosaic, niet iets dat opnieuw ontworpen moet worden.","hes-item-5-title": "Zorg over \"nog een platformlaag\"","hes-item-5-span": "Ook als het strategisch waardevol is, kan een tweede groot platform voelen als extra operationeel oppervlak.","hes-item-5-resp": "Het juiste kader is taakverdeling, niet extra overhead. Unity Catalog beheert data. Mosaic beheert de zakelijke betekenis. Dat zijn verschillende taken. Engineers die hebben gewerkt met logica verspreid over Tableau-datasets, SSAS-cubes en Excel-formules begrijpen waarom die in verschillende lagen thuishoren.","hes-item-6-title": "Hoge transparantie in geheugen, refresh en cachegedrag","hes-item-6-span": "Duidelijk inzicht in wat versneld wordt, modelstatus en performancegedrag.","hes-item-6-resp": "De module Usage Insights van Mosaic Sentinel biedt inzicht in het gebruik van de semantische laag, consumptiepatronen, meest gebruikte modellen en prestatiegegevens — zonder dataverplaatsing of leveranciersafhankelijkheid.","opt-eyebrow": "De echte keuze","opt-title": "Dit is niet Databricks versus Strategy.<br>Dit is alleen Databricks versus Databricks + Strategy.","opt-lead": "De beslissing wordt duidelijker wanneer deze wordt gezien als twee werkwijzen in plaats van als een product-tegen-productvervanging. Databricks is in beide scenario's de basis.","opt-card-1-title": "Optie A · Alleen Databricks","opt-card-1-tag": "Technische aansluiting","opt-item-1-title": "Databricks + Unity Catalog","opt-item-1-text": "Continuïteit in engineering en directe aansluiting op de governance. Maximaal hergebruik van huidige werkwijzen.","opt-item-2-title": "Tableau blijft de BI-laag in de afnameketen","opt-item-2-text": "De bestaande reportinglaag blijft behouden. Het Databricks-kostenpatroon vanuit Tableau-refreshes blijft bestaan.","opt-item-3-title": "Excel-bewerking gaat door","opt-item-3-text": "150+ merchandisers blijven dagelijks data vanuit Tableau naar Excel exporteren. Het risico op semantische drift blijft bestaan.","opt-item-4-title": "MSAS-uitfasering wordt apart behandeld","opt-item-4-text": "Vraagt om een apart ontworpen aanpak voor finance en ad-hocrapportage in Excel, buiten de keuze voor de semantische laag.","opt-card-2-title": "Optie B · Databricks + Strategy","opt-card-2-tag": "Volledige bedrijfsoplossing","opt-item-5-title": "Databricks blijft het fundament","opt-item-5-text": "Geen verdringing van de medallion-investering. Mosaic verbindt met de gold-laag als databron.","opt-item-6-title": "Mosaic als semantische laag","opt-item-6-text": "Herbruikbare businesslogica die vanuit één model wordt beheerd over Tableau, Excel en alle afnamekanalen heen.","opt-item-7-title": "Excel-last wordt opgelost, niet in stand gehouden","opt-item-7-text": "Merchandisers krijgen beheerde, verversbare data direct in Excel vanuit Mosaic. De dagelijkse exportactiviteit verdwijnt.","opt-item-8-title": "Finance-modernisering krijgt een echt pad","opt-item-8-text": "Vervanging van MSAS wordt onderdeel van dezelfde strategie. Excel add-in met Mosaic vervangt de SSAS-afhankelijkheid, zoals aangetoond in de POV.","arch-proposed-title": "Optie B · Voorgestelde architectuur in drie lagen","layer-1-name": "Dataplatformlaag — Databricks","layer-1-desc": "Onaangetast. Bronze → Silver → Gold medallion. Unity Catalog bestuurt datatoegang en lineage.","layer-2-name": "Semantische laag — Strategy Mosaic","layer-2-desc": "Businesslogica, gecertificeerde meetwaarden en governance. Onderschept query's: gecachete meetwaarden raken Databricks-compute niet. Mosaic Sentinel beheert toegang en gebruik.","layer-3-name": "Consumptielaag — Alle oppervlakken, één semantische waarheid","layer-3-desc": "Elke tool leest uit hetzelfde beheerde Mosaic-model. Definities kunnen niet afwijken. Handmatige Excel-bewerking wordt vervangen door beheerde verversing.","layer-4-name": "AI-laag — MCP en AI-agents <span style=\"font-size:11px;opacity:.6\">(Preview — vanaf maart 2026)</span>","layer-4-desc": "Elke LLM, Claude, Copilot, ChatGPT of Gemini, kan beheerde Wehkamp-meetwaarden rechtstreeks via MCP bevragen. Geen maatwerkintegratie. Geen risico op hallucinaties. Verankerd in dezelfde semantische laag van Mosaic.","pill-1": "Bronze","pill-2": "Silver","pill-3": "Gold","pill-4": "Unity Catalog","pill-5": "Delta Lake","pill-6": "Query Acceleration","pill-7": "Intelligent Cache","pill-8": "Mosaic Studio (10× snellere modelbouw)","pill-9": "Mosaic Sentinel","pill-10": "200+ connectors","pill-11": "Tableau","pill-12": "Excel add-in (vervangt MSAS)","pill-13": "Strategy One-dashboards","pill-14": "Power BI","pill-15": "Claude via MCP","pill-16": "Copilot Studio","pill-17": "ChatGPT","pill-18": "Gemini","pill-19": "AWS Quick Suite","cmp-eyebrow": "Vergelijking per beslissing","cmp-title": "Waar Databricks sterker is, waar Strategy sterker is en waar het afhangt van de prioriteit","cmp-lead": "Een eerlijke beoordeling, geen productpitch. Dit is de vergelijking die telt voor de echte beslissing van Wehkamp.","cmp-card-1-title": "Fit als dataplatform","cmp-card-1-badge": "Voordeel Databricks","cmp-card-1-body": "Databricks is al de vertrouwde engineeringbasis. Unity Catalog sluit sterk aan op de huidige werkwijze. Strategy concurreert hier niet, maar zit erboven.","cmp-card-2-title": "Semantisch hergebruik over tools heen","cmp-card-2-badge": "Hangt af van de prioriteit","cmp-card-2-body": "Databricks is sterker voor governance binnen het platform. Strategy is sterker voor beheerd hergebruik over de echte zakelijke afnamekanalen heen, zoals Tableau, Excel en andere downstream tools.","cmp-card-3-title": "Werkwijze voor Tableau en Excel","cmp-card-3-badge": "Voordeel Strategy","cmp-card-3-body": "Hier wordt het verhaal van Strategy aantoonbaar sterker. Het probleem van Wehkamp draait niet alleen om semantische modellering, maar ook om de werkwijze in de afnameketen. Strategy heeft hier tijdens de POV al waarde bewezen.","cmp-card-4-title": "Pad voor uitfasering van MSAS","cmp-card-4-badge": "Voordeel Strategy","cmp-card-4-body": "Strategy heeft hier het duidelijkste en enige geloofwaardige verhaal. De POV toonde expliciet Excel-gebaseerde selfservice zonder MSAS. Alleen Databricks kan MSAS niet vervangen voor finance-gebruikers die in Excel werken.","cmp-card-5-title": "Operationele eenvoud","cmp-card-5-badge": "Voordeel Databricks","cmp-card-5-body": "Wehkamp geeft duidelijk de voorkeur aan een model dat natuurlijker, meer geautomatiseerd en lichter aanvoelt voor een team van minder dan vijf mensen. Databricks heeft het meest intuïtieve antwoord als eenvoud in de werkwijze het belangrijkste criterium is.","cmp-card-6-title": "Volledigheid van de totale oplossing","cmp-card-6-badge": "Voordeel Strategy","cmp-card-6-body": "Als de vraag is welke optie het oorspronkelijke businessprobleem als geheel beter oplost, dan is Databricks + Strategy het completere antwoord. Databricks is wellicht de natuurlijkere platformfit. Strategy past sterker van semantiek tot consumptie.","cmp-h4-1": "Databricks","cmp-h4-2": "Strategy","cmp-h4-3": "Databricks","cmp-h4-4": "Strategy","cmp-h4-5": "Databricks","cmp-h4-6": "Strategy","cmp-h4-7": "Databricks","cmp-h4-8": "Strategy","cmp-h4-9": "Databricks","cmp-h4-10": "Strategy","cmp-h4-11": "Databricks","cmp-h4-12": "Strategy","cmp-li-1": "Directe aansluiting op de medallion-architectuur","cmp-li-2": "Afgestemd op huidig engineeringeigenaarschap","cmp-li-3": "Lagere waargenomen verstoring","cmp-li-4": "Niet gepositioneerd als dataplatform","cmp-li-5": "Het sterkst gepositioneerd boven het dataplatform","cmp-li-6": "Moet als aanvullende waarde worden gepositioneerd","cmp-li-7": "Sterk als het doel semantische governance binnen Databricks is","cmp-li-8": "Dichter bij bestaande engineering-assets","cmp-li-9": "Sterker wanneer semantische consistentie in de afnameketen even belangrijk is als in de aanvoerketen","cmp-li-10": "Eén model hergebruikt over alle tools","cmp-li-11": "Sterke platformalignment","cmp-li-12": "Laat Excel-bewerking en beheerde consumptie nog steeds onopgelost","cmp-li-13": "Pakt semantisch hergebruik en consumptie door zakelijke gebruikers samen aan","cmp-li-14": "Richt zich direct op de dagelijkse Excel-workflow van 150 gebruikers","cmp-li-15": "Solide databasis","cmp-li-16": "Vraagt om een apart ontworpen Excel- en finance-aanpak; dit maakt geen deel uit van Unity Catalog","cmp-li-17": "Combineert semantische modernisering met een echte werkwijze richting Excel","cmp-li-18": "MSAS-uitfasering wordt onderdeel van één beweging","cmp-li-19": "Dichter bij huidige teamvaardigheden en platformgewoonten","cmp-li-20": "Minder weerstand vanuit een technische evaluatie","cmp-li-21": "Brede platformwaarde","cmp-li-22": "De inspanning zit aan de voorkant, niet in de dagelijkse overhead; AI-ondersteunde modelcreatie verlaagt de belasting aanzienlijk","cmp-li-23": "Het beste als Wehkamp dicht bij zijn engineering-zwaartepunt wil blijven","cmp-li-24": "Het beste als Wehkamp semantisch hergebruik, minder Excel, beheerste rapportage en modernisering van MSAS samen wil oplossen","value-eyebrow": "Prijs-kwaliteitverhouding","value-title": "De beste waarde hangt af van waar Wehkamp op optimaliseert","value-lead": "Een formele ROI kan niet worden berekend zonder kwantitatieve input van Wehkamp. Het betere kader is de waarde op het niveau van de werkwijze: welke optie lost duurzaam meer van het oorspronkelijke probleem op.","value-card-1-title": "Alleen Databricks levert de beste waarde als de prioriteit ligt bij:","value-card-2-title": "Databricks + Strategy levert de beste waarde als de prioriteit ligt bij:","value-item-1-title": "Architectonische continuïteit","value-item-1-text": "Maximaal hergebruik van huidige Databricks-patronen en de vertrouwdheid van het team. Geen nieuw platformoppervlak.","value-item-2-title": "Waargenomen eenvoud","value-item-2-text": "De minste weerstand tegen het toevoegen van nog een groot platform.","value-item-3-title": "Engineeringgedreven optimalisatie","value-item-3-text": "Het besliskader wordt meer gedreven door platformfit dan door herontwerp van zakelijke afname.","value-item-4-title": "Het verminderen van Excel-intensief werk in de afnameketen","value-item-4-text": "Vooral waar Tableau nu als downloadmechanisme naar Excel wordt gebruikt door 150+ dagelijkse gebruikers.","value-item-5-title": "Geünificeerde semantische logica over consumptie heen","value-item-5-text": "Niet alleen op dataplatformniveau, maar over Tableau, Excel en beheerde rapportage heen met één model.","value-item-6-title": "Finance-rapportage moderniseren als onderdeel van dezelfde beweging","value-item-6-text": "De uitfasering van MSAS gebeurt naast de beslissing over de semantische laag, niet later als zijproject.","value-item-7-title": "AI-gereedheid voor de toekomst","value-item-7-text": "Beheerde Mosaic-modellen vormen de basis voor elke AI-agent, zonder hallucinaties en zonder maatwerkintegratie.","risk-eyebrow": "Risico's en bedenkingen","risk-title": "Beide opties hebben echte sterke punten en duidelijke afwegingen","risk-lead": "Een gebalanceerde beslissing vraagt dat beide kanten helder worden benoemd. Dit zijn de risico's, eerlijk beoordeeld.","risk-card-1-title": "Risico's van een richting met alleen Databricks","risk-card-2-title": "Risico's van een richting met Databricks + Strategy","risk-li-1": "De oplossing kan sterker aansluiten op engineeringvoorkeur dan op herontwerp van zakelijke consumptie in de afnameketen.","risk-li-2": "Frictie in Tableau en Excel kan gedeeltelijk blijven bestaan, ook als governance aan de aanvoerkant verbetert.","risk-li-3": "Het dagelijkse Excel-bewerkingsprobleem voor 150+ gebruikers kan blijven bestaan tenzij dit expliciet buiten het dataplatform wordt aangepakt.","risk-li-4": "Uitfasering van MSAS vraagt aanvullend ontwerp buiten de hoofdkeuze voor de semantische laag.","risk-li-5": "Het semantische verhaal blijft sterker voor het platformteam dan voor adoptie door zakelijke gebruikers.","risk-li-6": "AI-agents die Databricks direct aanspreken zonder een semantische laag ertussen, lopen risico op hallucinaties en governanceproblemen.","risk-li-7": "Wehkamp kan nog een platformlaag als overhead zien als de waarde niet duidelijk wordt gepositioneerd als complementair en niet als vervanging.","risk-li-8": "Het team kan Mosaic ervaren als iets dat meer expliciete semantische modelleerkeuzes vereist dan het volledig geautomatiseerde model dat men verkiest.","risk-li-9": "Operationele acceptatie hangt af van het aantonen dat het platform beheersbaar blijft voor een team van minder dan vijf engineers.","risk-li-10": "Prestatieverwachtingen moeten zorgvuldig worden toegelicht om tegenstrijdigheid met de voorkeur voor systeemgestuurde optimalisatie te vermijden.","risk-li-11": "Zonder een heldere taakverdeling, Databricks beheert data en Mosaic beheert de zakelijke betekenis, kan de architectuur worden gezien als overlap in plaats van complementariteit.","ai-eyebrow": "Vooruitkijken · AI-gereedheid","ai-title": "Het platform dat uw AI-toekomst ondersteunt","ai-lead": "De keuze voor de semantische laag van vandaag is ook de keuze voor de AI-basis van morgen. Deze dimensie ontbreekt in een pad met alleen Databricks.","ai-card-1-title": "MCP: AI-vrijheid","ai-card-1-text": "Elke AI-agent, Claude, Microsoft Copilot, ChatGPT, Gemini of AWS Quick Suite, kan nu Strategy Agents bevragen vanaf elk MCP-compatibel platform. Enterprise-governance wordt automatisch toegepast.","ai-card-1-badge": "GA · jan 2026","ai-card-2-title": "Directe toegang tot Mosaic via MCP","ai-card-2-text": "AI-modellen kunnen de beheerde semantische laag van Wehkamp direct via MCP bevragen, zonder agent en zonder maatwerkintegratie. Stel de vraag: 'Wat veroorzaakte de margedaling in damesmode deze week?' en krijg een beheerd, betrouwbaar antwoord.","ai-card-2-badge": "Preview · mrt 2026","ai-card-3-title": "Beheerde AI, geen hallucinaties","ai-card-3-text": "Omdat AI-agents zijn verankerd in de gecertificeerde meetwaarden van Mosaic, is er geen risico op hallucinaties. Dezelfde definities die in Tableau en Excel worden gebruikt, sturen ook het AI-antwoord aan. Eén bron van waarheid over elk oppervlak heen.","ai-card-3-badge": "GA · 2025","rec-eyebrow": "Eindaanbeveling","rec-title": "Databricks + Strategy is het completere antwoord op het probleem waarmee Wehkamp binnenkwam.","rec-p-1": "Als Wehkamp vooral optimaliseert voor natuurlijke aansluiting op de engineeringaanpak en minimale architectuurwijziging, zal een <strong>richting met alleen Databricks</strong> natuurlijker aanvoelen. Dat is de juiste keuze als eenvoud in engineering het enige doorslaggevende criterium is.","rec-p-2": "Als Wehkamp optimaliseert voor het volledige enterprise-probleem dat oorspronkelijk is gedefinieerd — semantische consistentie over tools heen, het elimineren van Excel-bewerking voor 150+ gebruikers, beheerde consumptie in de afnameketen en een geloofwaardig pad voor modernisering van MSAS — dan biedt <strong>Databricks plus Strategy een completere oplossing.</strong>","rec-p-3": "De sterkste positie voor Strategy is niet om tegen Databricks als dataplatform te argumenteren. Het is om te laten zien dat Databricks en Strategy samen meer van het echte businessprobleem oplossen dan een semantische strategie met alleen Databricks.","rec-p-4": "<strong>Het oordeel:</strong> Databricks beheert uw data. Mosaic beheert uw zakelijke betekenis. Dat zijn verschillende taken, en beide moeten worden uitgevoerd om MSAS uit te faseren, het Excel-probleem op te lossen en een AI-gereed analytisch bedrijfsmodel op te bouwen.","rec-take-1-title": "Directiepunt 1","rec-take-1-text": "Databricks sluit het meest natuurlijk aan op de engineeringaanpak. Strategy erkent dit en vraagt Wehkamp niet om dat te veranderen.","rec-take-2-title": "Directiepunt 2","rec-take-2-text": "Strategy biedt een completere aansluiting van semantiek tot consumptie. Drie toepassingsscenario's bewezen dit in de POV: trading, merchandising en finance.","rec-take-3-title": "Directiepunt 3","rec-take-3-text": "De beslissing is of Wehkamp wil optimaliseren voor eenvoud in engineering of voor bedrijfsbrede volledigheid. De oorspronkelijke vraag ging over dat laatste.","rec-take-4-title": "Directiepunt 4","rec-take-4-text": "De AI-toekomst draait op beheerde semantiek. Mosaic is die basis. Een pad met alleen Databricks vraagt later alsnog om een apart antwoord op die vraag.","next-eyebrow": "Voorgestelde vervolgstappen","next-title": "Drie acties om van kader naar besluit te gaan","next-card-1-title": "Gezamenlijke architectuursessie","next-card-1-text": "Een werksessie van 2 uur met de data engineering lead van Wehkamp en een stakeholder uit finance samen. Engineers valideren het Databricks-integratieverhaal. Finance ziet het pad weg van MSAS en wordt een interne sponsor.","next-card-2-title": "De Excel-overhead kwantificeren","next-card-2-text": "Werk met Wehkamp samen om de werkelijke kosten te schatten van 150+ gebruikers die dagelijks data in Excel bewerken. Vertaal de POV-resultaten, ‘duizenden uren geëlimineerd’, naar een specifieke en geloofwaardige besparing op het niveau van de werkwijze voor dit team.","next-card-3-title": "Mosaic op Databricks demonstreren","next-card-3-text": "Voer een gerichte demo van 90 minuten uit met de echte Databricks-omgeving van Wehkamp, of een vergelijkbare sandbox. Laat zien hoe Mosaic verbinding maakt met de gold-laag, binnen een uur een gecertificeerde meetwaarde bouwt en die gelijktijdig levert aan Tableau en Excel.","footer-brand": "Wehkamp · Besliskader voor de semantische laag","footer-meta-left": "Opgesteld door Strategy Software · Vertrouwelijk · 2026","footer-meta-right": "Directiepresentatie · v9"};
+  const titleNl = "Wehkamp · Besliskader voor de semantische laag";
+  const titleEn = document.title;
+  const htmlEl = document.documentElement;
+  const btnEn = document.getElementById('langBtnEn');
+  const btnNl = document.getElementById('langBtnNl');
+  const translatableIds = Object.keys(nlTranslations);
+  const originals = {};
+
+  translatableIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) originals[id] = el.innerHTML;
+  });
+
+  function applyLanguage(lang) {
+    const useDutch = lang === 'nl';
+    translatableIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = useDutch ? nlTranslations[id] : originals[id];
+    });
+    document.title = useDutch ? titleNl : titleEn;
+    htmlEl.setAttribute('lang', useDutch ? 'nl' : 'en');
+    btnEn.classList.toggle('active', !useDutch);
+    btnNl.classList.toggle('active', useDutch);
+    try {
+      localStorage.setItem('wehkampLang', lang);
+    } catch (e) {}
+  }
+
+  btnEn.addEventListener('click', () => applyLanguage('en'));
+  btnNl.addEventListener('click', () => applyLanguage('nl'));
+
+  let saved = 'en';
+  try {
+    saved = localStorage.getItem('wehkampLang') || 'en';
+  } catch (e) {}
+  if (saved === 'nl') applyLanguage('nl');
+})();
+</script></body>
+</html>
