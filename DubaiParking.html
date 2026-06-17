@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dubai Parking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#FA660F;
+    --orange-soft:rgba(250,102,15,.13);
+    --orange-line:rgba(250,102,15,.55);
+    --bg:#0a0a0b;
+    --surface-1:#151517;
+    --surface-2:#1c1c1f;
+    --line:rgba(255,255,255,.07);
+    --line-2:rgba(255,255,255,.13);
+    --white:#fff;
+    --g-300:#D2D2D2; --g-400:#A8A8A8; --g-500:#717171; --g-600:#484747;
+    --r:8px; --r-lg:14px;
+    --font:'Inter',Arial,Helvetica,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
+  body{color:var(--white);font-family:var(--font);-webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;line-height:1.45;min-height:100vh;
+    max-width:500px;margin:0 auto;position:relative;overflow-x:hidden}
+  body::before{content:"";position:fixed;top:-180px;left:50%;transform:translateX(-50%);
+    width:520px;height:420px;background:radial-gradient(circle,rgba(250,102,15,.16),transparent 65%);
+    pointer-events:none;z-index:0}
+  .wrap{position:relative;z-index:1;padding:0 18px 56px}
+
+  /* top bar */
+  .bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;
+    padding:15px 2px 14px;background:linear-gradient(180deg,var(--bg) 70%,rgba(10,10,11,0));
+    margin:0 -18px;padding-left:18px;padding-right:18px}
+  .wordmark{font-weight:600;font-size:17px;letter-spacing:-.03em;color:var(--white)}
+  .wordmark .sym{font-size:.56em;vertical-align:super;margin-left:1px;font-weight:600;opacity:.95}
+  .bar .sync{margin-left:auto;font-size:10px;color:var(--g-500);text-align:right;line-height:1.35;
+    letter-spacing:.02em}
+  .bar .sync .live{color:var(--orange)}
+  .bar .sync .live::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--orange);margin-right:5px;vertical-align:1px;box-shadow:0 0 8px var(--orange)}
+
+  /* hero */
+  .hero{display:flex;align-items:center;gap:13px;padding:10px 2px 22px}
+  .sicon{width:42px;height:42px;border-radius:10px;background:var(--orange);flex-shrink:0;
+    display:grid;place-items:center;font-weight:700;font-size:24px;color:#000;letter-spacing:-.04em}
+  .hero h1{font-size:25px;font-weight:600;letter-spacing:-.035em;line-height:1.05}
+  .hero .ey{font-size:11px;color:var(--orange);font-weight:500;letter-spacing:.01em;margin-bottom:2px}
+
+  .banner{display:flex;gap:9px;background:var(--orange-soft);border-left:3px solid var(--orange);
+    border-radius:0 var(--r) var(--r) 0;padding:11px 13px;margin-bottom:18px;font-size:12.5px;
+    color:var(--g-300);line-height:1.5}
+  .banner b{color:var(--orange);font-weight:600}
+
+  /* day toggle */
+  .seg{display:flex;gap:5px;background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);padding:5px;margin-bottom:18px}
+  .seg button{flex:1;border:none;border-radius:5px;background:transparent;color:var(--g-400);
+    font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;padding:9px 6px;transition:.16s}
+  .seg button .c{display:block;font-size:10px;font-weight:400;opacity:.7;margin-top:2px}
+  .seg button.on{background:var(--orange);color:#000;font-weight:600}
+  .seg button.on .c{opacity:.75}
+
+  /* who */
+  .panel-label{font-size:11px;color:var(--g-500);font-weight:500;letter-spacing:.02em;margin:0 2px 10px}
+  .grp{margin-bottom:13px}.grp:last-child{margin-bottom:0}
+  .grp .gh{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--g-500);margin:0 2px 8px}
+  .grp .gh .pip{width:7px;height:7px;border-radius:50%}
+  .pip.tue{background:var(--orange)} .pip.wed{background:var(--g-400)}
+  .who-wrap{background:var(--surface-1);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:14px;margin-bottom:18px}
+  .people{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{font-size:13px;font-weight:500;padding:7px 12px;border-radius:999px;cursor:pointer;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--g-300);transition:.14s}
+  .chip:hover{border-color:var(--line-2);color:var(--white)}
+  .chip.on{background:var(--orange);border-color:var(--orange);color:#000;font-weight:600}
+  .chip .t{font-size:10px;opacity:.6;margin-left:5px}
+  .chip.on .t{opacity:.7}
+
+  /* me card */
+  .me{border-radius:var(--r-lg);padding:19px;margin-bottom:22px;border:1px solid var(--line);
+    background:var(--surface-1)}
+  .me.act{border-color:var(--orange-line);background:linear-gradient(180deg,var(--orange-soft),transparent),var(--surface-1)}
+  .me .role{font-size:11px;color:var(--g-500);font-weight:500;letter-spacing:.02em}
+  .me .big{font-size:20px;font-weight:600;letter-spacing:-.02em;margin:5px 0 4px}
+  .me .desc{font-size:13px;color:var(--g-400);margin-bottom:16px;line-height:1.55}
+  .state{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:500;
+    padding:11px 13px;border-radius:var(--r);margin-bottom:14px}
+  .state.go{background:var(--orange-soft);color:var(--orange)}
+  .state.dim{background:var(--surface-2);color:var(--g-400)}
+  .state .d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .state.go .d{background:var(--orange);box-shadow:0 0 8px var(--orange)}
+  .state.dim .d{background:var(--g-500)}
+  .btn{display:block;width:100%;text-align:center;border:none;cursor:pointer;font-family:var(--font);
+    font-size:14.5px;font-weight:600;padding:13px;border-radius:var(--r);transition:.14s;letter-spacing:-.01em}
+  .btn:active{transform:scale(.985)}
+  .btn-primary{background:var(--orange);color:#fff}
+  .btn-primary:hover{background:#ff7322}
+  .btn-ghost{background:transparent;color:var(--orange);border:1px solid var(--orange-line)}
+  .btn-ghost:hover{background:var(--orange-soft)}
+  .btn-quiet{background:var(--surface-2);color:var(--g-300);border:1px solid var(--line)}
+  .btn-quiet:hover{border-color:var(--line-2);color:var(--white)}
+
+  /* lot */
+  .lot-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 12px}
+  .lot-h .t{font-size:11px;color:var(--g-500);font-weight:500;letter-spacing:.02em}
+  .lot-h .c{font-size:12px;color:var(--g-400);font-weight:500}
+  .lot-h .c b{color:var(--orange)}
+  .lot{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+  .stall{position:relative;background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);padding:13px 14px 14px;min-height:98px;display:flex;flex-direction:column;
+    transition:.18s;overflow:hidden;animation:rise .42s cubic-bezier(.2,.7,.3,1) both}
+  .stall::before{content:"";position:absolute;top:0;left:14px;right:14px;height:2px;
+    background:var(--line-2);border-radius:2px}
+  .stall .plate{font-size:11px;color:var(--g-500);font-weight:500;letter-spacing:.04em;margin-top:3px}
+  .stall .occ{font-size:14px;font-weight:600;letter-spacing:-.01em;margin-top:5px}
+  .stall .st{font-size:11px;color:var(--g-500);font-weight:500;margin-top:auto;padding-top:8px}
+  .stall.inuse .occ{color:var(--g-300)}
+  .stall.mine{border-color:var(--line-2)}
+  .stall.mine::before{background:var(--white)}
+  .stall.mine .occ{color:var(--white)}
+  .stall.taken{opacity:.55}
+  .stall.taken .occ{color:var(--g-400)}
+  .stall.free{background:linear-gradient(180deg,var(--orange-soft),transparent),var(--surface-1);
+    border-color:var(--orange-line);cursor:pointer;animation:rise .42s cubic-bezier(.2,.7,.3,1) both,glow 3.4s ease-in-out infinite}
+  .stall.free::before{background:var(--orange)}
+  .stall.free .occ{color:var(--white)}
+  .stall.free:hover{transform:translateY(-2px)}
+  .grabpill{align-self:flex-start;margin-top:auto;background:var(--orange);color:#fff;font-size:11px;
+    font-weight:600;padding:5px 11px;border-radius:999px}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes glow{0%,100%{box-shadow:0 4px 22px rgba(250,102,15,.10)}50%{box-shadow:0 6px 30px rgba(250,102,15,.22)}}
+
+  .foot{text-align:center;margin-top:26px;font-size:11px;color:var(--g-600);line-height:1.9}
+  .foot .reset{color:var(--g-500);cursor:pointer;border-bottom:1px solid var(--line-2);padding-bottom:1px}
+  .foot .reset:hover{color:var(--orange);border-color:var(--orange-line)}
+  @media(prefers-reduced-motion:reduce){.stall{animation:none}}
+  /* help button + sheet */
+  .help-btn{border:1px solid var(--line-2);background:transparent;color:var(--g-300);
+    font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;
+    transition:.15s;line-height:1;padding:6px 12px;border-radius:999px;letter-spacing:.01em}
+  .help-btn:hover{border-color:var(--orange-line);color:var(--orange)}
+  .overlay{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .2s}
+  .overlay.open{opacity:1;pointer-events:auto}
+  .sheet{width:100%;max-width:500px;max-height:88vh;overflow-y:auto;background:var(--surface-1);
+    border:1px solid var(--line-2);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:24px 20px 34px;
+    position:relative;transform:translateY(20px);transition:transform .24s cubic-bezier(.2,.7,.3,1)}
+  .overlay.open .sheet{transform:translateY(0)}
+  .sheet-close{position:absolute;top:15px;right:15px;width:31px;height:31px;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface-2);color:var(--g-300);font-size:19px;
+    cursor:pointer;line-height:1;transition:.15s}
+  .sheet-close:hover{color:var(--white);border-color:var(--line-2)}
+  .sheet h2{font-size:19px;font-weight:600;letter-spacing:-.025em}
+  .sheet .sub{font-size:12px;color:var(--g-500);margin-bottom:18px}
+  .sheet h3{font-size:13px;color:var(--orange);font-weight:600;margin:22px 0 10px}
+  .sheet ol,.sheet ul{margin:0;padding-left:18px}
+  .sheet li{font-size:13.5px;color:var(--g-300);line-height:1.55;margin-bottom:9px}
+  .sheet li b{color:var(--white);font-weight:600}
+  .sheet .sub-list{list-style:none;padding-left:0;margin-top:7px}
+  .sheet .sub-list li{font-size:12.5px;color:var(--g-400);margin-bottom:5px;padding-left:15px;position:relative}
+  .sheet .sub-list li::before{content:"\2192";position:absolute;left:0;color:var(--orange)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <span class="wordmark">Strategy<span class="sym">&#8383;</span></span>
+    <span class="sync" id="sync"></span>
+    <button class="help-btn" id="helpBtn" aria-label="How to use">Help</button>
+  </div>
+
+  <div class="hero">
+    <div class="sicon">S</div>
+    <div>
+      <div class="ey">Dubai office</div>
+      <h1>Parking</h1>
+    </div>
+  </div>
+
+  <div id="banner"></div>
+
+  <div class="seg" id="seg"></div>
+
+  <div class="who-wrap">
+    <div class="panel-label">Who are you?</div>
+    <div id="people"></div>
+  </div>
+
+  <div id="meCard"></div>
+
+  <div class="lot-h"><span class="t" id="lotTitle">The lot</span><span class="c" id="lotCount"></span></div>
+  <div class="lot" id="lot"></div>
+
+  <div class="foot">
+    <span class="reset" id="reset">Clear today &middot; weekly reset</span><br>
+    <span style="opacity:.7">&copy; 2026 Strategy Inc.</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="How to use">
+    <button class="sheet-close" id="helpClose" aria-label="Close">&times;</button>
+    <h2>Dubai office parking</h2>
+    <div class="sub">A quick guide</div>
+
+    <h3>How to use</h3>
+    <ol>
+      <li><b>Tap your name</b>, then your action. Pick yourself each time &mdash; nobody stays selected.</li>
+      <li><b>Not coming in?</b> Tap "I'm not coming today." Your bay turns orange and opens up for anyone.</li>
+      <li><b>Need a bay?</b> Tap any glowing orange stall to grab it. It's yours for the day.</li>
+      <li><b>Plans changed?</b>
+        <ul class="sub-list">
+          <li>Freed your bay, nobody took it yet &mdash; tap "take it back."</li>
+          <li>Someone already grabbed it &mdash; it's theirs today; message them in the chat if you really need it.</li>
+          <li>Grabbed one you won't use &mdash; tap "free it up" for the next person.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>Keep it fair</h3>
+    <ul>
+      <li>No login here &mdash; the app trusts everyone to play straight.</li>
+      <li>Tap <b>only your own name</b>. You can act as anyone; please don't.</li>
+      <li>Free your bay <b>only if you're truly not coming.</b></li>
+      <li>Grab a bay <b>only if you'll use it</b> &mdash; and free it up if plans change.</li>
+      <li><b>First come, first served.</b> If a stall isn't glowing, it's taken.</li>
+    </ul>
+
+    <h3>Good to know</h3>
+    <ul>
+      <li>An orange glow means <b>free</b>. Dim means <b>taken</b> or <b>in use</b>.</li>
+      <li>Changes show up for everyone within a few seconds.</li>
+      <li>Tuesday and Wednesday are separate &mdash; switch the day at the top.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SHARED STORE  -  the ONLY external thing.
+   Leave blank to run in solo mode (per-device, for testing).
+   To make it shared across everyone:
+     1. Go to https://jsonblob.com
+     2. Replace the editor contents with:  {}
+     3. Save, then copy the URL (looks like
+        https://jsonblob.com/api/jsonBlob/0000000000000000)
+     4. Paste it between the quotes below.
+   ============================================================ */
+const STORE_URL = "";
+/* ============================================================ */
+
+const TUE=[["Nisha",1],["Jacek",2],["Ranjith",3],["Rabie",4],["Omar",5],["Rishi",6]];
+const WED=[["Juliana",1],["Atul",2],["Wessel",3],["Sadik",4],["Ghadah",5],["Ludmila",6]];
+const ROSTER=[
+  ...TUE.map(([n,b])=>({id:"t_"+n,name:n,group:"tue",bay:b})),
+  ...WED.map(([n,b])=>({id:"w_"+n,name:n,group:"wed",bay:b})),
+];
+const BAYS=[1,2,3,4,5,6];
+const byId=id=>ROSTER.find(u=>u.id===id);
+const nameOf=id=>byId(id)?.name||"\u2014";
+const ownerOf=b=>ROSTER.find(u=>u.group===day&&u.bay===b)?.id||null;
+const isOwnerToday=u=>u.group===day;
+const dn={tue:"Tuesday",wed:"Wednesday"};
+
+let day=(new Date().getDay()===2)?"tue":"wed";
+let me=null;
+let DB={tue:{released:{},claims:{}},wed:{released:{},claims:{}}};
+let lastSeen="";
+function S(){return DB[day]||(DB[day]={released:{},claims:{}});}
+
+async function pull(){
+  if(!STORE_URL) return false;
+  try{
+    const r=await fetch(STORE_URL,{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const txt=await r.text();
+    const j=txt?JSON.parse(txt):{};
+    DB={tue:{released:{},claims:{},...(j.tue||{})},wed:{released:{},claims:{},...(j.wed||{})}};
+    setSync(true);
+    const changed=txt!==lastSeen; lastSeen=txt; return changed;
+  }catch(e){ setSync(false); return false; }
+}
+async function push(){
+  if(!STORE_URL){ render(); return; }
+  const body=JSON.stringify(DB);
+  try{ await fetch(STORE_URL,{method:"PUT",headers:{"Content-Type":"application/json"},body}); lastSeen=body; setSync(true); }
+  catch(e){ setSync(false); }
+}
+function setSync(ok){
+  const el=document.getElementById("sync");
+  if(!STORE_URL){ el.textContent=""; return; }
+  el.innerHTML=ok?'<span class="live">Live</span><br>synced':'Offline<br>retrying';
+}
+
+function bayStatus(b){
+  const s=S(),owner=ownerOf(b);
+  if(s.claims[b])return{cls:"claimed",who:nameOf(s.claims[b]),st:"Taken"};
+  if(s.released[b])return{cls:"free",who:nameOf(owner)+" \u00b7 away",st:"Free"};
+  return{cls:"inuse",who:nameOf(owner),st:"In use"};
+}
+
+function render(){
+  document.getElementById("banner").innerHTML = STORE_URL ? "" :
+    '<div class="banner"><span><b>Solo mode.</b> Changes stay on this device only. To sync everyone, add your shared link at the top of the code.</span></div>';
+
+  document.getElementById("seg").innerHTML=["tue","wed"].map(d=>
+    `<button class="${day===d?'on':''}" onclick="setDay('${d}')">${dn[d]}<span class="c">${d==='tue'?'Tue group parks':'Wed group parks'}</span></button>`).join('');
+
+  const seg=(g,label,pip)=>`<div class="grp"><div class="gh"><span class="pip ${pip}"></span>${label}</div>
+    <div class="people">${ROSTER.filter(u=>u.group===g).map(u=>{
+      const tag=isOwnerToday(u)?('bay '+u.bay):'off-day';
+      return `<div class="chip ${me===u.id?'on':''}" onclick="pick('${u.id}')">${u.name}<span class="t">${tag}</span></div>`;
+    }).join('')}</div></div>`;
+  document.getElementById("people").innerHTML=seg('tue','Tuesday group','tue')+seg('wed','Wednesday group','wed');
+
+  const s=S(),mc=document.getElementById("meCard");
+  if(!me){mc.innerHTML='<div class="me"><div class="desc" style="margin:0">Pick your name above to get started.</div></div>';}
+  else{
+    const u=byId(me);
+    if(isOwnerToday(u)){
+      const b=u.bay,released=!!s.released[b],takenBy=s.claims[b];
+      mc.innerHTML=`<div class="me ${released?'act':''}">
+        <div class="role">Your bay \u00b7 #${String(b).padStart(2,'0')} \u00b7 ${dn[day]}</div>
+        <div class="big">${released?(takenBy?"Handed over for today":"You're marked away"):"Your bay is reserved"}</div>
+        ${released
+          ? (takenBy
+              ?`<div class="state dim"><span class="d"></span>${nameOf(takenBy)} grabbed it \u2014 it's theirs today</div>
+                <div class="desc" style="margin:0">You can't take it back once it's grabbed. If you really need it, message ${nameOf(takenBy)} in the chat.</div>`
+              :`<div class="state go"><span class="d"></span>Free for anyone who needs it</div>
+                <button class="btn btn-ghost" onclick="keep()">I'm coming in \u2014 take it back</button>`)
+          :`<div class="desc">Not coming this ${dn[day]}? One tap frees your bay for someone who needs it.</div>
+            <button class="btn btn-primary" onclick="release()">I'm not coming today</button>`}</div>`;
+    } else {
+      const mine=BAYS.find(b=>s.claims[b]===me);
+      const open=BAYS.filter(b=>bayStatus(b).cls==="free").length;
+      if(mine){
+        mc.innerHTML=`<div class="me act"><div class="role">You're sorted \u00b7 ${dn[day]}</div>
+          <div class="big">Bay #${String(mine).padStart(2,'0')} is yours today</div>
+          <div class="state go"><span class="d"></span>You grabbed it</div>
+          <button class="btn btn-quiet" onclick="ungrab()">Won't need it \u2014 free it up</button></div>`;
+      } else {
+        mc.innerHTML=`<div class="me"><div class="role">Off-day \u00b7 need a bay this ${dn[day]}?</div>
+          <div class="big">${open>0?open+' bay'+(open>1?'s':'')+' free right now':'No bays free yet'}</div>
+          <div class="desc" style="margin:0">${open>0?'Tap any glowing stall below to grab it.':'Nobody from the '+dn[day]+' group has marked away yet. Check back later.'}</div></div>`;
+      }
+    }
+  }
+
+  const free=BAYS.filter(b=>bayStatus(b).cls==="free").length;
+  document.getElementById("lotTitle").textContent="The lot \u00b7 "+dn[day];
+  document.getElementById("lotCount").innerHTML='<b>'+free+'</b> free now';
+  document.getElementById("lot").innerHTML=BAYS.map(b=>{
+    const st=bayStatus(b),u=me?byId(me):null;
+    const mineBay=u&&isOwnerToday(u)&&u.bay===b&&!s.claims[b];
+    let cls=st.cls, who=st.who;
+    if(mineBay){cls="mine"; who="You";}
+    else if(st.cls==="claimed")cls="taken";
+    const canGrab=u&&!isOwnerToday(u)&&st.cls==="free"&&!BAYS.find(x=>s.claims[x]===me);
+    return `<div class="stall ${cls} ${canGrab?'grab':''}" style="animation-delay:${(b-1)*45}ms" ${canGrab?`onclick="grab(${b})"`:''}>
+      <div class="plate">Bay ${String(b).padStart(2,'0')}</div>
+      <div class="occ">${who}</div>
+      ${canGrab?'<span class="grabpill">Tap to grab</span>':'<div class="st">'+st.st+'</div>'}</div>`;
+  }).join('');
+}
+
+function pick(id){ me=(me===id?null:id); render(); }
+async function setDay(d){ if(d===day)return; day=d; await pull(); render(); }
+async function release(){ S().released[byId(me).bay]=me; render(); await push(); }
+async function keep(){
+  await pull();
+  const b=byId(me).bay;
+  if(S().claims[b]){ render(); return; }
+  delete S().released[b];
+  render(); await push();
+}
+async function grab(b){
+  await pull();
+  const s=S();
+  if(!s.released[b] || s.claims[b]){ render(); return; }
+  s.claims[b]=me; render(); await push();
+}
+async function ungrab(){ const b=BAYS.find(x=>S().claims[x]===me); if(b!==undefined)delete S().claims[b]; render(); await push(); }
+
+let resetArmed=false,resetTimer=null;
+document.getElementById("reset").onclick=async()=>{
+  const el=document.getElementById("reset");
+  if(!resetArmed){
+    resetArmed=true; el.textContent="Tap again to clear"; el.style.color="var(--orange)";
+    resetTimer=setTimeout(()=>{resetArmed=false;el.textContent="Clear today \u00b7 weekly reset";el.style.color="";},3000);
+    return;
+  }
+  clearTimeout(resetTimer); resetArmed=false;
+  el.textContent="Clear today \u00b7 weekly reset"; el.style.color="";
+  DB[day]={released:{},claims:{}}; render(); await push();
+};
+
+const overlay=document.getElementById("overlay");
+document.getElementById("helpBtn").onclick=()=>overlay.classList.add("open");
+document.getElementById("helpClose").onclick=()=>overlay.classList.remove("open");
+overlay.onclick=(e)=>{ if(e.target===overlay) overlay.classList.remove("open"); };
+document.addEventListener("keydown",(e)=>{ if(e.key==="Escape") overlay.classList.remove("open"); });
+
+(async()=>{
+  setSync(false);
+  await pull(); render();
+  setInterval(async()=>{ if(await pull()) render(); }, 4000);
+})();
+</script>
+</body>
+</html>
