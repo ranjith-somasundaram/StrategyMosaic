@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trusted context for AI agents — Strategy competitive briefing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#FA660F; --orange-dark:#C44E0B; --orange-tint:#FFF3EC; --orange-tint-2:#FCE3D3;
+  --black:#0B0B0B; --white:#FFFFFF;
+  --text-1:#16100C; --text-2:#484747; --text-3:#717171; --text-muted:#A8A8A8;
+  --g100:#F2F2F2; --g200:#E4E4E4; --g300:#D2D2D2; --g400:#A8A8A8; --g500:#717171; --g600:#484747;
+  --bg:#FFFFFF; --bg-alt:#F6F5F2; --bg-ink:#0B0B0B;
+  --border:#E9E7E2; --border-strong:#D9D6CF;
+  --slate:#5E7E88; --slate-tint:#E4EDF0; --slate-line:#B7CCD3;
+  --sans:'Inter',Arial,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --r-sm:6px; --r-md:10px; --r-lg:16px;
+  --shadow-sm:0 1px 2px rgba(20,16,12,.05),0 1px 3px rgba(20,16,12,.05);
+  --shadow-md:0 6px 24px rgba(20,16,12,.07);
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:var(--sans);color:var(--text-1);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;font-feature-settings:"ss01","cv05";letter-spacing:-0.011em}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
+section{padding:88px 0;border-bottom:1px solid var(--border)}
+h1,h2,h3{font-weight:600;letter-spacing:-0.03em;line-height:1.08;color:var(--text-1)}
+h2{font-size:38px;margin-bottom:14px}
+h3{font-size:21px;letter-spacing:-0.02em}
+p{color:var(--text-2)}
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:24px;height:2px;background:var(--orange);display:inline-block}
+.lead{font-size:18px;color:var(--text-2);max-width:760px}
+.muted{color:var(--text-3)}
+a{color:var(--orange);text-decoration:none}
+
+/* wordmark */
+.wm{font-family:var(--sans);font-weight:600;letter-spacing:-0.04em;display:inline-flex;align-items:flex-start;line-height:1}
+.wm sup{font-size:0.46em;font-weight:700;margin-left:0.04em;transform:translateY(-0.1em)}
+.wm.orange{color:var(--orange)} .wm.white{color:#fff} .wm.black{color:#0B0B0B}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,11,11,.94);backdrop-filter:blur(10px);border-bottom:1px solid #1d1d1d}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-in .wm{font-size:21px}
+.nav-links{display:flex;gap:4px}
+.nav-links a{font-size:13px;color:#cfcdc7;padding:7px 12px;border-radius:var(--r-sm);transition:color .18s,background .18s;font-weight:500;letter-spacing:-0.01em}
+.nav-links a:hover{color:#fff;background:#1c1c1c}
+.nav-links a.active{color:var(--orange)}
+.nav-tag{font-family:var(--mono);font-size:11px;color:#6e6c66;letter-spacing:.04em}
+
+/* hero */
+.hero{padding:96px 0 72px;border-bottom:1px solid var(--border);background:
+  radial-gradient(1100px 420px at 88% -8%, var(--orange-tint) 0%, rgba(255,243,236,0) 62%);}
+.hero h1{font-size:60px;letter-spacing:-0.04em;max-width:14ch;margin-bottom:22px}
+.hero h1 .hl{color:var(--orange)}
+.hero .q{font-size:20px;color:var(--text-2);max-width:680px;margin-bottom:30px;border-left:3px solid var(--orange);padding-left:18px;font-weight:500}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.chip{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--text-2);background:var(--white);border:1px solid var(--border-strong);padding:6px 12px;border-radius:100px}
+.chip b{color:var(--orange);font-weight:600}
+.anchor-stat{margin-top:40px;display:flex;align-items:flex-start;gap:18px;background:var(--orange-tint);border:1px solid var(--orange-tint-2);border-radius:var(--r-md);padding:22px 24px;max-width:780px}
+.anchor-stat .big{font-size:46px;font-weight:700;color:var(--orange);font-family:var(--sans);letter-spacing:-0.04em;line-height:1}
+.anchor-stat .txt{font-size:15px;color:var(--text-2)}
+.anchor-stat .txt b{color:var(--text-1);font-weight:600}
+
+/* generic grid */
+.grid{display:grid;gap:18px}
+.g-2{grid-template-columns:1fr 1fr}
+.g-3{grid-template-columns:repeat(3,1fr)}
+
+/* trap cards */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:36px}
+.tcard{border:1px solid var(--border);border-radius:var(--r-md);padding:26px;background:var(--white)}
+.tcard.bad{background:var(--bg-alt)}
+.tcard .tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;margin-bottom:12px}
+.tcard.bad .tag{color:var(--g500)} .tcard.good .tag{color:var(--orange)}
+.tcard h3{margin-bottom:10px}
+.tcard p{font-size:15px}
+.strike{color:var(--text-muted)}
+
+/* altitude map */
+.amap{margin-top:36px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--white);box-shadow:var(--shadow-sm);overflow:hidden}
+.amap-head{display:grid;grid-template-columns:150px repeat(3,1fr) 110px 110px;border-bottom:1px solid var(--border);background:var(--bg-alt)}
+.amap-head>div{padding:12px 10px;font-size:12px;font-weight:600;text-align:center;color:var(--text-2);letter-spacing:-0.01em}
+.amap-head .lbl{text-align:left;color:var(--text-3);font-weight:500;font-family:var(--mono);font-size:11px;letter-spacing:.04em;display:flex;align-items:center}
+.amap-head .rail-h{font-size:11px}
+.amap-head .rail-strat{color:var(--orange)}
+.amap-head .rail-atlan{color:var(--slate)}
+.trow{display:grid;grid-template-columns:150px repeat(3,1fr) 110px 110px;border-bottom:1px solid var(--border);position:relative;transition:background .18s}
+.trow:last-child{border-bottom:none}
+.trow:hover{background:#fcfbf9}
+.trow .tier-lbl{padding:0 14px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border)}
+.tier-lbl .t{font-size:13px;font-weight:600;color:var(--text-1);letter-spacing:-0.01em}
+.tier-lbl .s{font-size:11px;color:var(--text-3)}
+.cell{padding:14px 8px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border)}
+.pchip{font-size:12px;font-weight:500;color:var(--g600);background:var(--g100);border:1px solid var(--g200);border-radius:var(--r-sm);padding:7px 9px;text-align:center;width:100%;cursor:pointer;transition:all .16s;letter-spacing:-0.01em}
+.pchip:hover{background:var(--g200);color:var(--text-1);transform:translateY(-1px)}
+.pchip[data-tip]{cursor:help}
+.pchip[data-tip]>:not(.pp),.pchip[data-tip]{text-underline-offset:3px}
+.pchip[data-tip]::after{content:"";display:block;height:2px;margin:3px auto 0;width:18px;border-bottom:2px dotted rgba(250,102,15,.5)}
+.pchip .pp{display:block;font-size:10px;color:var(--text-muted);margin-top:1px;font-weight:400}
+/* band tooltip affordance */
+.band[data-tip]{cursor:help}
+.rail{position:relative;border-right:1px solid var(--border);pointer-events:none}
+.rail:last-child{border-right:none}
+.band{position:absolute;left:8px;right:8px;border-radius:var(--r-sm);cursor:pointer;pointer-events:auto;z-index:4;transition:all .18s;display:flex;align-items:center;justify-content:center;padding:6px}
+.band span{font-size:11px;font-weight:600;letter-spacing:-0.01em;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.band.strat{background:var(--orange);border:1px solid var(--orange-dark)}
+.band.strat span{color:#fff}
+.band.atlan{background:var(--slate-tint);border:1px solid var(--slate-line)}
+.band.atlan span{color:var(--slate)}
+.band:hover{filter:brightness(.97);box-shadow:var(--shadow-md)}
+.amap-foot{padding:14px 16px;background:var(--bg-alt);border-top:1px solid var(--border);font-size:13px;color:var(--text-2)}
+.amap-foot b{color:var(--text-1);font-weight:600}
+.amap-foot .ext{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--orange);border:1px dashed var(--orange-tint-2);background:var(--orange-tint);padding:3px 8px;border-radius:100px;margin-left:6px}
+.legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;font-size:13px;color:var(--text-2)}
+.legend .k{display:flex;align-items:center;gap:8px}
+.sw{width:13px;height:13px;border-radius:4px;display:inline-block}
+.sw.orange{background:var(--orange)} .sw.slate{background:var(--slate-tint);border:1px solid var(--slate-line)} .sw.gray{background:var(--g100);border:1px solid var(--g200)}
+
+/* convergence banner */
+.banner{margin-top:30px;background:var(--bg-ink);color:#f2f0ea;border-radius:var(--r-md);padding:24px 28px;display:flex;gap:18px;align-items:flex-start}
+.banner .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);margin-top:9px;flex:none}
+.banner h3{color:#fff;font-size:18px;margin-bottom:6px}
+.banner p{color:#bdbbb4;font-size:15px;margin:0}
+.banner p b{color:#fff;font-weight:600}
+
+/* role cards (even-handed) */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;margin-top:34px}
+.role{border:1px solid var(--border);border-radius:var(--r-md);background:var(--white);box-shadow:var(--shadow-sm);padding:22px;display:flex;flex-direction:column}
+.role .rh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.role .rname{font-size:18px;font-weight:600;letter-spacing:-0.01em;color:var(--text-1)}
+.role .rcat{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.role .rcat.platform{background:var(--slate-tint);color:var(--slate)}
+.role .rcat.govern{background:#EAF3DE;color:#3B6D11}
+.role .rcat.semantic{background:var(--orange-tint);color:var(--orange-dark)}
+.role .rstatus{font-family:var(--mono);font-size:11px;color:var(--text-3);margin-bottom:16px}
+.role dl{margin:0;display:grid;grid-template-columns:1fr;gap:12px}
+.role dt{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);margin-bottom:3px}
+.role dd{margin:0;font-size:13.5px;line-height:1.5;color:var(--text-2)}
+.role dd.isnt{color:var(--g600)}
+
+/* players comparison matrix */
+.pm-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);margin-top:34px}
+table.pm{border-collapse:collapse;width:100%;min-width:1180px;font-size:13px}
+.pm thead th{padding:13px 14px;text-align:left;font-weight:600;font-size:13px;letter-spacing:-0.01em;vertical-align:top;color:#fff;background:var(--g600);border-right:1px solid rgba(255,255,255,.14)}
+.pm thead th:first-child{background:var(--g600);width:120px}
+.pm thead th.p{background:var(--g500)}
+.pm thead th.strat-h{background:var(--orange)}
+.pm thead th .sub{display:block;font-family:var(--mono);font-size:10px;font-weight:400;opacity:.82;margin-top:3px;letter-spacing:.03em;text-transform:none}
+.pm tbody th{text-align:left;font-weight:600;color:var(--text-3);background:var(--bg-alt);padding:13px 14px;font-size:11px;font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase;vertical-align:top;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.pm tbody td{padding:13px 14px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);color:var(--text-2);vertical-align:top;line-height:1.5}
+.pm tbody td:last-child{border-right:none}
+.pm tbody tr:last-child th,.pm tbody tr:last-child td{border-bottom:none}
+.pm td.strat-c{background:var(--orange-tint);color:var(--text-1)}
+.pm td.warn{color:var(--g600)}
+.pm td.win{color:var(--orange-dark);font-weight:600}
+.pm .pill{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:100px;font-weight:500;letter-spacing:.03em;display:inline-block;white-space:nowrap}
+.pm .pill.ga{background:#EAF3DE;color:#3B6D11}
+.pm .pill.prev{background:var(--orange-tint);color:var(--orange-dark)}
+.pm .pill.lead{background:var(--slate-tint);color:var(--slate)}
+.pm .pill.strat{background:var(--orange);color:#fff}
+
+/* platform cards */
+.pcards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.pc{border:1px solid var(--border);border-radius:var(--r-md);background:var(--white);padding:24px;border-top:3px solid var(--g300);transition:transform .18s,box-shadow .18s,border-color .18s;display:flex;flex-direction:column}
+.pc:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.pc.hero-card{border-top-color:var(--orange)}
+.pc .name{font-size:17px;font-weight:600;letter-spacing:-0.02em;display:flex;align-items:center;justify-content:space-between}
+.pc .vendor{font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.04em;margin-bottom:14px;margin-top:2px}
+.pc .role{font-size:14px;color:var(--text-2);margin-bottom:16px;min-height:42px}
+.pc dl{font-size:13px;display:grid;grid-template-columns:auto 1fr;gap:6px 10px;margin-top:auto}
+.pc dt{color:var(--text-3);font-weight:500}
+.pc dd{color:var(--text-2)}
+.pc dd.warn{color:var(--g600)}
+.tagp{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:100px;font-weight:500;letter-spacing:.03em}
+.tagp.ga{background:#EAF3DE;color:#3B6D11} .tagp.prev{background:var(--orange-tint);color:var(--orange-dark)}
+
+/* scorecard */
+.sc-tools{display:flex;align-items:center;gap:14px;margin-top:30px;margin-bottom:18px;flex-wrap:wrap}
+.toggle{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:var(--text-2);cursor:pointer;user-select:none;background:var(--white);border:1px solid var(--border-strong);padding:8px 14px;border-radius:100px;transition:all .16s}
+.toggle:hover{border-color:var(--orange)}
+.toggle.on{background:var(--orange-tint);border-color:var(--orange-tint-2);color:var(--orange-dark)}
+.toggle .box{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--g400);display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:#fff;transition:all .16s}
+.toggle.on .box{background:var(--orange);border-color:var(--orange)}
+.sc-hint{font-size:12px;color:var(--text-3);font-family:var(--mono)}
+/* role matrix (primary / partial / not its job) */
+.rm-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm);margin-top:30px}
+table.rm{border-collapse:collapse;width:100%;min-width:780px;font-size:13px}
+.rm thead th{background:var(--g600);color:#fff;font-weight:600;padding:12px 12px;text-align:center;font-size:12.5px;letter-spacing:-0.01em}
+.rm thead th:first-child{text-align:left}
+.rm thead th .rc{display:block;font-family:var(--mono);font-size:9px;font-weight:400;opacity:.82;margin-top:3px;text-transform:uppercase;letter-spacing:.03em}
+.rm tbody th{text-align:left;font-weight:600;color:var(--text-2);background:var(--bg-alt);padding:13px 12px;font-size:12.5px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.rm tbody td{text-align:center;padding:13px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);vertical-align:middle}
+.rm tbody td:last-child,.rm tbody th:last-child{border-right:none}
+.rm tbody tr:last-child td,.rm tbody tr:last-child th{border-bottom:none}
+.rm .d{font-size:17px;line-height:1;display:block}
+.rm .full{color:var(--text-1)}
+.rm .part{color:var(--slate)}
+.rm .none{color:#d4cec4}
+.rm-legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--text-3);font-family:var(--mono)}
+.rm-legend span{display:inline-flex;align-items:center;gap:7px}
+.rm-legend b{font-size:15px;line-height:1}
+.conv{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+.conv .c{border:1px solid var(--border);border-radius:var(--r-md);padding:20px 22px;background:var(--white)}
+.conv .c.same{border-top:3px solid var(--slate)}
+.conv .c.diff{border-top:3px solid var(--orange)}
+.conv .c h3{font-size:15px;margin:0 0 10px;color:var(--text-1)}
+.conv .c ul{margin:0;padding-left:18px}
+.conv .c li{font-size:13px;line-height:1.55;color:var(--text-2);margin-bottom:8px}
+.conv .c li:last-child{margin-bottom:0}
+.stack-note{margin-top:30px;border-left:3px solid var(--orange);background:var(--orange-tint);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:18px 22px}
+.stack-note h3{font-size:15px;margin:0 0 8px;color:var(--text-1)}
+.stack-note p{margin:0;font-size:13.5px;line-height:1.6;color:var(--text-2)}
+.stack-note code{font-family:var(--mono);font-size:12px;background:var(--white);padding:2px 6px;border-radius:4px;border:1px solid var(--orange-tint-2);color:var(--orange-dark)}
+.decide{margin-top:34px;display:grid;gap:13px}
+.decide .q{border:1px solid var(--border);border-radius:var(--r-md);background:var(--white);box-shadow:var(--shadow-sm);padding:18px 22px}
+.decide .q .qq{font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:6px}
+.decide .q .qa{font-size:13.5px;line-height:1.55;color:var(--text-2)}
+.fitbox{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fitbox .fb{border-radius:var(--r-md);padding:20px 22px;font-size:13.5px;line-height:1.55}
+.fitbox .fb.yes{background:var(--orange-tint);border:1px solid var(--orange-tint-2);color:var(--text-1)}
+.fitbox .fb.no{background:var(--bg-alt);border:1px solid var(--border);color:var(--text-2)}
+.fitbox .fb b{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+.fitbox .fb.yes b{color:var(--orange-dark)}
+.fitbox .fb.no b{color:var(--text-3)}
+
+.sc-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-sm)}
+table.sc{border-collapse:collapse;width:100%;min-width:1080px;font-size:14px}
+.sc thead th{background:var(--orange);color:#fff;font-weight:600;padding:13px 12px;text-align:center;font-size:13px;letter-spacing:-0.01em;position:sticky;top:0}
+.sc thead th:first-child{text-align:left;border-top-left-radius:0}
+.sc thead th.strat-h{background:var(--g600)}
+.sc tbody td{padding:0;text-align:center;border-bottom:1px solid var(--border);font-family:var(--mono);font-weight:500;color:var(--text-1)}
+.sc tbody tr:nth-child(even){background:var(--g100)}
+.sc tbody td.cap{font-family:var(--sans);text-align:left;padding:12px 12px;color:var(--text-1);font-weight:500;letter-spacing:-0.01em;font-size:13.5px}
+.sc td .val{padding:12px 6px;display:block}
+.sc td.strat-c{background:var(--orange);color:#fff}
+.sc tbody tr:nth-child(even) td.strat-c{background:var(--orange)}
+.sc td[data-tip]{cursor:help;position:relative}
+.sc td[data-tip] .val{border-bottom:2px dotted rgba(250,102,15,.45)}
+.sc td.strat-c[data-tip] .val{border-bottom:2px dotted rgba(255,255,255,.55)}
+.sc tr.newrow td{background:#FFF7F1;border-top:2px solid var(--orange);border-bottom:2px solid var(--orange)}
+.sc tr.newrow td.strat-c{background:var(--orange)}
+.sc tr.newrow td.cap{color:var(--orange-dark);font-weight:600}
+.newbadge{font-family:var(--mono);font-size:9px;background:var(--orange);color:#fff;padding:1px 5px;border-radius:3px;margin-left:7px;vertical-align:middle;letter-spacing:.04em}
+.dimmed{opacity:.32;transition:opacity .25s}
+
+/* tooltip */
+#tip{position:fixed;z-index:90;max-width:300px;background:var(--bg-ink);color:#f3f1eb;font-size:12.5px;line-height:1.5;padding:11px 13px;border-radius:var(--r-sm);box-shadow:var(--shadow-md);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .14s,transform .14s;font-family:var(--sans);letter-spacing:0}
+#tip.show{opacity:1;transform:translateY(0)}
+#tip b{color:#fff}
+
+/* loop flow */
+.loop{display:flex;align-items:stretch;gap:0;margin-top:34px;flex-wrap:wrap}
+.loop .step{flex:1;min-width:150px;background:var(--white);border:1px solid var(--border);padding:20px 18px;position:relative}
+.loop .step:first-child{border-top-left-radius:var(--r-md);border-bottom-left-radius:var(--r-md)}
+.loop .step:last-child{border-top-right-radius:var(--r-md);border-bottom-right-radius:var(--r-md);background:var(--orange);border-color:var(--orange-dark)}
+.loop .step .n{font-family:var(--mono);font-size:11px;color:var(--text-muted)}
+.loop .step:last-child .n{color:#ffd6bd}
+.loop .step .h{font-size:15px;font-weight:600;margin:6px 0 4px;letter-spacing:-0.01em}
+.loop .step:last-child .h{color:#fff}
+.loop .step .d{font-size:12.5px;color:var(--text-3)}
+.loop .step:last-child .d{color:#ffe6d6}
+.loop .step:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:14px;height:14px;background:var(--white);border-top:1px solid var(--border);border-right:1px solid var(--border);transform:translateY(-50%) rotate(45deg);z-index:2}
+.note-line{margin-top:18px;font-size:14px;color:var(--text-2)}
+.note-line b{color:var(--orange-dark);font-weight:600}
+
+/* stack inventory */
+.stack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px}
+.si{border:1px solid var(--border);border-radius:var(--r-md);padding:20px;background:var(--white)}
+.si .ic{width:34px;height:34px;border-radius:8px;background:var(--orange-tint);color:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--mono);font-size:15px;margin-bottom:13px}
+.si h3{font-size:15.5px;margin-bottom:6px}
+.si p{font-size:13.5px;color:var(--text-2)}
+.callout{margin-top:26px;border-left:4px solid var(--orange);background:var(--orange-tint);border-radius:0 var(--r-md) var(--r-md) 0;padding:20px 24px}
+.callout h3{font-size:16px;margin-bottom:6px}
+.callout p{font-size:14.5px;color:var(--text-2)}
+.callout p b{color:var(--text-1)}
+
+/* playbook */
+.moves{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px;counter-reset:m}
+.move{border:1px solid var(--border);border-radius:var(--r-md);padding:24px;background:var(--white);position:relative}
+.move::before{counter-increment:m;content:counter(m);position:absolute;top:20px;right:22px;font-size:44px;font-weight:700;color:var(--orange-tint-2);font-family:var(--sans);letter-spacing:-0.04em;line-height:1}
+.move h3{font-size:16px;margin-bottom:8px;max-width:13ch}
+.move p{font-size:14px;color:var(--text-2)}
+.fork{margin-top:26px;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.fork .fh{background:var(--bg-ink);color:#fff;padding:16px 22px;font-size:15px;font-weight:600}
+.fork .fh span{color:var(--orange)}
+.fork-body{display:grid;grid-template-columns:1fr 1fr}
+.fork-body>div{padding:22px 24px}
+.fork-body>div:first-child{border-right:1px solid var(--border)}
+.fork-body .ft{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.fork-body p{font-size:14px;color:var(--text-2)}
+
+/* objections */
+.obj{margin-top:30px;display:flex;flex-direction:column;gap:12px}
+.qa{border:1px solid var(--border);border-radius:var(--r-md);background:var(--white);overflow:hidden;transition:box-shadow .18s}
+.qa.open{box-shadow:var(--shadow-sm)}
+.qa .q{padding:18px 22px;display:flex;align-items:center;gap:14px;cursor:pointer;font-weight:600;font-size:15.5px;letter-spacing:-0.01em;color:var(--text-1)}
+.qa .q .ob-ic{width:24px;height:24px;border-radius:6px;background:var(--orange-tint);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:400;flex:none;transition:transform .2s}
+.qa.open .q .ob-ic{transform:rotate(45deg)}
+.qa .q .qt{flex:1}
+.qa .a{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 22px}
+.qa.open .a{max-height:260px;padding-bottom:20px}
+.qa .a p{font-size:14.5px;color:var(--text-2)}
+.qa .a b{color:var(--text-1)}
+
+/* verification */
+.verify{background:var(--bg-alt)}
+.vtable{margin-top:30px;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:var(--white)}
+.vrow{display:grid;grid-template-columns:200px 1fr 130px;border-bottom:1px solid var(--border);font-size:13.5px}
+.vrow:last-child{border-bottom:none}
+.vrow>div{padding:13px 16px}
+.vrow .vk{font-weight:600;color:var(--text-1);border-right:1px solid var(--border);letter-spacing:-0.01em}
+.vrow .vd{color:var(--text-2);border-right:1px solid var(--border)}
+.vrow .vd b{color:var(--text-1)}
+.vrow .vs{display:flex;align-items:center;justify-content:center}
+.vrow.head{background:var(--bg-ink)}
+.vrow.head>div{color:#cfcdc7;font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;border-color:#222}
+.stat-pill{font-family:var(--mono);font-size:10.5px;font-weight:500;padding:4px 9px;border-radius:100px;letter-spacing:.02em}
+.stat-pill.ga{background:#EAF3DE;color:#3B6D11}
+.stat-pill.prev{background:var(--orange-tint);color:var(--orange-dark)}
+.stat-pill.proj{background:var(--slate-tint);color:var(--slate)}
+.stat-pill.unv{background:var(--g100);color:var(--g600)}
+.sr-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}
+.sr{border-radius:var(--r-md);padding:22px;border:1px solid var(--border);background:var(--white)}
+.sr.safe{border-left:4px solid #639922}
+.sr.risk{border-left:4px solid var(--orange)}
+.sr h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sr ul{list-style:none;font-size:13.5px;color:var(--text-2)}
+.sr li{padding:6px 0 6px 20px;position:relative;border-top:1px solid var(--border)}
+.sr li:first-child{border-top:none}
+.sr li::before{position:absolute;left:0;top:6px;font-family:var(--mono);font-weight:700}
+.sr.safe li::before{content:"✓";color:#639922}
+.sr.risk li::before{content:"!";color:var(--orange)}
+.sr li b{color:var(--text-1)}
+
+/* footer */
+footer{background:var(--bg-ink);color:#bdbbb4;padding:48px 0;border:none}
+.foot-in{max-width:var(--maxw);margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
+.foot-in .wm{font-size:26px}
+.foot-meta{font-size:12.5px;line-height:1.8;text-align:right;color:#86847e;font-family:var(--mono);letter-spacing:.01em}
+.foot-meta b{color:#e8e6e0;font-weight:500}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.6,.2,1),transform .6s cubic-bezier(.2,.6,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+@media(max-width:920px){
+  .hero h1{font-size:42px}
+  h2{font-size:30px}
+  .g-2,.g-3,.split,.pcards,.stack-grid,.moves,.sr-cols,.conv,.fitbox{grid-template-columns:1fr}
+  .fork-body{grid-template-columns:1fr}
+  .fork-body>div:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .wrap,.nav-in,.foot-in{padding-left:20px;padding-right:20px}
+  .nav-links{display:none}
+  .vrow{grid-template-columns:1fr;}
+  .vrow .vk,.vrow .vd{border-right:none}
+  .amap-head,.trow{grid-template-columns:100px repeat(3,1fr) 64px 64px}
+  .band span{font-size:10px}
+  .foot-meta{text-align:left}
+}
+.hero-dek{font-size:19px;line-height:1.55;color:var(--text-2);max-width:780px;margin-top:24px;font-weight:400}
+.hero-dek b{color:var(--text-1);font-weight:600}
+.scope-note{margin-top:22px;font-family:var(--mono);font-size:11.5px;line-height:1.65;color:var(--text-3);max-width:740px;border-left:2px solid var(--orange-tint-2);padding-left:14px}
+.scope-note b{color:var(--text-2);font-weight:600}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <span class="wm white">Strategy<sup>₿</sup></span>
+    <div class="nav-links">
+      <a href="#map">Where each operates</a>
+      <a href="#players">What each is for</a>
+      <a href="#scorecard">Overlap &amp; difference</a>
+      <a href="#positioning">How to think about it</a>
+    </div>
+    <span class="nav-tag">Architecture explainer · Jun 2026</span>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Architecture explainer</div>
+    <h1>Named together, built for <span class="hl">different jobs</span>.</h1>
+    <p class="hero-dek">Microsoft, Snowflake, Databricks, Atlan and Strategy come up in the same conversation about "the layer that gives AI trusted context." Read as five candidates for one slot, they look like competitors. They mostly aren't. Three are <b>data platforms</b>, one is a <b>governance &amp; context layer</b>, one is a <b>semantic &amp; consumption layer</b> — and in a real architecture they often sit together as layers, not substitutes. This explains what each is actually for, where they genuinely overlap, and how to think about fit.</p>
+    <p class="scope-note"><b>How to read this:</b> it's an architecture explainer, not a scorecard with a winner. Every platform here is strong and credible. Where Strategy fits is described as fit, not victory — and where you wouldn't need it is stated plainly. Status (GA vs preview) is point-in-time June 2026 and moves fast; verify specifics before committing.</p>
+  </div>
+</header>
+
+<!-- ============ TRAP (removed) ============ -->
+
+<!-- ============ MAP ============ -->
+<section id="map">
+  <div class="wrap rv">
+    <div class="eyebrow">Where each operates</div>
+    <h2>Different shapes, because they do different jobs.</h2>
+    <p class="lead">Three of these own a <b>data substrate</b> and build upward from it — they show as vertical columns. Two are <b>horizontal layers</b> defined to sit across sources: Atlan (governance &amp; context) and Strategy (semantic &amp; consumption). The shape shows where each is <b>centered</b> — not a wall. All three platforms can also federate to outside data; that's covered honestly below. Hover any component for the sourced detail.</p>
+
+    <div class="amap">
+      <div class="amap-head">
+        <div class="lbl">Tier</div>
+        <div data-player="ms">Microsoft</div>
+        <div data-player="snf">Snowflake</div>
+        <div data-player="dbx">Databricks</div>
+        <div class="rail-h rail-atlan">Atlan</div>
+        <div class="rail-h rail-strat">Strategy</div>
+      </div>
+
+      <div class="trow" data-tier="agent">
+        <div class="tier-lbl"><span class="t">Agent &amp; runtime</span><span class="s">MCP delivery</span></div>
+        <div class="cell"><div class="pchip" data-goto="ms" data-tip="<b>Copilot · Operations Agents</b> — Microsoft's agent surfaces across M365 and Fabric (Operations Agents GA at Build 2026), grounded in Fabric IQ context.">Copilot</div></div>
+        <div class="cell"><div class="pchip" data-goto="snf" data-tip="<b>Snowflake Intelligence / Cortex Agents</b> — Snowflake's agentic surfaces over Cortex, governed by Horizon.">Snowflake Intelligence</div></div>
+        <div class="cell"><div class="pchip" data-goto="dbx" data-tip="<b>Genie</b> — Databricks' conversational / agent surface, with a managed Genie MCP server (public preview, DAIS Jun 2026).">Genie</div></div>
+        <div class="rail" data-rail="atlan"></div>
+        <div class="rail" data-rail="strat"></div>
+      </div>
+
+      <div class="trow" data-tier="ctx">
+        <div class="tier-lbl"><span class="t">Ontology &amp; context</span><span class="s">entities, relationships</span></div>
+        <div class="cell"><div class="pchip" data-goto="ms" data-tip="<b>Fabric IQ</b> — business context (entities, relationships) for agents. Fabric IQ is <b>GA</b> as of Build 2026; the <b>ontology workload within it is still preview</b> (GA expected in the coming months).">Fabric IQ<span class="pp">ontology preview</span></div></div>
+        <div class="cell"><div class="pchip" data-goto="snf" data-tip="<b>Horizon Context</b> — Snowflake's governed context layer. Can catalog and pull context from external systems; semantic execution is deepest on Snowflake-resident data.">Horizon Context</div></div>
+        <div class="cell"><div class="pchip" data-goto="dbx" data-tip="<b>Genie Ontology</b> — a new context layer (DAIS, Jun 2026). Real but recent; accuracy claims are relative to RAG baselines, not external benchmarks.">Genie Ontology</div></div>
+        <div class="rail" data-rail="atlan"></div>
+        <div class="rail" data-rail="strat"></div>
+      </div>
+
+      <div class="trow" data-tier="sem">
+        <div class="tier-lbl"><span class="t">Semantic</span><span class="s">governed metrics</span></div>
+        <div class="cell"><div class="pchip" data-goto="ms" data-tip="<b>Power BI semantic models</b> — a mature, governed metric layer (35M+ active users), industry-leading and centered on Fabric / Azure.">Power BI models</div></div>
+        <div class="cell"><div class="pchip" data-goto="snf" data-tip="<b>Snowflake semantic views</b> — governed metrics exposed to AI / MCP. Deepest on Snowflake-resident data; broader reach via Iceberg / integrations.">Semantic views</div></div>
+        <div class="cell"><div class="pchip" data-goto="dbx" data-tip="<b>Metric views</b> — governed metric definitions in Unity Catalog, centered on the lakehouse.">Metric views</div></div>
+        <div class="rail" data-rail="atlan"></div>
+        <div class="rail" data-rail="strat"></div>
+      </div>
+
+      <div class="trow" data-tier="gov">
+        <div class="tier-lbl"><span class="t">Governance &amp; metadata</span><span class="s">policy, lineage</span></div>
+        <div class="cell"><div class="pchip" data-goto="ms" data-tip="<b>Microsoft Purview</b> — governance, policy and lineage across the Microsoft estate.">Purview</div></div>
+        <div class="cell"><div class="pchip" data-goto="snf" data-tip="<b>Snowflake Horizon</b> — governance, lineage and policy; catalogs across the estate via the Iceberg REST catalog.">Horizon</div></div>
+        <div class="cell"><div class="pchip" data-goto="dbx" data-tip="<b>Unity Catalog</b> — strong governance (ABAC GA). Via Lakehouse Federation it also governs external sources (Postgres, Redshift, Snowflake, BigQuery) read-only.">Unity Catalog</div></div>
+        <div class="rail" data-rail="atlan"></div>
+        <div class="rail" data-rail="strat"></div>
+      </div>
+
+      <div class="trow" data-tier="sub">
+        <div class="tier-lbl"><span class="t">Data substrate</span><span class="s">compute &amp; storage</span></div>
+        <div class="cell"><div class="pchip" data-goto="ms" data-tip="<b>OneLake</b> — Fabric's unified lake. Federates external data via shortcuts and mirroring (Oracle and SAP Datasphere mirroring now GA), without ETL.">OneLake</div></div>
+        <div class="cell"><div class="pchip" data-goto="snf" data-tip="<b>The Snowflake data cloud</b> — reads and writes external Iceberg via catalog-linked databases (Unity Catalog, Glue, Polaris), zero-copy.">Snowflake</div></div>
+        <div class="cell"><div class="pchip" data-goto="dbx" data-tip="<b>The Databricks lakehouse</b> — Lakehouse Federation queries external databases (Postgres, MySQL, Redshift, Snowflake, BigQuery, Oracle) without moving data.">Lakehouse</div></div>
+        <div class="rail" data-rail="atlan"></div>
+        <div class="rail" data-rail="strat"></div>
+      </div>
+
+      <div class="amap-foot">
+        <b>All three platforms federate to outside data</b> — via Iceberg catalogs, mirroring and query federation — so the columns mark where each is <i>centered</i>, not a boundary. The horizontal layers are <i>defined</i> to sit across sources, including ERP / CRM / app data:
+        <span class="ext">SAP · Oracle · Salesforce · on-prem</span>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="k"><span class="sw orange"></span> Strategy — neutral semantic &amp; consumption layer, across sources</span>
+      <span class="k"><span class="sw slate"></span> Atlan — neutral governance &amp; context layer, across sources</span>
+      <span class="k"><span class="sw gray"></span> Platform — owns a substrate, builds upward (and federates outward)</span>
+    </div>
+
+    <div class="banner">
+      <span class="dot"></span>
+      <div>
+        <h3>Why these get named together.</h3>
+        <p>By 2026 every platform ships a semantic layer, a context / ontology layer and an MCP server — and every platform can federate to external data. That convergence is real, and it's exactly why the five look interchangeable on a slide. The differences that remain are narrower and more specific than "who can reach the data" — they're about <b>who owns the governed meaning, what it's optimized for, and how far it reaches into non-database sources</b>. The next sections lay those out plainly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAYERS ============ -->
+<section id="players">
+  <div class="wrap rv">
+    <div class="eyebrow">What each is for</div>
+    <h2>Three data platforms, two horizontal layers.</h2>
+    <p class="lead">Described the same way, with the same candor — including what each one <b>deliberately isn't</b>. None of these is trying to be all five things; they're named together because their edges now overlap, not because they do the same job.</p>
+
+    <div class="roles">
+
+      <div class="role" id="ms">
+        <div class="rh"><span class="rname">Microsoft Fabric</span><span class="rcat platform">Data platform</span></div>
+        <div class="rstatus">Fabric IQ GA · ontology preview</div>
+        <dl>
+          <dt>Primary job</dt><dd>Run the Microsoft data estate end to end — OneLake substrate, Power BI semantic models, Fabric IQ context, Copilot &amp; Operations agents.</dd>
+          <dt>Best fit</dt><dd>Organizations standardized on Azure and M365 that want one governed stack from storage to agent.</dd>
+          <dt>Deliberately isn't</dt><dd class="isnt">A neutral cross-vendor layer — it's centered on Fabric / Azure, though OneLake now mirrors Oracle, SAP Datasphere and more.</dd>
+        </dl>
+      </div>
+
+      <div class="role" id="snf">
+        <div class="rh"><span class="rname">Snowflake</span><span class="rcat platform">Data platform</span></div>
+        <div class="rstatus">Horizon · semantic views · Cortex agents</div>
+        <dl>
+          <dt>Primary job</dt><dd>A governed data cloud — store, govern and query, now with semantic views, Horizon Context and Cortex agents exposed over MCP.</dd>
+          <dt>Best fit</dt><dd>Snowflake-centric estates that want governed analytics and AI without managing infrastructure.</dd>
+          <dt>Deliberately isn't</dt><dd class="isnt">A native BI / visualization tool (it partners for that); semantics are deepest on Snowflake-resident data, broader reach via Iceberg.</dd>
+        </dl>
+      </div>
+
+      <div class="role" id="dbx">
+        <div class="rh"><span class="rname">Databricks</span><span class="rcat platform">Data platform</span></div>
+        <div class="rstatus">Unity Catalog · Genie · Genie Ontology</div>
+        <dl>
+          <dt>Primary job</dt><dd>A lakehouse + governance platform (Unity Catalog) that also executes everything, with Genie agents and a new Genie Ontology context layer.</dd>
+          <dt>Best fit</dt><dd>Engineering-led teams running data, ML and analytics together on one lakehouse.</dd>
+          <dt>Deliberately isn't</dt><dd class="isnt">A turnkey BI layer; the ontology is brand new. Centered on the lakehouse, though Lakehouse Federation reaches external sources read-only.</dd>
+        </dl>
+      </div>
+
+      <div class="role" id="atlan">
+        <div class="rh"><span class="rname">Atlan</span><span class="rcat govern">Governance &amp; context layer</span></div>
+        <div class="rstatus">Gartner Leader, D&amp;A Governance 2026</div>
+        <dl>
+          <dt>Primary job</dt><dd>A vendor-neutral governance &amp; context layer — enterprise data graph, active metadata and lineage, served to tools and agents over MCP.</dd>
+          <dt>Best fit</dt><dd>Large estates that need one trusted context and governance plane across many platforms.</dd>
+          <dt>Deliberately isn't</dt><dd class="isnt">An execution or BI engine — it serves context, never runs the query or renders the answer. It needs platforms underneath it.</dd>
+        </dl>
+      </div>
+
+      <div class="role" id="strat">
+        <div class="rh"><span class="rname">Strategy Mosaic + One</span><span class="rcat semantic">Semantic &amp; consumption layer</span></div>
+        <div class="rstatus">Mosaic-over-MCP GA · OSI co-founder</div>
+        <dl>
+          <dt>Primary job</dt><dd>A vendor-neutral semantic layer (Mosaic) that defines a governed metric once across 200+ sources, plus a consumption layer (Strategy One, Auto, HyperIntelligence) that renders it for people and agents. Mosaic Sentinel adds governance and audit.</dd>
+          <dt>Best fit</dt><dd>Multi-vendor or multi-source estates that want one governed definition of a metric usable everywhere — including ERP / CRM / app data like SAP, Oracle and Salesforce.</dd>
+          <dt>Deliberately isn't</dt><dd class="isnt">A data substrate (it owns no storage or compute), a full data-discovery catalog, or the deepest ontology — it's lighter there than Atlan or the platforms, and semantic modelling is real upfront work.</dd>
+        </dl>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCORECARD ============ -->
+<section id="scorecard">
+  <div class="wrap rv">
+    <div class="eyebrow">Overlap &amp; difference</div>
+    <h2>Where they converge, where they don't.</h2>
+    <p class="lead">This isn't a 1–10 ranking — that would invent a contest these tools aren't really in. It's a map of <b>which job each is built for</b>. Read down a column to see a tool's shape; read across a row to see who genuinely competes for that job.</p>
+
+    <div class="rm-wrap">
+      <table class="rm">
+        <thead>
+          <tr>
+            <th>Job / layer</th>
+            <th>Microsoft<span class="rc">platform</span></th>
+            <th>Snowflake<span class="rc">platform</span></th>
+            <th>Databricks<span class="rc">platform</span></th>
+            <th>Atlan<span class="rc">govern &amp; context</span></th>
+            <th>Strategy<span class="rc">semantic &amp; consume</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>Owns the data substrate</th><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d none">○</span></td><td><span class="d none">○</span></td></tr>
+          <tr><th>Governance &amp; policy</th><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d part">◐</span></td></tr>
+          <tr><th>Semantic / metric layer</th><td><span class="d full">●</span></td><td><span class="d part">◐</span></td><td><span class="d part">◐</span></td><td><span class="d none">○</span></td><td><span class="d full">●</span></td></tr>
+          <tr><th>Ontology &amp; context</th><td><span class="d part">◐</span></td><td><span class="d part">◐</span></td><td><span class="d part">◐</span></td><td><span class="d full">●</span></td><td><span class="d part">◐</span></td></tr>
+          <tr><th>Reach across sources (incl. SAP / CRM / apps)</th><td><span class="d part">◐</span></td><td><span class="d part">◐</span></td><td><span class="d part">◐</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td></tr>
+          <tr><th>BI / rendering for people</th><td><span class="d full">●</span></td><td><span class="d none">○</span></td><td><span class="d part">◐</span></td><td><span class="d none">○</span></td><td><span class="d full">●</span></td></tr>
+          <tr><th>Agent delivery over MCP</th><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td><td><span class="d full">●</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="rm-legend">
+      <span><b class="full">●</b> primary job</span>
+      <span><b class="part">◐</b> partial / scoped</span>
+      <span><b class="none">○</b> not its job</span>
+      <span style="color:var(--text-muted)">Point-in-time June 2026 · verify specifics before committing</span>
+    </div>
+
+    <div class="conv">
+      <div class="c same">
+        <h3>What's converged — and why they look alike</h3>
+        <ul>
+          <li>Every one now exposes governed data to agents <b>over MCP</b> — that row is all-primary.</li>
+          <li>Every platform ships a semantic layer, a context / ontology layer and agents — the tiers rhyme.</li>
+          <li>Every platform can <b>federate to outside data</b> (Iceberg catalogs, mirroring, query federation). None is a walled garden.</li>
+          <li>"Context layer for AI" became everyone's phrase, so the category language collapsed into one slide.</li>
+        </ul>
+      </div>
+      <div class="c diff">
+        <h3>What still genuinely differs</h3>
+        <ul>
+          <li><b>Owns a substrate vs sits across them:</b> the three platforms run storage and compute; Atlan and Strategy don't.</li>
+          <li><b>Governs access vs governs meaning:</b> platform federation governs <i>table access</i> across sources; a semantic layer unifies the <i>metric definition</i> across them.</li>
+          <li><b>Renders the answer vs doesn't:</b> Power BI and Strategy render BI for people; Atlan serves context only.</li>
+          <li><b>Database / lake reach vs app reach:</b> platform federation centers on warehouses, lakes and Iceberg; Strategy's connectors also reach ERP / CRM / on-prem (SAP, Oracle, Salesforce).</li>
+          <li><b>Incentive:</b> a platform optimizes for its own engine; a neutral layer has no substrate to favor.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stack-note">
+      <h3>The honest takeaway: often layers, not substitutes.</h3>
+      <p>In a real architecture these frequently coexist. A common shape: a platform as substrate + governance (say <code>Snowflake</code> or <code>Databricks</code>), Atlan for estate-wide context and lineage, Strategy for one governed semantic definition and consumption across sources, and Power BI, Fabric or agents on top. The useful question isn't "which one wins" — it's <b>"which layer am I solving for, and what do I already own?"</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW TO THINK ABOUT IT ============ -->
+<section id="positioning">
+  <div class="wrap rv">
+    <div class="eyebrow">How to think about it</div>
+    <h2>The questions that actually decide fit.</h2>
+    <p class="lead">Not "which one wins" — these don't compete for the same slot. The useful exercise is matching the layer to the need and to what you already run. Five questions an architect can answer honestly:</p>
+
+    <div class="decide">
+      <div class="q">
+        <div class="qq">1. Where should the governed <i>meaning</i> live?</div>
+        <div class="qa">If your data sits in one platform and you intend to stay there, that platform's own semantic layer may be all you need. If a metric must mean the same thing across several platforms — and survive a future migration — a layer that's independent of any one of them (Strategy for semantics, Atlan for context) earns its place.</div>
+      </div>
+      <div class="q">
+        <div class="qq">2. What's your data-residency and sovereignty posture?</div>
+        <div class="qa">In the UAE this often decides the substrate first — Azure UAE, a sovereign cloud, or a specific region. The semantic and context layers should sit <i>above</i> whatever residency dictates, not force a substrate choice.</div>
+      </div>
+      <div class="q">
+        <div class="qq">3. How much of your data isn't in a database?</div>
+        <div class="qa">If almost everything is in one warehouse or lake, platform-native semantics cover it well. If business-critical data lives in SAP, Oracle, Salesforce, mainframe or on-prem systems, a layer built to reach application sources — not just databases and Iceberg — matters more.</div>
+      </div>
+      <div class="q">
+        <div class="qq">4. Do you need to <i>render</i> the answer, or just serve context?</div>
+        <div class="qa">If people need dashboards and natural-language answers, you need a consumption layer (Power BI, Strategy). If you only need agents to have trusted context over data you already govern, a context layer (Atlan) on top of your platform may be enough.</div>
+      </div>
+      <div class="q">
+        <div class="qq">5. One platform or many — today, and in three years?</div>
+        <div class="qa">Single-platform shops get the most from native layers. Multi-vendor estates — common after mergers, or when different teams standardized differently — are where a neutral layer pays for itself.</div>
+      </div>
+    </div>
+
+    <div class="fitbox">
+      <div class="fb yes">
+        <b>Where Strategy fits</b>
+        Multi-source, multi-vendor estates that need one governed definition of a metric usable by every tool and agent — including ERP / CRM / app data — plus a way to render it for people. It complements the platform you already run rather than replacing it.
+      </div>
+      <div class="fb no">
+        <b>Where you may not need it</b>
+        A committed single-platform shop with all relevant data in one warehouse or lake, whose native semantic layer and BI already meet the need, may get there without an added layer. That's a legitimate outcome — and worth saying plainly.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer>
+  <div class="foot-in">
+    <div>
+      <span class="wm white">Strategy<sup>₿</sup></span>
+      <div style="font-size:13px;color:#86847e;margin-top:10px;max-width:42ch">An architecture explainer comparing how these five platforms fit together — what each is built for, where they overlap, and how to think about fit.</div>
+    </div>
+    <div class="foot-meta">
+      <b>Sources current as of June 2026</b><br>
+      GA / preview status verified against primary vendor docs<br>
+      Role placements are architectural judgments; verify specifics for your estate<br>
+      Product names belong to their respective owners.
+    </div>
+  </div>
+</footer>
+
+<div id="tip"></div>
+
+<script>
+(function(){
+  // shared tooltip
+  var tip=document.getElementById('tip');
+  function bindTip(el){
+    el.addEventListener('mouseenter',function(){tip.innerHTML=el.getAttribute('data-tip');tip.classList.add('show');});
+    el.addEventListener('mousemove',function(ev){
+      var x=ev.clientX+16, y=ev.clientY+16;
+      if(x+320>window.innerWidth)x=ev.clientX-316;
+      if(y+150>window.innerHeight)y=ev.clientY-140;
+      tip.style.left=x+'px';tip.style.top=y+'px';
+    });
+    el.addEventListener('mouseleave',function(){tip.classList.remove('show');});
+  }
+
+  // scroll reveal
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+
+  // nav active state
+  var secs=[].slice.call(document.querySelectorAll('section[id]'));
+  var links=[].slice.call(document.querySelectorAll('.nav-links a'));
+  var navIo=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id;links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+id);});}});},{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(function(s){navIo.observe(s);});
+
+  // altitude rail bands: build Strategy (rows 1-3) and Atlan (rows 2-4)
+  function buildBands(){
+    var rows=[].slice.call(document.querySelectorAll('.trow'));
+    if(rows.length<5) return;
+    var amap=document.querySelector('.amap');
+    var spans={strat:[0,1,2],atlan:[1,2,3]}; // 0=agent,1=ctx,2=sem,3=gov,4=sub
+    ['strat','atlan'].forEach(function(key){
+      var idxs=spans[key];
+      var topRow=rows[idxs[0]], botRow=rows[idxs[idxs.length-1]];
+      var railCell=topRow.querySelector('.rail[data-rail="'+key+'"]');
+      if(!railCell) return;
+      var top=topRow.offsetTop, bot=botRow.offsetTop+botRow.offsetHeight;
+      var band=document.createElement('div');
+      band.className='band '+key;
+      band.style.top=(top - topRow.offsetTop + 6)+'px';
+      band.style.height=(bot-top-12)+'px';
+      band.innerHTML='<span>'+(key==='strat'?'Strategy':'Atlan')+'</span>';
+      band.setAttribute('data-goto',key==='strat'?'strat':'atlan');
+      band.setAttribute('data-tip', key==='strat'
+        ? '<b>Strategy Mosaic + One</b> — a vendor-neutral semantic &amp; consumption layer. Defines governed metrics once across 200+ sources (incl. SAP, Oracle, Salesforce, on-prem) and renders them for people and agents. Doesn\'t own a substrate, and is lighter on estate-wide catalog / ontology.'
+        : '<b>Atlan</b> — vendor-neutral governance &amp; context across the estate (Gartner Leader, 2026). Serves context and metadata to tools and agents; doesn\'t execute queries or render BI.');
+      bindTip(band);
+      railCell.appendChild(band);
+    });
+  }
+  window.addEventListener('load',buildBands);
+  window.addEventListener('resize',function(){document.querySelectorAll('.band').forEach(function(b){b.remove();});buildBands();});
+
+  // chip / band click -> scroll to player card
+  document.addEventListener('click',function(e){
+    var g=e.target.closest('[data-goto]');
+    if(g){var id=g.getAttribute('data-goto');var card=document.getElementById(id);if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.style.transition='box-shadow .3s';card.style.boxShadow='0 0 0 3px rgba(250,102,15,.4)';setTimeout(function(){card.style.boxShadow='';},1400);}}
+  });
+
+  // map row hover dim
+  var trows=[].slice.call(document.querySelectorAll('.trow'));
+  trows.forEach(function(r){
+    r.addEventListener('mouseenter',function(){trows.forEach(function(o){if(o!==r)o.classList.add('dimmed');});});
+    r.addEventListener('mouseleave',function(){trows.forEach(function(o){o.classList.remove('dimmed');});});
+  });
+
+  // bind tooltips on all static [data-tip] elements (map chips)
+  document.querySelectorAll('[data-tip]').forEach(bindTip);
+})();
+</script>
+</body>
+</html>
