@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDC 360 — Cyber Defence Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --w-1:#f4f7f9; --w-2:rgba(244,247,249,.62); --w-3:rgba(244,247,249,.4); --w-4:rgba(244,247,249,.2);
+  --teal:#3fe0cb; --success:#5fd39a; --warning:#e8b84e; --danger:#ef6b7c;
+  --glass-bg:rgba(18,20,24,.42); --glass-sheen:rgba(255,255,255,.06);
+  --spring:cubic-bezier(.34,1.56,.64,1); --expo:cubic-bezier(.16,1,.3,1); --ease:cubic-bezier(.4,0,.2,1);
+}
+* {box-sizing:border-box;}
+html, body {margin:0;padding:0;height:100%;}
+body {background:#030304; color:var(--w-1); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased; overflow:hidden;}
+#page-overview .mono {font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+::-webkit-scrollbar {width:7px;}
+::-webkit-scrollbar-track {background:transparent;}
+::-webkit-scrollbar-thumb {background:rgba(255,255,255,.13); border-radius:99px;}
+#page-overview .glow {position:fixed; inset:0; z-index:0; pointer-events:none;}
+#page-overview .glow::before, #page-overview .glow::after {content:''; position:absolute; border-radius:50%; filter:blur(100px);}
+#page-overview .glow::before {width:680px; height:680px; top:-180px; left:-140px; background:radial-gradient(circle, rgba(63,224,203,.16), transparent 70%);}
+#page-overview .glow::after {width:580px; height:580px; top:160px; right:-160px; background:radial-gradient(circle, rgba(239,107,124,.10), transparent 70%);}
+#page-overview .glow-b3 {position:fixed; z-index:0; pointer-events:none; width:640px; height:640px; bottom:-220px; left:36%; border-radius:50%; filter:blur(110px); background:radial-gradient(circle, rgba(232,184,78,.08), transparent 70%);}
+#page-overview .glass {
+  background-color:var(--glass-bg);
+  background-image:linear-gradient(135deg, var(--glass-sheen), rgba(255,255,255,.015));
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 16px 44px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+}
+#page-overview .app {display:flex; height:100vh; width:100vw; position:relative; z-index:2;}
+#page-overview .sidebar {width:222px; flex-shrink:0; display:flex; flex-direction:column; padding:22px 0; margin:14px 0 14px 14px; border-radius:26px;}
+#page-overview .brand {display:flex; align-items:center; gap:12px; padding:0 18px 18px 18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:14px;}
+#page-overview .brand-mark svg {width:30px; height:30px;}
+#page-overview .brand-text .b1 {font-family:'Chakra Petch'; font-weight:700; font-size:13.5px; letter-spacing:.05em;}
+#page-overview .brand-text .b2 {font-size:8.5px; color:var(--w-3); letter-spacing:.09em; text-transform:uppercase; margin-top:2px;}
+#page-overview .nav-scroll {flex:1; overflow-y:auto; padding:0 10px;}
+#page-overview .nav-group {margin-bottom:18px;}
+#page-overview .nav-group-label {font-size:9.5px; letter-spacing:.13em; color:var(--w-4); text-transform:uppercase; padding:0 10px; margin-bottom:8px; font-weight:600;}
+#page-overview .nav-item {display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:12px; margin-bottom:3px; color:var(--w-3); font-size:12.5px; font-weight:500;}
+#page-overview .nav-item svg {width:14.5px; height:14.5px; flex-shrink:0; opacity:.8;}
+#page-overview .nav-item.active {background:rgba(63,224,203,.13); color:var(--w-1); box-shadow:inset 0 0 0 1px rgba(63,224,203,.25);}
+#page-overview .sidebar-footer {padding:14px 18px 0 18px; margin-top:14px; border-top:1px solid rgba(255,255,255,.08);}
+#page-overview .nuwa-chip {display:flex; align-items:center; gap:10px; padding:11px; border-radius:16px;}
+#page-overview .nuwa-chip .dot {width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulseDot 2.4s ease-in-out infinite;}
+#page-overview .nuwa-chip-text .t1 {font-family:'Chakra Petch'; font-size:11.5px; font-weight:600;}
+#page-overview .nuwa-chip-text .t2 {font-size:9px; color:var(--w-3);}
+#page-overview .main {flex:1; display:flex; flex-direction:column; min-width:0; height:100vh; padding:14px 14px 0 10px;}
+#page-overview .topbar {height:60px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 26px; border-radius:20px; margin-bottom:14px;}
+#page-overview .breadcrumb {font-size:12px; color:var(--w-3); display:flex; gap:8px;}
+#page-overview .breadcrumb .cur {color:var(--w-1); font-weight:600;}
+#page-overview .topbar-right {display:flex; align-items:center; gap:20px;}
+#page-overview .status-pill {display:flex; align-items:center; gap:7px; padding:6px 13px; border-radius:99px; background:rgba(232,184,78,.14); font-size:11px; font-weight:600; color:var(--warning);}
+#page-overview .status-pill .dot {width:5px; height:5px; border-radius:50%; background:var(--warning); animation:pulseDot 2s ease-in-out infinite;}
+#page-overview .clock {font-size:12px; color:var(--w-2);}
+#page-overview .clock .date {color:var(--w-4); margin-left:8px;}
+#page-overview .avatar {width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.07); display:flex; align-items:center; justify-content:center; font-family:'Chakra Petch'; font-weight:700; font-size:11px; color:var(--teal);}
+#page-overview .content {flex:1; overflow-y:auto; padding-bottom:16px;}
+#page-overview .hero {position:relative; padding:24px 30px 26px 30px; display:grid; grid-template-columns:1fr 320px; gap:22px; align-items:center; border-radius:28px; margin-bottom:16px;}
+#page-overview .hero-head {grid-column:1/-1; margin-bottom:6px; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:14px;}
+#page-overview .hero-eyebrow {font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--teal); font-weight:600; margin-bottom:5px; display:flex; align-items:center; gap:7px;}
+#page-overview .hero-eyebrow .sq {width:5px; height:5px; border-radius:50%; background:var(--teal);}
+#page-overview .hero-title {font-family:'Chakra Petch'; font-weight:700; font-size:23px; letter-spacing:-.01em; margin:0;}
+#page-overview .hero-sub {font-size:13.8px; color:var(--w-3); margin-top:4px;}
+#page-overview .view-toggle {display:flex; gap:4px; background:rgba(255,255,255,.05); padding:4px; border-radius:12px;}
+#page-overview .view-btn {padding:8px 16px; font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--w-3); border-radius:9px; cursor:pointer; font-family:'IBM Plex Mono'; transition:all .2s ease;}
+#page-overview .view-btn.active {background:rgba(63,224,203,.16); color:var(--teal);}
+#page-overview .core-col {position:relative; display:flex; flex-direction:column; align-items:center; width:100%;}
+#page-overview .core-stage {position:relative; width:440px; height:440px;}
+#page-overview .core-stage svg {overflow:visible;}
+#page-overview #radarGroup {transform-origin:220px 220px; animation:spin 7s linear infinite;}
+#page-overview .domain-arc, #page-overview .layer-ring {transition:opacity .25s ease, stroke-width .25s ease, stroke .25s ease; cursor:pointer;}
+#page-overview .domain-arc.dim, #page-overview .layer-ring.dim {opacity:.18 !important;}
+#page-overview .core-center-num {font-family:'Chakra Petch'; font-weight:700; letter-spacing:-.03em; fill:var(--w-1);}
+#page-overview .core-center-unit {font-family:'IBM Plex Mono'; fill:var(--w-3);}
+#page-overview .core-center-label {font-family:'IBM Plex Sans'; letter-spacing:.1em; fill:var(--w-3); text-transform:uppercase;}
+#page-overview .domain-label-name {font-family:'IBM Plex Mono'; font-weight:600; letter-spacing:.02em; pointer-events:none;}
+#page-overview .domain-label-val {font-family:'IBM Plex Mono'; font-weight:600; opacity:.75; pointer-events:none;}
+#page-overview .core-detail-strip {min-height:56px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; align-items:flex-start; margin-top:16px; width:100%;}
+#page-overview .detail-chip {border-radius:14px; padding:10px 16px; text-align:center; min-width:86px;}
+#page-overview .detail-chip .dv {font-family:'IBM Plex Mono'; font-weight:600; font-size:13px;}
+#page-overview .detail-chip .dl {font-size:10.2px; color:var(--w-3); text-transform:uppercase; letter-spacing:.05em; margin-top:2px;}
+#page-overview .detail-hint {font-size:12px; color:var(--w-4); text-align:center; width:100%; margin-top:-4px; margin-bottom:2px;}
+#page-overview .detail-heading {font-family:'Chakra Petch'; font-size:12.6px; font-weight:600; width:100%; text-align:center; margin-bottom:0px; letter-spacing:.04em;}
+#page-overview .gauges-row {display:none; width:100%; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:8px; justify-items:center;}
+#page-overview .gauges-row.active {display:grid;}
+#page-overview .core-stage {display:none;}
+#page-overview .core-stage.show {display:block;}
+#page-overview .gauge-card {border-radius:22px; padding:24px 18px; text-align:center; position:relative; width:100%; max-width:190px;}
+#page-overview .gauge-card svg {width:140px; height:140px;}
+#page-overview .gauge-name {font-family:'IBM Plex Mono'; font-size:12px; font-weight:600; letter-spacing:.04em; margin-top:6px;}
+#page-overview .gauge-delta {font-family:'IBM Plex Mono'; font-size:11.5px; font-weight:600; margin-top:3px;}
+#page-overview .gauge-weak {font-size:11px; color:var(--w-3); margin-top:12px; line-height:1.4; padding-top:12px; border-top:1px solid rgba(255,255,255,.07);}
+#page-overview .gauge-weak b {color:var(--w-1); font-weight:600;}
+#page-overview .gauge-tooltip {position:absolute; left:50%; bottom:calc(100% + 12px); transform:translateX(-50%) translateY(4px); width:270px; border-radius:16px; padding:16px; opacity:0; pointer-events:none; transition:opacity .2s ease, transform .25s var(--expo); z-index:25; text-align:left; background:rgba(10,11,14,.97); backdrop-filter:blur(10px); box-shadow:0 16px 40px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);}
+#page-overview .gauge-card:hover .gauge-tooltip {opacity:1; transform:translateX(-50%) translateY(0);}
+#page-overview .gt-title {font-family:'Chakra Petch'; font-weight:600; font-size:11.5px; color:var(--w-1); margin-bottom:10px;}
+#page-overview .gt-row {display:flex; align-items:flex-start; gap:9px; margin-bottom:8px;}
+#page-overview .gt-row:last-child {margin-bottom:0;}
+#page-overview .gt-layer {font-family:'IBM Plex Mono'; font-size:9.5px; font-weight:700; width:26px; flex-shrink:0; padding-top:1px;}
+#page-overview .gt-note {font-size:10.2px; color:var(--w-2); line-height:1.4;}
+#page-overview .gt-note .v {color:var(--w-1); font-weight:600;}
+#page-overview .movements {display:flex; flex-direction:column; gap:18px;}
+#page-overview .timeline-wrap {margin-top:26px; padding-top:22px; border-top:1px solid rgba(255,255,255,.08); transition:opacity .3s ease;}
+#page-overview .timeline-head {display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+#page-overview .timeline-status {display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono'; font-size:11px; font-weight:600; letter-spacing:.05em; color:var(--success);}
+#page-overview .tl-live-dot {width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 8px var(--success); animation:pulseDot 1.6s ease-in-out infinite;}
+#page-overview .timeline-wrap.is-history .timeline-status {color:var(--w-3);}
+#page-overview .timeline-wrap.is-history .tl-live-dot {background:var(--w-4); box-shadow:none; animation:none;}
+#page-overview .timeline-controls {display:flex; align-items:center; gap:10px;}
+#page-overview .tl-btn {width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .2s ease;}
+#page-overview .tl-btn:hover {background:rgba(255,255,255,.1);}
+#page-overview .tl-btn svg {width:13px; height:13px; fill:var(--w-1);}
+#page-overview .tl-return-btn {display:none; padding:7px 14px; border-radius:99px; background:rgba(63,224,203,.15); color:var(--teal); font-size:10.5px; font-weight:700; letter-spacing:.03em; cursor:pointer; text-transform:uppercase; font-family:'IBM Plex Mono';}
+#page-overview .timeline-wrap.is-history .tl-return-btn {display:block;}
+#page-overview .timeline-track-wrap {padding:0 6px;}
+#page-overview .timeline-track {position:relative; height:6px; border-radius:3px; background:rgba(255,255,255,.08); cursor:pointer;}
+#page-overview .tl-fill {position:absolute; left:0; top:0; height:100%; border-radius:3px; background:linear-gradient(90deg, rgba(63,224,203,.35), var(--teal)); width:100%; pointer-events:none;}
+#page-overview .tl-events {position:absolute; inset:0; pointer-events:none;}
+#page-overview .tl-event-dot {position:absolute; top:50%; width:12px; height:12px; border-radius:50%; transform:translate(-50%,-50%); border:2px solid #0d0e11; cursor:pointer; pointer-events:auto; transition:transform .2s var(--spring);}
+#page-overview .tl-event-dot:hover {transform:translate(-50%,-50%) scale(1.3);}
+#page-overview .tl-event-tooltip {position:absolute; bottom:22px; left:50%; transform:translateX(-50%); width:210px; background:rgba(15,16,19,.95); backdrop-filter:blur(16px); border-radius:12px; padding:11px 13px; font-size:10.5px; color:var(--w-2); line-height:1.4; opacity:0; pointer-events:none; transition:opacity .2s ease; text-align:center;}
+#page-overview .tl-event-dot:hover .tl-event-tooltip {opacity:1;}
+#page-overview .tl-handle {position:absolute; top:50%; width:18px; height:18px; border-radius:50%; background:var(--w-1); border:3px solid var(--teal); transform:translate(-50%,-50%); cursor:grab; box-shadow:0 0 14px rgba(63,224,203,.6); pointer-events:auto; z-index:5; transition:left .05s linear;}
+#page-overview .tl-handle:active {cursor:grabbing;}
+#page-overview .timeline-foot {display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-size:10px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-overview .timeline-caption {color:var(--w-3); font-family:'IBM Plex Sans'; font-size:11px; text-align:center; flex:1;}
+#page-overview #movementsList {display:flex; flex-direction:column; gap:18px;}
+#page-overview .mv-header {font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--w-3); font-weight:600; margin-bottom:2px;}
+#page-overview .mv-card {border-radius:20px; padding:16px 18px;}
+#page-overview .mv-top {display:flex; align-items:baseline; gap:9px;}
+#page-overview .mv-name {font-family:'Chakra Petch'; font-weight:600; font-size:13px; color:var(--w-2);}
+#page-overview .mv-val {font-family:'Chakra Petch'; font-weight:700; font-size:26px; letter-spacing:-.02em; margin-left:auto;}
+#page-overview .mv-delta {font-size:11.5px; font-weight:600; font-family:'IBM Plex Mono';}
+#page-overview .mv-delta.good {color:var(--success);}
+#page-overview .mv-delta.bad {color:var(--danger);}
+#page-overview .mv-delta.flat {color:var(--w-3); font-size:10px;}
+#page-overview .mv-note {font-size:11.8px; color:var(--w-3); margin-top:7px; line-height:1.45;}
+#page-overview .mv-bars {display:flex; gap:4px; margin-top:11px;}
+#page-overview .mv-bar {flex:1; height:22px; border-radius:5px; position:relative; display:flex; align-items:flex-end;}
+#page-overview .mv-bar-fill {width:100%; border-radius:5px;}
+#page-overview .mv-live {display:flex; align-items:center; gap:6px; margin-top:10px; font-size:10.5px; color:var(--w-3); font-family:'IBM Plex Mono';}
+#page-overview .mv-live .d {width:5px; height:5px; border-radius:50%; background:var(--danger); animation:pulseDot 1.6s ease-in-out infinite;}
+#page-overview .mv-live b {color:var(--w-1);}
+#page-overview .bd-row-set {margin-top:11px;}
+#page-overview .bd-row {display:flex; align-items:center; gap:8px; font-size:10px; color:var(--w-3); margin-bottom:5px;}
+#page-overview .bd-label {width:84px; flex-shrink:0;}
+#page-overview .bd-bar-bg {flex:1; height:4px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden;}
+#page-overview .bd-bar-fill {height:100%; border-radius:2px;}
+#page-overview .bd-val {width:32px; text-align:right; font-family:'IBM Plex Mono'; flex-shrink:0;}
+#page-overview .fc-scale {display:flex; gap:6px; margin-top:11px;}
+#page-overview .fc-seg {flex:1; text-align:center; padding:6px 4px; border-radius:8px; font-size:9px; font-weight:700; letter-spacing:.05em; font-family:'IBM Plex Mono';}
+#page-overview .mv-spark {width:100%; height:20px; margin-top:10px; display:block;}
+#page-overview .section {padding:0 30px 16px 30px;}
+#page-overview .section-head {display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+#page-overview .section-label {font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--w-3); font-weight:600; display:flex; align-items:center; gap:8px;}
+#page-overview .section-label .sq {width:5px; height:5px; border-radius:50%; background:var(--teal);}
+#page-overview .section-count {font-size:12px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-overview .featured-row {display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;}
+#page-overview .featured-card {border-radius:22px; padding:22px; display:grid; grid-template-columns:1fr 128px; gap:16px; align-items:center;}
+#page-overview .fc-top-row {display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+#page-overview .fc-tag {display:inline-flex; align-items:center; gap:6px; font-size:9.5px; font-weight:700; letter-spacing:.06em; color:var(--success); background:rgba(95,211,154,.14); padding:3px 8px; border-radius:99px; text-transform:uppercase;}
+#page-overview .fc-tag .d {width:5px; height:5px; border-radius:50%; background:var(--success);}
+#page-overview .fc-chevron {width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.07); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .3s var(--spring); flex-shrink:0;}
+#page-overview .fc-chevron.open {transform:rotate(180deg);}
+#page-overview .fc-chevron svg {width:11px; height:11px; stroke:var(--w-3);}
+#page-overview .fc-name {font-family:'Chakra Petch'; font-weight:700; font-size:19px; margin-bottom:6px;}
+#page-overview .fc-desc {font-size:13.8px; color:var(--w-3); line-height:1.5; max-width:280px;}
+#page-overview .fc-meta {display:flex; gap:18px; margin-top:14px;}
+#page-overview .fc-meta div .v {font-family:'IBM Plex Mono'; font-weight:600; font-size:16px;}
+#page-overview .fc-meta div .l {font-size:10.8px; color:var(--w-4); text-transform:uppercase; letter-spacing:.05em;}
+#page-overview .fc-visual {width:128px; height:96px;}
+#page-overview .fc-breach-list {grid-column:1/-1; max-height:0; overflow:hidden; transition:max-height .35s var(--expo);}
+#page-overview .fc-breach-list.open {max-height:180px;}
+#page-overview .fc-breach-row {display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-top:1px solid rgba(255,255,255,.08); font-size:11.5px;}
+#page-overview .fc-breach-row .name {color:var(--w-2);}
+#page-overview .fc-breach-row .right {display:flex; align-items:center; gap:8px;}
+#page-overview .fc-breach-row .val {font-family:'IBM Plex Mono'; font-weight:600;}
+#page-overview .fc-status-dot {width:6px; height:6px; border-radius:50%;}
+#page-overview .module-rail {display:flex; gap:14px; overflow-x:auto; padding-bottom:8px;}
+#page-overview .rail-tile {flex:0 0 auto; width:188px; border-radius:20px; padding:17px; position:relative;}
+#page-overview .rail-tile-name {font-family:'Chakra Petch'; font-weight:600; font-size:13.5px; color:var(--w-1); margin-bottom:10px;}
+#page-overview .rail-tile-kpi {display:flex; align-items:baseline; gap:6px;}
+#page-overview .rail-tile-kpi .v {font-family:'Chakra Petch'; font-weight:700; font-size:24px;}
+#page-overview .rail-tile-kpi .l {font-size:10.5px; color:var(--w-3);}
+#page-overview .rail-tile svg.spark {width:100%; height:20px; margin-top:10px; display:block;}
+#page-overview .rail-tooltip {position:absolute; left:50%; bottom:calc(100% + 12px); transform:translateX(-50%) translateY(4px); width:250px; border-radius:16px; padding:16px; opacity:0; pointer-events:none; transition:opacity .2s ease, transform .25s var(--expo); z-index:20; background:rgba(10,11,14,.97); backdrop-filter:blur(10px); box-shadow:0 16px 40px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);}
+#page-overview .rail-tile:hover .rail-tooltip {opacity:1; transform:translateX(-50%) translateY(0);}
+#page-overview .rail-tooltip-title {font-family:'Chakra Petch'; font-weight:600; font-size:11.5px; color:var(--w-1); margin-bottom:8px;}
+#page-overview .rail-tooltip-line {font-size:10.5px; color:var(--w-2); line-height:1.5; margin-bottom:9px;}
+#page-overview .rail-tooltip-indicator {display:flex; align-items:center; gap:6px;}
+#page-overview .rt-dot {width:6px; height:6px; border-radius:50%; flex-shrink:0;}
+#page-overview .rt-bar-bg {flex:1; height:4px; background:rgba(255,255,255,.1); border-radius:2px; overflow:hidden;}
+#page-overview .rt-bar-fill {height:100%; border-radius:2px;}
+#page-overview .console {margin:0 30px 4px 30px; border-radius:22px; padding:17px 22px; display:flex; gap:14px; align-items:flex-start;}
+#page-overview .console-tag {font-family:'IBM Plex Mono'; font-size:11px; color:var(--teal); flex-shrink:0; font-weight:600; padding-top:1px;}
+#page-overview .console-body {flex:1; font-size:13.2px; color:var(--w-2); line-height:1.7;}
+#page-overview .console-body .hl {color:var(--w-1); font-weight:600;}
+#page-overview .ai-panel {border-radius:24px; padding:26px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:28px; margin:0 30px 4px 30px;}
+#page-overview .ai-panel-head {grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; margin-bottom:-6px;}
+#page-overview .ai-panel-title {display:flex; align-items:center; gap:10px;}
+#page-overview .ai-orb {width:24px; height:24px; border-radius:50%; background:conic-gradient(var(--teal), rgba(255,255,255,.1), var(--teal)); animation:spin 6s linear infinite; position:relative;}
+#page-overview .ai-orb::after {content:''; position:absolute; inset:3px; border-radius:50%; background:#0d0e11;}
+#page-overview .ai-panel-title .n1 {font-family:'Chakra Petch'; font-weight:700; font-size:14.5px;}
+#page-overview .beta-tag {font-size:8px; font-weight:700; color:var(--teal); background:rgba(63,224,203,.13); padding:2px 6px; border-radius:5px; letter-spacing:.05em;}
+#page-overview .ai-meta {font-size:10px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-overview .ai-col-title {font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;}
+#page-overview .ai-col-title.red {color:var(--danger);}
+#page-overview .ai-col-title.teal {color:var(--teal);}
+#page-overview .ai-col-title.amber {color:var(--warning);}
+#page-overview .trend-badge {font-size:9px; font-weight:700; letter-spacing:.05em; padding:3px 9px; border-radius:99px; text-transform:uppercase;}
+#page-overview .trend-badge.mixed {color:var(--warning); background:rgba(232,184,78,.14);}
+#page-overview .ai-panel p {font-size:12px; line-height:1.65; color:var(--w-2); margin:0;}
+#page-overview .insight-list {list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px;}
+#page-overview .insight-item {display:flex; align-items:flex-start; gap:9px;}
+#page-overview .ins-arrow {flex-shrink:0; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+#page-overview .ins-arrow.bad {background:rgba(239,107,124,.16);}
+#page-overview .ins-arrow.good {background:rgba(95,211,154,.16);}
+#page-overview .ins-arrow.watch {background:rgba(232,184,78,.16);}
+#page-overview .ins-arrow svg {width:9px; height:9px;}
+#page-overview .ins-text {font-size:11.5px; line-height:1.55; color:var(--w-2);}
+#page-overview .ins-text b {color:var(--w-1); font-weight:600;}
+#page-overview .console-cursor {display:inline-block; width:6px; height:12px; background:var(--teal); margin-left:2px; animation:blink 1s step-end infinite; vertical-align:middle;}
+
+
+@keyframes pulseDot{0%,100%{opacity:1;} 50%{opacity:.3;}}
+
+@keyframes spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+
+@keyframes blink{50%{opacity:0;}}
+
+@keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+@keyframes tipPulse{0%,100%{r:2.2; opacity:1;} 50%{r:4; opacity:.45;}}
+#page-overview .fade-in {animation:fadeUp .65s var(--expo) both;}
+:root {
+  --w-1:#f4f7f9; --w-2:rgba(244,247,249,.62); --w-3:rgba(244,247,249,.4); --w-4:rgba(244,247,249,.2);
+  --teal:#3fe0cb; --success:#5fd39a; --warning:#e8b84e; --danger:#ef6b7c;
+  --glass-bg:rgba(18,20,24,.42); --glass-sheen:rgba(255,255,255,.06);
+  --spring:cubic-bezier(.34,1.56,.64,1); --expo:cubic-bezier(.16,1,.3,1); --ease:cubic-bezier(.4,0,.2,1);
+}
+* {box-sizing:border-box;}
+html, body {margin:0;padding:0;height:100%;}
+body {background:#030304; color:var(--w-1); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased; overflow:hidden;}
+#page-ops .mono {font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+::-webkit-scrollbar {width:7px;}
+::-webkit-scrollbar-track {background:transparent;}
+::-webkit-scrollbar-thumb {background:rgba(255,255,255,.13); border-radius:99px;}
+#page-ops .glow {position:fixed; inset:0; z-index:0; pointer-events:none;}
+#page-ops .glow::before, #page-ops .glow::after {content:''; position:absolute; border-radius:50%; filter:blur(100px);}
+#page-ops .glow::before {width:680px; height:680px; top:-180px; left:-140px; background:radial-gradient(circle, rgba(63,224,203,.16), transparent 70%);}
+#page-ops .glow::after {width:580px; height:580px; top:160px; right:-160px; background:radial-gradient(circle, rgba(239,107,124,.10), transparent 70%);}
+#page-ops .glow-b3 {position:fixed; z-index:0; pointer-events:none; width:640px; height:640px; bottom:-220px; left:36%; border-radius:50%; filter:blur(110px); background:radial-gradient(circle, rgba(232,184,78,.08), transparent 70%);}
+#page-ops .glass {
+  background-color:var(--glass-bg);
+  background-image:linear-gradient(135deg, var(--glass-sheen), rgba(255,255,255,.015));
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 16px 44px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+}
+#page-ops .app {display:flex; height:100vh; width:100vw; position:relative; z-index:2;}
+#page-ops .sidebar {width:222px; flex-shrink:0; display:flex; flex-direction:column; padding:22px 0; margin:14px 0 14px 14px; border-radius:26px;}
+#page-ops .brand {display:flex; align-items:center; gap:12px; padding:0 18px 18px 18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:14px;}
+#page-ops .brand-mark svg {width:30px; height:30px;}
+#page-ops .brand-text .b1 {font-family:'Chakra Petch'; font-weight:700; font-size:13.5px; letter-spacing:.05em;}
+#page-ops .brand-text .b2 {font-size:8.5px; color:var(--w-3); letter-spacing:.09em; text-transform:uppercase; margin-top:2px;}
+#page-ops .nav-scroll {flex:1; overflow-y:auto; padding:0 10px;}
+#page-ops .nav-group {margin-bottom:18px;}
+#page-ops .nav-group-label {font-size:9.5px; letter-spacing:.13em; color:var(--w-4); text-transform:uppercase; padding:0 10px; margin-bottom:8px; font-weight:600;}
+#page-ops .nav-item {display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:12px; margin-bottom:3px; color:var(--w-3); font-size:12.5px; font-weight:500;}
+#page-ops .nav-item svg {width:14.5px; height:14.5px; flex-shrink:0; opacity:.8;}
+#page-ops .nav-item.active {background:rgba(63,224,203,.13); color:var(--w-1); box-shadow:inset 0 0 0 1px rgba(63,224,203,.25);}
+#page-ops .sidebar-footer {padding:14px 18px 0 18px; margin-top:14px; border-top:1px solid rgba(255,255,255,.08);}
+#page-ops .nuwa-chip {display:flex; align-items:center; gap:10px; padding:11px; border-radius:16px;}
+#page-ops .nuwa-chip .dot {width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulseDot 2.4s ease-in-out infinite;}
+#page-ops .nuwa-chip-text .t1 {font-family:'Chakra Petch'; font-size:11.5px; font-weight:600;}
+#page-ops .nuwa-chip-text .t2 {font-size:9px; color:var(--w-3);}
+#page-ops .main {flex:1; display:flex; flex-direction:column; min-width:0; height:100vh; padding:14px 14px 0 10px;}
+#page-ops .topbar {height:60px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 26px; border-radius:20px; margin-bottom:14px;}
+#page-ops .breadcrumb {font-size:12px; color:var(--w-3); display:flex; gap:8px;}
+#page-ops .breadcrumb .cur {color:var(--w-1); font-weight:600;}
+#page-ops .topbar-mid {display:flex; align-items:center; gap:20px;}
+#page-ops .tele-chip {display:flex; flex-direction:column; align-items:flex-start; gap:1px;}
+#page-ops .tele-chip .l {font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--w-4);}
+#page-ops .tele-chip .v {font-size:12.5px; font-family:'IBM Plex Mono'; font-weight:600; color:var(--w-2);}
+#page-ops .topbar-right {display:flex; align-items:center; gap:18px;}
+#page-ops .updated-pill {display:flex; align-items:center; gap:6px; padding:5px 11px; border-radius:99px; background:rgba(239,107,124,.14); font-size:10.5px; font-weight:700; color:var(--danger);}
+#page-ops .clock {font-size:12px; color:var(--w-2);}
+#page-ops .clock .date {color:var(--w-4); margin-left:8px;}
+#page-ops .avatar {width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.07); display:flex; align-items:center; justify-content:center; font-family:'Chakra Petch'; font-weight:700; font-size:11px; color:var(--teal);}
+#page-ops .content {flex:1; overflow-y:auto; padding-bottom:16px;}
+#page-ops .page-head {display:flex; align-items:flex-end; justify-content:space-between; padding:20px 30px 16px 30px; flex-wrap:wrap; gap:14px;}
+#page-ops .page-title {font-family:'Chakra Petch'; font-weight:700; font-size:23px; letter-spacing:-.01em; margin:0;}
+#page-ops .page-sub {font-size:13px; color:var(--w-3); margin-top:4px;}
+#page-ops .range-pills {display:flex; gap:4px; background:rgba(255,255,255,.05); padding:4px; border-radius:12px;}
+#page-ops .range-pill {padding:7px 14px; font-size:10.5px; font-weight:600; border-radius:9px; color:var(--w-3); cursor:pointer; font-family:'IBM Plex Mono';}
+#page-ops .range-pill.active {background:rgba(63,224,203,.16); color:var(--teal);}
+#page-ops .filters-btn {display:flex; align-items:center; gap:7px; padding:9px 16px; border-radius:12px; font-size:11px; font-weight:600; color:var(--w-2); cursor:pointer;}
+#page-ops .filters-btn svg {width:13px; height:13px; stroke:var(--w-3);}
+#page-ops .head-controls {display:flex; align-items:center; gap:10px;}
+#page-ops .hero {border-radius:28px; padding:26px 30px; margin:0 30px 18px 30px; display:grid; grid-template-columns:1.3fr repeat(4,1fr); gap:0;}
+#page-ops .hero-block {padding:0 26px;}
+#page-ops .hero-block:first-child {padding-left:0;}
+#page-ops .hero-block:not(:first-child) {border-left:1px solid rgba(255,255,255,.08);}
+#page-ops .posture-lbl {font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--w-3); font-weight:600; margin-bottom:10px;}
+#page-ops .posture-row {display:flex; align-items:baseline; gap:10px;}
+#page-ops .posture-val {font-family:'Chakra Petch'; font-weight:700; font-size:48px; letter-spacing:-.02em;}
+#page-ops .posture-unit {font-family:'IBM Plex Mono'; font-size:14px; color:var(--w-3);}
+#page-ops .posture-delta {font-size:13px; font-weight:600; font-family:'IBM Plex Mono'; margin-left:auto;}
+#page-ops .posture-bar-wrap {margin-top:14px; position:relative;}
+#page-ops .posture-bar-bg {height:8px; border-radius:4px; background:rgba(255,255,255,.08); overflow:hidden;}
+#page-ops .posture-bar-fill {height:100%; border-radius:4px;}
+#page-ops .posture-target {position:absolute; top:-4px; width:2px; height:16px; background:var(--w-1); opacity:.5;}
+#page-ops .posture-target-lbl {position:absolute; top:14px; font-size:9px; font-family:'IBM Plex Mono'; color:var(--w-4); transform:translateX(-50%);}
+#page-ops .sig-tag {display:inline-block; font-size:9px; font-weight:700; letter-spacing:.06em; padding:3px 9px; border-radius:99px; text-transform:uppercase; margin-bottom:10px;}
+#page-ops .sig-tag.crit {color:var(--danger); background:rgba(239,107,124,.14);}
+#page-ops .sig-tag.win {color:var(--success); background:rgba(95,211,154,.14);}
+#page-ops .sig-tag.watch {color:var(--warning); background:rgba(232,184,78,.14);}
+#page-ops .sig-tag.info {color:var(--teal); background:rgba(63,224,203,.14);}
+#page-ops .sig-name {font-family:'Chakra Petch'; font-weight:700; font-size:15px; line-height:1.3;}
+#page-ops .sig-valrow {display:flex; align-items:baseline; gap:8px; margin-top:8px;}
+#page-ops .sig-val {font-family:'Chakra Petch'; font-weight:700; font-size:20px;}
+#page-ops .sig-note {font-size:10.8px; color:var(--w-3); margin-top:7px; line-height:1.4;}
+#page-ops .section {padding:0 30px 20px 30px;}
+#page-ops .section-row {display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px;}
+#page-ops .section-title {font-family:'Chakra Petch'; font-weight:600; font-size:15px;}
+#page-ops .section-sub {font-size:11px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-ops .domain-grid {display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px;}
+#page-ops .domain-card {border-radius:22px; padding:20px;}
+#page-ops .dc-head {display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; padding-bottom:13px; border-bottom:1px solid rgba(255,255,255,.08);}
+#page-ops .dc-name {font-family:'Chakra Petch'; font-weight:600; font-size:14px;}
+#page-ops .dc-badge {font-size:9px; font-weight:700; letter-spacing:.05em; padding:4px 9px; border-radius:99px;}
+#page-ops .dc-badge.watch {color:var(--warning); background:rgba(232,184,78,.14);}
+#page-ops .dc-badge.crit {color:var(--danger); background:rgba(239,107,124,.14);}
+#page-ops .dc-score {font-family:'Chakra Petch'; font-weight:700; font-size:20px; margin-top:2px;}
+#page-ops .metric-row {padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06);}
+#page-ops .metric-row:last-child {border-bottom:none;}
+#page-ops .metric-top {display:flex; align-items:center; justify-content:space-between;}
+#page-ops .metric-lbl {font-size:11px; color:var(--w-2); max-width:66%; line-height:1.3;}
+#page-ops .metric-right {display:flex; align-items:center; gap:6px;}
+#page-ops .metric-val {font-family:'IBM Plex Mono'; font-weight:600; font-size:13px;}
+#page-ops .trend {display:flex; align-items:center; gap:3px; font-family:'IBM Plex Mono'; font-size:10px; font-weight:600;}
+#page-ops .trend.bad {color:var(--danger);}
+#page-ops .trend.good {color:var(--success);}
+#page-ops .metric-row svg.spark {width:100%; height:14px; margin-top:6px; display:block;}
+#page-ops .ai-panel {border-radius:24px; padding:26px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:28px;}
+#page-ops .ai-panel-head {grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; margin-bottom:-6px;}
+#page-ops .ai-panel-title {display:flex; align-items:center; gap:10px;}
+#page-ops .ai-orb {width:24px; height:24px; border-radius:50%; background:conic-gradient(var(--teal), rgba(255,255,255,.1), var(--teal)); animation:spin 6s linear infinite; position:relative;}
+#page-ops .ai-orb::after {content:''; position:absolute; inset:3px; border-radius:50%; background:#0d0e11;}
+#page-ops .ai-panel-title .n1 {font-family:'Chakra Petch'; font-weight:700; font-size:14.5px;}
+#page-ops .beta-tag {font-size:8px; font-weight:700; color:var(--teal); background:rgba(63,224,203,.13); padding:2px 6px; border-radius:5px; letter-spacing:.05em;}
+#page-ops .ai-meta {font-size:10px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-ops .ai-col-title {font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;}
+#page-ops .ai-col-title.red {color:var(--danger);}
+#page-ops .ai-col-title.teal {color:var(--teal);}
+#page-ops .ai-col-title.amber {color:var(--warning);}
+#page-ops .trend-badge {font-size:9px; font-weight:700; letter-spacing:.05em; padding:3px 9px; border-radius:99px; text-transform:uppercase;}
+#page-ops .trend-badge.declining {color:var(--danger); background:rgba(239,107,124,.14);}
+#page-ops .ai-panel p {font-size:12px; line-height:1.65; color:var(--w-2); margin:0;}
+#page-ops .insight-list {list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px;}
+#page-ops .insight-item {display:flex; align-items:flex-start; gap:9px;}
+#page-ops .ins-arrow {flex-shrink:0; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+#page-ops .ins-arrow.bad {background:rgba(239,107,124,.16);}
+#page-ops .ins-arrow.good {background:rgba(95,211,154,.16);}
+#page-ops .ins-arrow svg {width:9px; height:9px;}
+#page-ops .ins-text {font-size:11.5px; line-height:1.55; color:var(--w-2);}
+#page-ops .ins-text b {color:var(--w-1); font-weight:600;}
+
+
+@keyframes pulseDot{0%,100%{opacity:1;} 50%{opacity:.3;}}
+
+@keyframes spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+
+@keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+@keyframes tipPulse{0%,100%{r:2.2; opacity:1;} 50%{r:4; opacity:.45;}}
+#page-ops .fade-in {animation:fadeUp .65s var(--expo) both;}
+#page-ops .stagger > * {opacity:0; animation:fadeUp .55s var(--expo) forwards;}
+#page-ops .stagger > *:nth-child(1) {animation-delay:.02s;}
+#page-ops .stagger > *:nth-child(2) {animation-delay:.07s;}
+#page-ops .stagger > *:nth-child(3) {animation-delay:.12s;}
+#page-ops .stagger > *:nth-child(4) {animation-delay:.17s;}
+:root {
+  --w-1:#f4f7f9; --w-2:rgba(244,247,249,.62); --w-3:rgba(244,247,249,.4); --w-4:rgba(244,247,249,.2);
+  --teal:#3fe0cb; --success:#5fd39a; --warning:#e8b84e; --danger:#ef6b7c;
+  --glass-bg:rgba(18,20,24,.42); --glass-sheen:rgba(255,255,255,.06);
+  --spring:cubic-bezier(.34,1.56,.64,1); --expo:cubic-bezier(.16,1,.3,1); --ease:cubic-bezier(.4,0,.2,1);
+}
+* {box-sizing:border-box;}
+html, body {margin:0;padding:0;height:100%;}
+body {background:#030304; color:var(--w-1); font-family:'IBM Plex Sans',sans-serif; -webkit-font-smoothing:antialiased; overflow:hidden;}
+#page-user360 .mono {font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+::-webkit-scrollbar {width:7px;}
+::-webkit-scrollbar-track {background:transparent;}
+::-webkit-scrollbar-thumb {background:rgba(255,255,255,.13); border-radius:99px;}
+#page-user360 .glow {position:fixed; inset:0; z-index:0; pointer-events:none;}
+#page-user360 .glow::before, #page-user360 .glow::after {content:''; position:absolute; border-radius:50%; filter:blur(100px);}
+#page-user360 .glow::before {width:680px; height:680px; top:-180px; left:-140px; background:radial-gradient(circle, rgba(63,224,203,.16), transparent 70%);}
+#page-user360 .glow::after {width:580px; height:580px; top:160px; right:-160px; background:radial-gradient(circle, rgba(239,107,124,.10), transparent 70%);}
+#page-user360 .glow-b3 {position:fixed; z-index:0; pointer-events:none; width:640px; height:640px; bottom:-220px; left:36%; border-radius:50%; filter:blur(110px); background:radial-gradient(circle, rgba(232,184,78,.08), transparent 70%);}
+#page-user360 .glass {
+  background-color:var(--glass-bg);
+  background-image:linear-gradient(135deg, var(--glass-sheen), rgba(255,255,255,.015));
+  backdrop-filter:blur(28px) saturate(160%);
+  -webkit-backdrop-filter:blur(28px) saturate(160%);
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:0 16px 44px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.08);
+}
+#page-user360 .app {display:flex; height:100vh; width:100vw; position:relative; z-index:2;}
+#page-user360 .sidebar {width:222px; flex-shrink:0; display:flex; flex-direction:column; padding:22px 0; margin:14px 0 14px 14px; border-radius:26px;}
+#page-user360 .brand {display:flex; align-items:center; gap:12px; padding:0 18px 18px 18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:14px;}
+#page-user360 .brand-mark svg {width:30px; height:30px;}
+#page-user360 .brand-text .b1 {font-family:'Chakra Petch'; font-weight:700; font-size:13.5px; letter-spacing:.05em;}
+#page-user360 .brand-text .b2 {font-size:8.5px; color:var(--w-3); letter-spacing:.09em; text-transform:uppercase; margin-top:2px;}
+#page-user360 .nav-scroll {flex:1; overflow-y:auto; padding:0 10px;}
+#page-user360 .nav-group {margin-bottom:18px;}
+#page-user360 .nav-group-label {font-size:9.5px; letter-spacing:.13em; color:var(--w-4); text-transform:uppercase; padding:0 10px; margin-bottom:8px; font-weight:600;}
+#page-user360 .nav-item {display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:12px; margin-bottom:3px; color:var(--w-3); font-size:12.5px; font-weight:500;}
+#page-user360 .nav-item svg {width:14.5px; height:14.5px; flex-shrink:0; opacity:.8;}
+#page-user360 .nav-item.active {background:rgba(63,224,203,.13); color:var(--w-1); box-shadow:inset 0 0 0 1px rgba(63,224,203,.25);}
+#page-user360 .sidebar-footer {padding:14px 18px 0 18px; margin-top:14px; border-top:1px solid rgba(255,255,255,.08);}
+#page-user360 .nuwa-chip {display:flex; align-items:center; gap:10px; padding:11px; border-radius:16px;}
+#page-user360 .nuwa-chip .dot {width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 8px var(--teal); animation:pulseDot 2.4s ease-in-out infinite;}
+#page-user360 .nuwa-chip-text .t1 {font-family:'Chakra Petch'; font-size:11.5px; font-weight:600;}
+#page-user360 .nuwa-chip-text .t2 {font-size:9px; color:var(--w-3);}
+#page-user360 .main {flex:1; display:flex; flex-direction:column; min-width:0; height:100vh; padding:14px 14px 0 10px;}
+#page-user360 .topbar {height:60px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 26px; border-radius:20px; margin-bottom:14px;}
+#page-user360 .breadcrumb {font-size:12px; color:var(--w-3); display:flex; gap:8px; flex-shrink:0;}
+#page-user360 .breadcrumb .cur {color:var(--w-1); font-weight:600;}
+#page-user360 .entity-switch {display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.05); border-radius:11px; padding:7px 12px; margin-left:22px; flex:1; max-width:280px;}
+#page-user360 .entity-switch svg {width:13px; height:13px; stroke:var(--w-3); flex-shrink:0;}
+#page-user360 .entity-switch input {background:none; border:none; outline:none; color:var(--w-1); font-size:11.5px; flex:1; font-family:'IBM Plex Sans';}
+#page-user360 .entity-switch input::placeholder {color:var(--w-4);}
+#page-user360 .entity-kbd {font-size:9px; font-family:'IBM Plex Mono'; color:var(--w-4); background:rgba(255,255,255,.06); padding:2px 6px; border-radius:5px;}
+#page-user360 .topbar-mid {display:flex; align-items:center; gap:20px;}
+#page-user360 .tele-chip {display:flex; flex-direction:column; align-items:flex-start; gap:1px;}
+#page-user360 .tele-chip .l {font-size:8.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--w-4);}
+#page-user360 .tele-chip .v {font-size:12.5px; font-family:'IBM Plex Mono'; font-weight:600; color:var(--w-2);}
+#page-user360 .topbar-right {display:flex; align-items:center; gap:18px;}
+#page-user360 .updated-pill {display:flex; align-items:center; gap:6px; padding:5px 11px; border-radius:99px; background:rgba(63,224,203,.13); font-size:10.5px; font-weight:700; color:var(--teal);}
+#page-user360 .clock {font-size:12px; color:var(--w-2);}
+#page-user360 .clock .date {color:var(--w-4); margin-left:8px;}
+#page-user360 .avatar {width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.07); display:flex; align-items:center; justify-content:center; font-family:'Chakra Petch'; font-weight:700; font-size:11px; color:var(--teal);}
+#page-user360 .content {flex:1; overflow-y:auto; padding-bottom:16px;}
+#page-user360 .page-head {display:flex; align-items:flex-end; justify-content:space-between; padding:20px 30px 16px 30px; flex-wrap:wrap; gap:14px;}
+#page-user360 .page-title {font-family:'Chakra Petch'; font-weight:700; font-size:23px; letter-spacing:-.01em; margin:0;}
+#page-user360 .page-sub {font-size:13px; color:var(--w-3); margin-top:4px;}
+#page-user360 .range-pills {display:flex; gap:4px; background:rgba(255,255,255,.05); padding:4px; border-radius:12px;}
+#page-user360 .range-pill {padding:7px 14px; font-size:10.5px; font-weight:600; border-radius:9px; color:var(--w-3); cursor:pointer; font-family:'IBM Plex Mono';}
+#page-user360 .range-pill.active {background:rgba(63,224,203,.16); color:var(--teal);}
+#page-user360 .section {padding:0 30px 20px 30px;}
+#page-user360 .section-row {display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px;}
+#page-user360 .section-title {font-family:'Chakra Petch'; font-weight:600; font-size:15px;}
+#page-user360 .section-sub {font-size:11px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-user360 .id-hero {border-radius:28px; padding:26px 30px; margin:0 30px 18px 30px; display:grid; grid-template-columns:1fr auto; gap:26px; align-items:center;}
+#page-user360 .id-left {display:flex; align-items:flex-start; gap:18px;}
+#page-user360 .id-avatar {width:64px; height:64px; border-radius:50%; background:rgba(63,224,203,.12); border:2px solid rgba(63,224,203,.3); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
+#page-user360 .id-avatar svg {width:100%; height:100%;}
+#page-user360 .id-name-row {display:flex; align-items:center; gap:10px;}
+#page-user360 .id-name {font-family:'Chakra Petch'; font-weight:700; font-size:22px;}
+#page-user360 .id-status {display:flex; align-items:center; gap:6px; padding:4px 11px; border-radius:99px; background:rgba(95,211,154,.14); color:var(--success); font-size:10.5px; font-weight:700;}
+#page-user360 .id-status .d {width:5px; height:5px; border-radius:50%; background:var(--success);}
+#page-user360 .id-role {font-size:12px; color:var(--w-3); margin-top:5px;}
+#page-user360 .id-role b {color:var(--w-2); font-weight:500;}
+#page-user360 .id-more {display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--teal); cursor:pointer; margin-top:12px; font-weight:600;}
+#page-user360 .id-more svg {width:11px; height:11px; stroke:var(--teal); transition:transform .3s var(--spring);}
+#page-user360 .id-more.open svg {transform:rotate(180deg);}
+#page-user360 .id-detail-grid {max-height:0; overflow:hidden; transition:max-height .35s var(--expo); display:grid; grid-template-columns:1fr 1fr; gap:8px 30px;}
+#page-user360 .id-detail-grid.open {max-height:200px; margin-top:14px;}
+#page-user360 .id-detail-row {display:flex; justify-content:space-between; font-size:11px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,.06);}
+#page-user360 .id-detail-row span:first-child {color:var(--w-4);}
+#page-user360 .id-detail-row span:last-child {color:var(--w-2);}
+#page-user360 .id-masked {filter:blur(4px); user-select:none;}
+#page-user360 .action-bar {display:flex; align-items:center; gap:12px; padding-top:18px; margin-top:18px; border-top:1px solid rgba(255,255,255,.08); flex-wrap:wrap;}
+#page-user360 .action-btn {font-family:'IBM Plex Sans'; font-size:12px; font-weight:600; padding:9px 16px; border-radius:11px; cursor:pointer; border:1px solid transparent; background:none; transition:all .2s ease; letter-spacing:.01em;}
+#page-user360 .action-btn.danger {color:var(--danger); border-color:rgba(239,107,124,.35); background:rgba(239,107,124,.08);}
+#page-user360 .action-btn.danger:hover {background:rgba(239,107,124,.16);}
+#page-user360 .action-btn.warning {color:var(--warning); border-color:rgba(232,184,78,.35); background:rgba(232,184,78,.08);}
+#page-user360 .action-btn.warning:hover {background:rgba(232,184,78,.16);}
+#page-user360 .action-btn.neutral {color:var(--w-2); border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04);}
+#page-user360 .action-btn.neutral:hover {background:rgba(255,255,255,.09);}
+#page-user360 .action-btn.done {opacity:.55; cursor:default; pointer-events:none;}
+#page-user360 .action-btn.done::before {content:'\\2713  '; }
+#page-user360 .action-feedback {font-size:11px; color:var(--w-3); font-family:'IBM Plex Mono'; opacity:0; transition:opacity .3s ease;}
+#page-user360 .action-feedback.show {opacity:1;}
+#page-user360 .action-btn.reset {color:var(--w-3); border-color:rgba(255,255,255,.12); background:none; margin-left:auto;}
+#page-user360 .action-btn.reset:hover {background:rgba(255,255,255,.06); color:var(--w-1);}
+#page-user360 .modal-overlay {position:fixed; inset:0; z-index:100; background:rgba(3,3,4,.7); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center;}
+#page-user360 .modal-overlay.open {display:flex;}
+#page-user360 .modal-box {width:420px; border-radius:22px; padding:26px; background-color:rgba(20,22,27,.98); backdrop-filter:blur(20px);}
+#page-user360 .modal-title {font-family:'Chakra Petch'; font-weight:700; font-size:17px; margin-bottom:6px;}
+#page-user360 .modal-sub {font-size:12px; color:var(--w-3); line-height:1.5; margin-bottom:16px;}
+#page-user360 .modal-textarea {width:100%; min-height:90px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:12px; color:var(--w-1); font-family:'IBM Plex Sans'; font-size:12.5px; resize:vertical; outline:none; box-sizing:border-box;}
+#page-user360 .modal-textarea::placeholder {color:var(--w-4);}
+#page-user360 .modal-textarea:focus {border-color:rgba(63,224,203,.4);}
+#page-user360 .modal-actions {display:flex; justify-content:flex-end; gap:10px; margin-top:16px;}
+#page-user360 .modal-btn {font-size:12px; font-weight:600; padding:9px 18px; border-radius:11px; cursor:pointer; border:1px solid transparent;}
+#page-user360 .modal-btn.cancel {color:var(--w-2); background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.1);}
+#page-user360 .modal-btn.cancel:hover {background:rgba(255,255,255,.09);}
+#page-user360 .modal-btn.submit {color:#0a0e14; background:var(--teal); font-weight:700;}
+#page-user360 .modal-btn.submit:hover {background:#54e6d3;}
+#page-user360 .ack-btn {font-size:9px; font-weight:700; letter-spacing:.04em; color:var(--teal); background:rgba(63,224,203,.12); border:1px solid rgba(63,224,203,.25); padding:3px 9px; border-radius:99px; cursor:pointer; margin-top:5px; display:inline-block; transition:all .2s ease;}
+#page-user360 .ack-btn:hover {background:rgba(63,224,203,.2);}
+#page-user360 .ack-btn.done {color:var(--w-4); background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.08); cursor:default; pointer-events:none;}
+#page-user360 .trust-ring-wrap {display:flex; gap:34px;}
+#page-user360 .trust-ring {text-align:center;}
+#page-user360 .trust-ring svg {width:100px; height:100px;}
+#page-user360 .trust-ring-label {font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--w-3); font-weight:600; margin-top:6px;}
+#page-user360 .trust-ring-sub {font-size:9.5px; color:var(--w-4); margin-top:2px; font-family:'IBM Plex Mono';}
+#page-user360 .trust-divider {width:1px; align-self:stretch; background:rgba(255,255,255,.1); margin:4px 14px;}
+#page-user360 .presence-panel {border-radius:24px; padding:22px 26px; margin-bottom:18px;}
+#page-user360 .presence-legend {display:flex; gap:18px; margin-bottom:16px;}
+#page-user360 .pl-item {display:flex; align-items:center; gap:7px; font-size:10.5px; color:var(--w-3);}
+#page-user360 .pl-sw {width:10px; height:10px; border-radius:3px;}
+#page-user360 .presence-grid {display:flex; gap:6px; align-items:flex-end; height:190px;}
+#page-user360 .presence-day {flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; height:100%; justify-content:flex-end; cursor:pointer; position:relative;}
+#page-user360 .pd-bars {display:flex; gap:3px; align-items:flex-end; height:158px; position:relative;}
+#page-user360 .pd-bars::before {content:''; position:absolute; left:-3px; right:-3px; top:0; height:1px; background:rgba(255,255,255,.06);}
+#page-user360 .pd-bars::after {content:''; position:absolute; left:-3px; right:-3px; bottom:0; height:1px; background:rgba(255,255,255,.1);}
+#page-user360 .pd-scale {position:absolute; left:0; top:0; bottom:20px; display:flex; flex-direction:column; justify-content:space-between; font-size:8px; color:var(--w-4); font-family:'IBM Plex Mono'; pointer-events:none;}
+#page-user360 .presence-grid {position:relative; padding-left:26px;}
+#page-user360 .pd-bar {width:9px; border-radius:3px 3px 0 0; min-height:3px;}
+#page-user360 .pd-bar.badge {background:rgba(63,224,203,.55);}
+#page-user360 .pd-bar.digital {background:rgba(232,184,78,.55);}
+#page-user360 .pd-flag {position:absolute; top:-14px; width:14px; height:14px; border-radius:50%; background:var(--danger); display:flex; align-items:center; justify-content:center; box-shadow:0 0 8px rgba(239,107,124,.6);}
+#page-user360 .pd-flag svg {width:8px; height:8px; stroke:#0d0e11; stroke-width:3;}
+#page-user360 .pd-label {font-size:8px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-user360 .presence-tooltip {position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%); width:200px; background:rgba(10,11,14,.97); backdrop-filter:blur(10px); border-radius:12px; padding:12px; font-size:10.5px; color:var(--w-2); line-height:1.5; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:20; text-align:left; box-shadow:0 16px 40px rgba(0,0,0,.5);}
+#page-user360 .presence-day:hover .presence-tooltip {opacity:1;}
+#page-user360 .presence-tooltip b {color:var(--w-1);}
+#page-user360 .presence-tooltip.flagged {border:1px solid rgba(239,107,124,.4);}
+#page-user360 .geo-panel {border-radius:24px; padding:22px 26px; display:grid; grid-template-columns:280px 1fr; gap:26px;}
+#page-user360 .geo-map-col {display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.02); border-radius:16px;}
+#page-user360 .geo-map {width:100%; height:180px;}
+#page-user360 .geo-list {display:flex; flex-direction:column; gap:14px;}
+#page-user360 .geo-entry {display:flex; gap:10px; align-items:flex-start; padding-bottom:14px; border-bottom:1px solid rgba(255,255,255,.06);}
+#page-user360 .geo-entry:last-child {border-bottom:none; padding-bottom:0;}
+#page-user360 .geo-dot {width:7px; height:7px; border-radius:50%; margin-top:5px; flex-shrink:0;}
+#page-user360 .geo-body .t {font-size:12px; color:var(--w-1); font-weight:600; font-family:'Chakra Petch';}
+#page-user360 .geo-body .d {font-size:10.5px; color:var(--w-3); margin-top:2px;}
+#page-user360 .geo-entry.flagged .geo-body .t {color:var(--danger);}
+#page-user360 .triad-panel {border-radius:24px; padding:22px 26px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:28px; margin-bottom:18px;}
+#page-user360 .triad-col-title {font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--w-3); margin-bottom:13px; display:flex; align-items:center; justify-content:space-between;}
+#page-user360 .chip-row {display:flex; flex-wrap:wrap; gap:7px;}
+#page-user360 .access-chip {font-size:10.5px; padding:6px 11px; border-radius:99px; background:rgba(63,224,203,.1); color:var(--teal); font-family:'IBM Plex Mono'; border:1px solid rgba(63,224,203,.2);}
+#page-user360 .priv-row {display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:11.5px;}
+#page-user360 .priv-row:last-child {border-bottom:none;}
+#page-user360 .priv-row .l {color:var(--w-2);}
+#page-user360 .priv-badge {font-size:10px; font-weight:700; padding:3px 9px; border-radius:99px;}
+#page-user360 .priv-badge.none {color:var(--w-4); background:rgba(255,255,255,.06);}
+#page-user360 .priv-badge.limited {color:var(--warning); background:rgba(232,184,78,.14);}
+#page-user360 .priv-badge.full {color:var(--danger); background:rgba(239,107,124,.14);}
+#page-user360 .timeline-mini {display:flex; flex-direction:column; gap:12px;}
+#page-user360 .tm-row {display:flex; gap:10px; align-items:flex-start;}
+#page-user360 .tm-dot {width:7px; height:7px; border-radius:50%; margin-top:5px; flex-shrink:0;}
+#page-user360 .tm-body .t {font-size:11px; color:var(--w-2); line-height:1.4;}
+#page-user360 .tm-body .d {font-size:9.5px; color:var(--w-4); font-family:'IBM Plex Mono'; margin-top:2px;}
+#page-user360 .tm-flag {display:inline-block; font-size:8.5px; font-weight:700; color:var(--danger); background:rgba(239,107,124,.14); padding:2px 7px; border-radius:5px; margin-top:4px; letter-spacing:.03em;}
+#page-user360 .corr-row {display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:11px;}
+#page-user360 .corr-row:last-child {border-bottom:none;}
+#page-user360 .corr-row .l {display:flex; align-items:center; gap:8px; color:var(--w-2);}
+#page-user360 .corr-dot {width:6px; height:6px; border-radius:50%; flex-shrink:0;}
+#page-user360 .corr-row .r {font-family:'IBM Plex Mono'; color:var(--w-4); font-size:10px;}
+#page-user360 .email-stat-row {display:flex; gap:18px; margin-bottom:14px;}
+#page-user360 .email-stat .v {font-family:'Chakra Petch'; font-weight:700; font-size:20px;}
+#page-user360 .email-stat .l {font-size:9.5px; color:var(--w-4); text-transform:uppercase; letter-spacing:.04em; margin-top:2px;}
+#page-user360 .domain-row {display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px;}
+#page-user360 .dom-card {border-radius:22px; padding:20px;}
+#page-user360 .dom-head {display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; padding-bottom:13px; border-bottom:1px solid rgba(255,255,255,.08);}
+#page-user360 .dom-title {display:flex; align-items:center; gap:9px; font-family:'Chakra Petch'; font-weight:600; font-size:13.5px;}
+#page-user360 .dom-icon {width:26px; height:26px; border-radius:8px; background:rgba(63,224,203,.12); display:flex; align-items:center; justify-content:center;}
+#page-user360 .dom-icon svg {width:13px; height:13px; stroke:var(--teal);}
+#page-user360 .dom-count {font-family:'Chakra Petch'; font-weight:700; font-size:17px;}
+#page-user360 .dom-row-item {display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:11.5px;}
+#page-user360 .dom-row-item:last-of-type {border-bottom:none;}
+#page-user360 .dom-row-item .l {display:flex; align-items:center; gap:8px; color:var(--w-2);}
+#page-user360 .dom-dot {width:6px; height:6px; border-radius:50%; background:var(--success); flex-shrink:0;}
+#page-user360 .dom-row-item .r {color:var(--w-4); font-size:10.5px;}
+#page-user360 .dom-view-all {display:block; margin-top:12px; font-size:10.5px; color:var(--teal); font-weight:600; cursor:pointer;}
+#page-user360 .pulse-panel {border-radius:24px; padding:22px 26px; margin-bottom:18px;}
+#page-user360 .pulse-lane {display:flex; align-items:center; gap:16px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.06);}
+#page-user360 .pulse-lane:last-child {border-bottom:none;}
+#page-user360 .pulse-dot {width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+#page-user360 .pulse-name {width:150px; font-size:11.5px; color:var(--w-2); flex-shrink:0;}
+#page-user360 .pulse-val {width:44px; font-family:'Chakra Petch'; font-weight:700; font-size:16px; flex-shrink:0;}
+#page-user360 .pulse-track {flex:1; height:22px;}
+#page-user360 .pulse-delta {width:56px; text-align:right; font-family:'IBM Plex Mono'; font-size:10px; color:var(--w-4); flex-shrink:0;}
+#page-user360 .ai-panel {border-radius:24px; padding:26px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:26px;}
+#page-user360 .ai-panel-head {grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; margin-bottom:-6px;}
+#page-user360 .ai-panel-title {display:flex; align-items:center; gap:10px;}
+#page-user360 .ai-orb {width:24px; height:24px; border-radius:50%; background:conic-gradient(var(--teal), rgba(255,255,255,.1), var(--teal)); animation:spin 6s linear infinite; position:relative;}
+#page-user360 .ai-orb::after {content:''; position:absolute; inset:3px; border-radius:50%; background:#0d0e11;}
+#page-user360 .ai-panel-title .n1 {font-family:'Chakra Petch'; font-weight:700; font-size:14.5px;}
+#page-user360 .beta-tag {font-size:8px; font-weight:700; color:var(--teal); background:rgba(63,224,203,.13); padding:2px 6px; border-radius:5px; letter-spacing:.05em;}
+#page-user360 .ai-meta {font-size:10px; color:var(--w-4); font-family:'IBM Plex Mono';}
+#page-user360 .ai-col-title {font-size:10px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;}
+#page-user360 .ai-col-title.red {color:var(--danger);}
+#page-user360 .ai-col-title.teal {color:var(--teal);}
+#page-user360 .ai-col-title.amber {color:var(--warning);}
+#page-user360 .trend-badge {font-size:9px; font-weight:700; letter-spacing:.05em; padding:3px 9px; border-radius:99px; text-transform:uppercase;}
+#page-user360 .trend-badge.low {color:var(--success); background:rgba(95,211,154,.14);}
+#page-user360 .ai-panel p {font-size:12px; line-height:1.65; color:var(--w-2); margin:0;}
+#page-user360 .insight-list {list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+#page-user360 .insight-item {display:flex; align-items:flex-start; gap:9px;}
+#page-user360 .ins-arrow {flex-shrink:0; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+#page-user360 .ins-arrow.bad {background:rgba(239,107,124,.16);}
+#page-user360 .ins-arrow.good {background:rgba(95,211,154,.16);}
+#page-user360 .ins-arrow.watch {background:rgba(232,184,78,.16);}
+#page-user360 .ins-arrow svg {width:9px; height:9px;}
+#page-user360 .ins-text {font-size:11.5px; line-height:1.55; color:var(--w-2);}
+#page-user360 .ins-text b {color:var(--w-1); font-weight:600;}
+#page-user360 .ask-box {display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.04); border-radius:10px; padding:9px 10px; margin-bottom:11px;}
+#page-user360 .ask-box input {flex:1; background:none; border:none; outline:none; color:var(--w-1); font-size:11.5px; font-family:'IBM Plex Sans';}
+#page-user360 .ask-box input::placeholder {color:var(--w-4);}
+#page-user360 .ask-send {width:24px; height:24px; border-radius:8px; background:rgba(63,224,203,.14); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;}
+#page-user360 .ask-send svg {width:12px; height:12px; stroke:var(--teal);}
+#page-user360 .ask-suggestions {display:flex; flex-wrap:wrap; gap:6px;}
+#page-user360 .ask-chip {font-size:10px; padding:5px 10px; background:rgba(255,255,255,.04); border-radius:99px; color:var(--w-3); cursor:pointer; transition:all .2s ease;}
+#page-user360 .ask-chip:hover {background:rgba(255,255,255,.08); color:var(--w-1);}
+
+
+@keyframes pulseDot{0%,100%{opacity:1;} 50%{opacity:.3;}}
+
+@keyframes spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+
+@keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+#page-user360 .fade-in {animation:fadeUp .65s var(--expo) both;}
+
+.page-wrap{display:none; height:100vh; width:100vw;}
+.page-wrap.active{display:block;}
+
+</style>
+</head>
+<body>
+<div id="page-overview" class="page-wrap active">
+
+
+<div class="glow"></div>
+<div class="glow-b3"></div>
+
+<div class="app">
+  <aside class="sidebar glass">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#3fe0cb" stroke-width="1.4" opacity=".4"/><path d="M20 4 A16 16 0 0 1 36 20" stroke="#3fe0cb" stroke-width="2.4" stroke-linecap="round"/><path d="M20 36 A16 16 0 0 1 4 20" stroke="#e8b84e" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="20" r="5" fill="#3fe0cb"/></svg></div>
+      <div class="brand-text"><div class="b1">CDC 360</div><div class="b2">Cyber Defence Centre</div></div>
+    </div>
+    <nav class="nav-scroll">
+      <div class="nav-group"><div class="nav-group-label">Overview</div>
+        <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7M5 10v10h14V10"/></svg>Executive Overview</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">360&deg; Intelligence</div>
+        <div class="nav-item" style="cursor:pointer;" onclick="goPage('user360')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>User 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>Asset 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M7 12h6M13 12l4-4.5M13 12l4 4.5"/></svg>Network 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 8.5h17"/></svg>Application 360</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Risk &amp; Compliance</div>
+        <div class="nav-item" style="cursor:pointer;" onclick="goPage('ops')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7z"/></svg>Operations Risk</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12.5l2 2 4-4.5"/><rect x="3.5" y="3.5" width="17" height="17" rx="3"/></svg>Compliance</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Defence Ops</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Threat Intelligence</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-6 4 3 6-8"/><path d="M14 6h4v4"/></svg>Predictive Defence</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4.5" width="17" height="12" rx="1.5"/><path d="M9 20h6M12 16.5V20"/></svg>SOC Dashboard</div>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><div class="nuwa-chip glass"><div class="dot"></div><div class="nuwa-chip-text"><div class="t1">Nuwa AI</div><div class="t2">Ask. Analyze. Act.</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar glass">
+      <div class="breadcrumb"><span>CDC 360</span><span>/</span><span class="cur">Executive Overview</span></div>
+      <div class="topbar-right">
+        <div class="status-pill"><span class="dot"></span>NO SERVICE DISRUPTION</div>
+        <div class="clock mono liveClock"></div>
+        <div class="avatar">MT</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="hero glass">
+        <div class="hero-head">
+          <div>
+            <div class="hero-eyebrow"><span class="sq"></span>National Grid Cyber Posture &middot; Report of Today</div>
+            <h1 class="hero-title">Command Core</h1>
+            <div class="hero-sub">DEWA Cyber Defence Centre &middot; target 85 &middot; hover a ring for live detail</div>
+          </div>
+          <div class="view-toggle">
+            <div class="view-btn active" data-view="radial">Radial</div>
+            <div class="view-btn" data-view="gauges">Gauges</div>
+          </div>
+        </div>
+
+        <div class="core-col fade-in">
+          <div class="core-stage show" id="radialView">
+            <svg width="440" height="440" viewBox="0 0 440 440" id="coreSvg"></svg>
+          </div>
+          <div class="gauges-row" id="gaugesView"></div>
+          <div class="core-detail-strip" id="coreDetail"></div>
+        </div>
+
+        <div class="movements fade-in" style="animation-delay:.15s;">
+          <div class="mv-header" id="mvHeader">Key Movements This Week</div>
+          <div id="movementsList"></div>
+        </div>
+
+        <div class="timeline-wrap fade-in" style="grid-column:1/-1; animation-delay:.2s;" id="timelineWrap">
+          <div class="timeline-head">
+            <div class="timeline-status" id="timelineStatus"><span class="tl-live-dot" id="tlLiveDot"></span><span id="timelineStatusText">LIVE &middot; TODAY</span></div>
+            <div class="timeline-controls">
+              <div class="tl-btn" id="tlPlayBtn" title="Play history"><svg id="tlPlayIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+              <div class="tl-return-btn" id="tlReturnBtn">Return to Live</div>
+            </div>
+          </div>
+          <div class="timeline-track-wrap">
+            <div class="timeline-track" id="timelineTrack">
+              <div class="tl-fill" id="tlFill"></div>
+              <div class="tl-events" id="tlEvents"></div>
+              <div class="tl-handle" id="tlHandle"></div>
+            </div>
+          </div>
+          <div class="timeline-foot">
+            <span id="tlDateStart"></span>
+            <span class="timeline-caption" id="timelineCaption">Drag to rewind, or click a marker to jump to a notable moment</span>
+            <span id="tlDateEnd"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><div class="section-label"><span class="sq"></span>Live Modules</div><div class="section-count">2 of 9 built</div></div>
+        <div class="featured-row fade-in" style="animation-delay:.25s;">
+          <div class="featured-card glass" style="cursor:pointer;" onclick="goPage('ops')">
+            <div>
+              <div class="fc-top-row"><div class="fc-tag"><span class="d"></span>Live</div><div class="fc-chevron" id="chevOps" onclick="event.stopPropagation(); toggleFC('ops')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div></div>
+              <div class="fc-name">Operations Risk</div>
+              <div class="fc-desc">User, asset, network &amp; application risk posture with AI-generated remediation guidance.</div>
+              <div class="fc-meta"><div><div class="v" style="color:var(--warning);">CAUTION</div><div class="l">Status</div></div><div><div class="v">76</div><div class="l">Posture /100</div></div></div>
+            </div>
+            <svg class="fc-visual" viewBox="0 0 128 96" id="fcOps"></svg>
+            <div class="fc-breach-list" id="listOps">
+              <div class="fc-breach-row"><span class="name">Applications under active attack</span><div class="right"><span class="val">4</span><span class="fc-status-dot" style="background:var(--danger);"></span></div></div>
+              <div class="fc-breach-row"><span class="name">Users carrying risk (up from 17)</span><div class="right"><span class="val">24</span><span class="fc-status-dot" style="background:var(--danger);"></span></div></div>
+              <div class="fc-breach-row"><span class="name">Legacy OT devices past end-of-life</span><div class="right"><span class="val">42</span><span class="fc-status-dot" style="background:var(--warning);"></span></div></div>
+            </div>
+          </div>
+          <div class="featured-card glass">
+            <div>
+              <div class="fc-top-row"><div class="fc-tag"><span class="d"></span>Live</div><div class="fc-chevron" id="chevComp" onclick="toggleFC('comp')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div></div>
+              <div class="fc-name">Compliance</div>
+              <div class="fc-desc">16-KPI compliance register with breach thresholds and week-over-week trend detection.</div>
+              <div class="fc-meta"><div><div class="v" style="color:var(--danger);">4 BREACH</div><div class="l">Status</div></div><div><div class="v">81</div><div class="l">Posture /100</div></div></div>
+            </div>
+            <svg class="fc-visual" viewBox="0 0 128 96" id="fcCompliance"></svg>
+            <div class="fc-breach-list" id="listComp">
+              <div class="fc-breach-row"><span class="name">KPIs breaching threshold</span><div class="right"><span class="val">4</span><span class="fc-status-dot" style="background:var(--danger);"></span></div></div>
+              <div class="fc-breach-row"><span class="name">Remediation plans filed</span><div class="right"><span class="val">4</span><span class="fc-status-dot" style="background:var(--success);"></span></div></div>
+              <div class="fc-breach-row"><span class="name">KPIs tracked overall</span><div class="right"><span class="val">16</span><span class="fc-status-dot" style="background:var(--teal);"></span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:0;">
+        <div class="section-head"><div class="section-label"><span class="sq" style="background:var(--w-4);"></span>Additional Modules</div><div class="section-count">Hover a tile for detail</div></div>
+        <div class="module-rail fade-in" style="animation-delay:.32s;" id="moduleRail"></div>
+      </section>
+
+      <div class="ai-panel glass fade-in" style="animation-delay:.4s;" id="aiPanel-ov"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<div id="page-ops" class="page-wrap">
+
+
+<div class="glow"></div>
+<div class="glow-b3"></div>
+
+<div class="app">
+  <aside class="sidebar glass">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#3fe0cb" stroke-width="1.4" opacity=".4"/><path d="M20 4 A16 16 0 0 1 36 20" stroke="#3fe0cb" stroke-width="2.4" stroke-linecap="round"/><path d="M20 36 A16 16 0 0 1 4 20" stroke="#e8b84e" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="20" r="5" fill="#3fe0cb"/></svg></div>
+      <div class="brand-text"><div class="b1">CDC 360</div><div class="b2">Cyber Defence Centre</div></div>
+    </div>
+    <nav class="nav-scroll">
+      <div class="nav-group"><div class="nav-group-label">Overview</div>
+        <div class="nav-item" style="cursor:pointer;" onclick="goPage('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7M5 10v10h14V10"/></svg>Executive Overview</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">360&deg; Intelligence</div>
+        <div class="nav-item" style="cursor:pointer;" onclick="goPage('user360')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>User 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>Asset 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M7 12h6M13 12l4-4.5M13 12l4 4.5"/></svg>Network 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 8.5h17"/></svg>Application 360</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Risk &amp; Compliance</div>
+        <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7z"/></svg>Operations Risk</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12.5l2 2 4-4.5"/><rect x="3.5" y="3.5" width="17" height="17" rx="3"/></svg>Compliance</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Defence Ops</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Threat Intelligence</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-6 4 3 6-8"/><path d="M14 6h4v4"/></svg>Predictive Defence</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4.5" width="17" height="12" rx="1.5"/><path d="M9 20h6M12 16.5V20"/></svg>SOC Dashboard</div>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><div class="nuwa-chip glass"><div class="dot"></div><div class="nuwa-chip-text"><div class="t1">Nuwa AI</div><div class="t2">Ask. Analyze. Act.</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar glass">
+      <div class="breadcrumb"><span style="cursor:pointer;" onclick="goPage('overview')">CDC 360</span><span>/</span><span>Operations Risk</span><span>/</span><span class="cur">Executive View</span></div>
+      <div class="topbar-mid">
+        <div class="tele-chip"><span class="l">Source</span><span class="v">18</span></div>
+        <div class="tele-chip"><span class="l">Feeds</span><span class="v">96</span></div>
+        <div class="tele-chip"><span class="l">Attributes</span><span class="v">2,400</span></div>
+        <div class="tele-chip"><span class="l">Records</span><span class="v">128.4M</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="updated-pill">12 UPDATED</div>
+        <div class="clock mono liveClock"></div>
+        <div class="avatar">MT</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head fade-in">
+        <div>
+          <h1 class="page-title">Operations Risk</h1>
+          <div class="page-sub">User, asset, network &amp; application risk posture &middot; updated live</div>
+        </div>
+        <div class="head-controls">
+          <div class="range-pills"><div class="range-pill">7D</div><div class="range-pill active">30D</div><div class="range-pill">90D</div><div class="range-pill">6M</div><div class="range-pill">1Y</div></div>
+          <div class="filters-btn glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters</div>
+        </div>
+      </div>
+
+      <div class="hero glass stagger">
+        <div class="hero-block">
+          <div class="posture-lbl">Operational Risk Posture</div>
+          <div class="posture-row"><span class="posture-val">76</span><span class="posture-unit">/100</span><span class="posture-delta" style="color:var(--danger);">&#9660; 4 vs 30D</span></div>
+          <div class="posture-bar-wrap">
+            <div class="posture-bar-bg"><div class="posture-bar-fill" style="width:76%; background:var(--warning);"></div></div>
+            <div class="posture-target" style="left:85%;"></div>
+            <div class="posture-target-lbl" style="left:85%;">TARGET 85</div>
+          </div>
+        </div>
+        <div class="hero-block">
+          <span class="sig-tag crit">Top Exposure</span>
+          <div class="sig-name">Assets without DLP</div>
+          <div class="sig-valrow"><span class="sig-val" style="color:var(--danger);">388</span><span class="trend bad">&#9650; 27</span></div>
+          <div class="sig-note">Largest and fastest-growing data-leakage exposure this cycle.</div>
+        </div>
+        <div class="hero-block">
+          <span class="sig-tag win">Biggest Win</span>
+          <div class="sig-name">Missing patches</div>
+          <div class="sig-valrow"><span class="sig-val" style="color:var(--success);">-31%</span><span class="trend good">&#9660; improving</span></div>
+          <div class="sig-note">Fastest-closing gap of any category this month.</div>
+        </div>
+        <div class="hero-block">
+          <span class="sig-tag watch">Active Threat</span>
+          <div class="sig-name">Apps under attack</div>
+          <div class="sig-valrow"><span class="sig-val" style="color:var(--warning);">3</span><span class="trend bad">&#9650; 1</span></div>
+          <div class="sig-note">Block signature active; 6 attacking IPs identified.</div>
+        </div>
+        <div class="hero-block">
+          <span class="sig-tag info">Watch Item</span>
+          <div class="sig-name">Users &rarr; new URLs</div>
+          <div class="sig-valrow"><span class="sig-val">131</span><span class="trend bad">&#9650; 18</span></div>
+          <div class="sig-note">Elevated first-seen domain activity worth monitoring.</div>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="section-row"><div class="section-title">Risk Domains</div><div class="section-sub">4 domains &middot; 20 tracked metrics</div></div>
+        <div class="domain-grid" id="domainGrid"></div>
+
+        <div class="ai-panel glass" id="aiPanel-ops"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<div id="page-user360" class="page-wrap">
+
+
+<div class="glow"></div>
+<div class="glow-b3"></div>
+
+<div class="app">
+  <aside class="sidebar glass">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#3fe0cb" stroke-width="1.4" opacity=".4"/><path d="M20 4 A16 16 0 0 1 36 20" stroke="#3fe0cb" stroke-width="2.4" stroke-linecap="round"/><path d="M20 36 A16 16 0 0 1 4 20" stroke="#e8b84e" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="20" r="5" fill="#3fe0cb"/></svg></div>
+      <div class="brand-text"><div class="b1">CDC 360</div><div class="b2">Cyber Defence Centre</div></div>
+    </div>
+    <nav class="nav-scroll">
+      <div class="nav-group"><div class="nav-group-label">Overview</div>
+        <div class="nav-item" style="cursor:pointer;" onclick="goPage('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7M5 10v10h14V10"/></svg>Executive Overview</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">360&deg; Intelligence</div>
+        <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5"/></svg>User 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>Asset 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M7 12h6M13 12l4-4.5M13 12l4 4.5"/></svg>Network 360</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 8.5h17"/></svg>Application 360</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Risk &amp; Compliance</div>
+        <div class="nav-item" style="cursor:pointer;" onclick="goPage('ops')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7z"/></svg>Operations Risk</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12.5l2 2 4-4.5"/><rect x="3.5" y="3.5" width="17" height="17" rx="3"/></svg>Compliance</div>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Defence Ops</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Threat Intelligence</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-6 4 3 6-8"/><path d="M14 6h4v4"/></svg>Predictive Defence</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4.5" width="17" height="12" rx="1.5"/><path d="M9 20h6M12 16.5V20"/></svg>SOC Dashboard</div>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><div class="nuwa-chip glass"><div class="dot"></div><div class="nuwa-chip-text"><div class="t1">Nuwa AI</div><div class="t2">Ask. Analyze. Act.</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar glass">
+      <div class="breadcrumb"><span>CDC 360</span><span>/</span><span>User 360</span><span>/</span><span class="cur">User Details</span></div>
+      <div class="entity-switch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input placeholder="Search any user or asset&hellip;"/>
+        <span class="entity-kbd">&#8984;K</span>
+      </div>
+      <div class="topbar-right">
+        <div class="updated-pill">12 UPDATED</div>
+        <div class="clock mono liveClock"></div>
+        <div class="avatar">MT</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-head fade-in">
+        <div>
+          <h1 class="page-title">User 360</h1>
+          <div class="page-sub">Identity, presence &amp; digital activity &middot; one profile, every signal</div>
+        </div>
+        <div class="range-pills"><div class="range-pill">7D</div><div class="range-pill active">30D</div><div class="range-pill">90D</div><div class="range-pill">Custom</div></div>
+      </div>
+
+      <div class="id-hero glass stagger fade-in">
+        <div class="id-left">
+          <div class="id-avatar">
+            <svg viewBox="0 0 64 64">
+              <defs>
+                <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#c98f68"/><stop offset="100%" stop-color="#a8734e"/>
+                </linearGradient>
+              </defs>
+              <rect width="64" height="64" fill="#1a2029"/>
+              <ellipse cx="32" cy="66" rx="22" ry="16" fill="#2b3a45"/>
+              <path d="M32 12c-8 0-13 6-13 14 0 5 2 9 4 12 2 3 5 5 9 5s7-2 9-5c2-3 4-7 4-12 0-8-5-14-13-14z" fill="url(#skinGrad)"/>
+              <path d="M19 24c0-8 5-13 13-13s13 5 13 13c0-3-2-5-4-6-2 3-6 4-9 4-4 0-8-2-10-5-2 1-3 4-3 7z" fill="#241b14"/>
+              <path d="M20 22c-1 3-1 6 0 9-2-1-3-4-3-7 0-1 1-2 3-2z" fill="#241b14"/>
+              <path d="M44 22c1 3 1 6 0 9 2-1 3-4 3-7 0-1-1-2-3-2z" fill="#241b14"/>
+              <ellipse cx="26" cy="27" rx="1.4" ry="1.8" fill="#241b14"/>
+              <ellipse cx="38" cy="27" rx="1.4" ry="1.8" fill="#241b14"/>
+              <path d="M29 34c1 1 3 1 4 0" stroke="#7a4c30" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+              <path d="M25 22c2-1 4-1 6 0M33 22c2-1 4-1 6 0" stroke="#241b14" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="id-name-row"><span class="id-name">Khalid Al Mazrouei</span><span class="id-status"><span class="d"></span>Active</span></div>
+            <div class="id-role"><b>External Staff</b> &middot; External Contractor &middot; DEWA Transmission BU</div>
+            <div class="id-more" id="idMoreBtn" onclick="toggleIdDetail()">More details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+            <div class="id-detail-grid" id="idDetailGrid">
+              <div class="id-detail-row"><span>Email ID</span><span>k.almazrouei@dewa.gov.ae</span></div>
+              <div class="id-detail-row"><span>Nationality</span><span>United Arab Emirates</span></div>
+              <div class="id-detail-row"><span>Department</span><span>Transmission Operations</span></div>
+              <div class="id-detail-row"><span>City / Office</span><span>Al Garhoud, Dubai</span></div>
+              <div class="id-detail-row"><span>Manager</span><span>Ahmed Al Falasi</span></div>
+              <div class="id-detail-row"><span>Last Working Date</span><span>Not on file</span></div>
+              <div class="id-detail-row"><span>PR Number</span><span>PR-45210</span></div>
+              <div class="id-detail-row"><span>Account Created</span><span>03 Jan 2023</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="trust-ring-wrap">
+          <div class="trust-ring">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
+              <circle id="confArc" cx="50" cy="50" r="42" fill="none" stroke="#5fd39a" stroke-width="9" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="76" transform="rotate(-90 50 50)"/>
+              <text id="confNum" x="50" y="46" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#f4f7f9">72%</text>
+              <text id="confSub" x="50" y="63" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="rgba(244,247,249,.5)">&#9650; 6%</text>
+            </svg>
+            <div class="trust-ring-label">Confidence</div>
+            <div class="trust-ring-sub">Moderate</div>
+          </div>
+          <div class="trust-ring">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
+              <circle id="riskArc" cx="50" cy="50" r="42" fill="none" stroke="#5fd39a" stroke-width="9" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="243" transform="rotate(-90 50 50)"/>
+              <text id="riskNum" x="50" y="46" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#5fd39a">8%</text>
+              <text id="riskSub" x="50" y="63" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="rgba(244,247,249,.5)">&#9660; 3%</text>
+            </svg>
+            <div class="trust-ring-label">Risk Score</div>
+            <div class="trust-ring-sub">Low</div>
+          </div>
+
+          <div class="trust-divider"></div>
+
+          <div class="trust-ring mini">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#e8b84e" stroke-width="9" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="31.7" transform="rotate(-90 50 50)"/>
+              <text x="50" y="46" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#f4f7f9">88%</text>
+              <text x="50" y="63" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="#e8b84e">1 FLAGGED</text>
+            </svg>
+            <div class="trust-ring-label">Access Health</div>
+            <div class="trust-ring-sub">Review overdue</div>
+          </div>
+          <div class="trust-ring mini">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#3fe0cb" stroke-width="9" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="18.5" transform="rotate(-90 50 50)"/>
+              <text x="50" y="46" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#f4f7f9">93%</text>
+              <text x="50" y="63" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="rgba(244,247,249,.5)">13 / 14 DAYS</text>
+            </svg>
+            <div class="trust-ring-label">Presence Consistency</div>
+            <div class="trust-ring-sub">1 mismatch flagged</div>
+          </div>
+          <div class="trust-ring mini">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#3fe0cb" stroke-width="9" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="10.6" transform="rotate(-90 50 50)"/>
+              <text x="50" y="46" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="24" fill="#f4f7f9">96%</text>
+              <text x="50" y="63" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="rgba(244,247,249,.5)">1 FLAGGED</text>
+            </svg>
+            <div class="trust-ring-label">Comms Trust</div>
+            <div class="trust-ring-sub">Verified contacts</div>
+          </div>
+        </div>
+
+        <div class="action-bar" id="actionBar" style="grid-column:1/-1;">
+          <button class="action-btn danger" id="btnEscalate" onclick="openActionModal('escalate', this)">Escalate to SOC</button>
+          <button class="action-btn warning" id="btnFlag" onclick="openActionModal('flag', this)">Flag for HR Review</button>
+          <button class="action-btn neutral" id="btnRevoke" onclick="openActionModal('revoke', this)">Revoke Access</button>
+          <button class="action-btn reset" id="btnReset" onclick="resetActions()">Reset</button>
+          <span class="action-feedback" id="actionFeedback"></span>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box glass">
+          <div class="modal-title" id="modalTitle">Escalate to SOC</div>
+          <div class="modal-sub" id="modalSub">This will open a case and notify the SOC on-call analyst.</div>
+          <textarea class="modal-textarea" id="modalComment" placeholder="Add context for this action&hellip;"></textarea>
+          <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeActionModal()">Cancel</button>
+            <button class="modal-btn submit" id="modalSubmitBtn" onclick="submitActionModal()">Submit</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="section-row"><div class="section-title">Presence &amp; Digital Correlation</div><div class="section-sub">Badge activity vs. digital sessions &middot; last 14 days</div></div>
+        <div class="presence-panel glass">
+          <div class="presence-legend">
+            <div class="pl-item"><span class="pl-sw" style="background:rgba(63,224,203,.55);"></span>Physical badge activity</div>
+            <div class="pl-item"><span class="pl-sw" style="background:rgba(232,184,78,.55);"></span>Digital session activity</div>
+            <div class="pl-item"><span class="pl-sw" style="background:var(--danger); border-radius:50%; width:8px; height:8px;"></span>Correlation flag</div>
+          </div>
+          <div class="presence-grid" id="presenceGrid"></div>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:0;">
+        <div class="section-row"><div class="section-title">Geospatial Whereabouts</div><div class="section-sub">Last 14 days &middot; DEWA facility access</div></div>
+        <div class="geo-panel glass">
+          <div class="geo-map-col">
+            <svg viewBox="0 0 260 200" class="geo-map">
+              <line x1="70" y1="150" x2="150" y2="60" stroke="rgba(255,255,255,.12)" stroke-width="1.2"/>
+              <line x1="150" y1="60" x2="210" y2="120" stroke="rgba(255,255,255,.12)" stroke-width="1.2"/>
+              <line x1="70" y1="150" x2="210" y2="120" stroke="rgba(255,255,255,.08)" stroke-width="1" stroke-dasharray="3 4"/>
+              <g>
+                <circle cx="150" cy="60" r="18" fill="rgba(63,224,203,.14)"><animate attributeName="r" values="14;20;14" dur="2.4s" repeatCount="indefinite"/></circle>
+                <circle cx="150" cy="60" r="7" fill="#3fe0cb"/>
+                <text x="150" y="42" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#3fe0cb">AL GARHOUD HQ</text>
+                <text x="150" y="86" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" fill="rgba(244,247,249,.4)">Current</text>
+              </g>
+              <g>
+                <circle cx="70" cy="150" r="5.5" fill="#8fa0b0"/>
+                <text x="70" y="170" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="rgba(244,247,249,.5)">JEBEL ALI</text>
+              </g>
+              <g>
+                <circle cx="210" cy="120" r="5.5" fill="#8fa0b0"/>
+                <text x="210" y="140" text-anchor="middle" font-family="IBM Plex Mono" font-size="8.5" fill="rgba(244,247,249,.5)">MIRDIF OFFICE</text>
+              </g>
+            </svg>
+          </div>
+          <div class="geo-list">
+            <div class="geo-entry"><span class="geo-dot" style="background:var(--success);"></span><div class="geo-body"><div class="t">Al Garhoud HQ &middot; Building 3</div><div class="d">Today, 08:14 &middot; Badge + VPN idle (on-site)</div></div></div>
+            <div class="geo-entry"><span class="geo-dot" style="background:var(--success);"></span><div class="geo-body"><div class="t">Al Garhoud HQ &middot; Building 3</div><div class="d">Yesterday, 17:40 &middot; Badge out</div></div></div>
+            <div class="geo-entry flagged"><span class="geo-dot" style="background:var(--danger);"></span><div class="geo-body"><div class="t">Jebel Ali Site</div><div class="d">6 days ago, 18:02 &middot; Badge showed departure</div><span class="tm-flag">VPN SESSION ORIGINATED FROM AL GARHOUD IP RANGE</span></div></div>
+            <div class="geo-entry"><span class="geo-dot" style="background:var(--success);"></span><div class="geo-body"><div class="t">Mirdif Office</div><div class="d">9 days ago, 09:15 &middot; Badge in</div></div></div>
+            <div class="geo-entry"><span class="geo-dot" style="background:var(--success);"></span><div class="geo-body"><div class="t">Al Garhoud HQ &middot; Building 3</div><div class="d">12 days ago, 08:30 &middot; Badge in</div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" style="padding-top:0;">
+        <div class="section-row"><div class="section-title">Digital Access Permissions</div><div class="section-sub" id="accessSub">1 item needs review</div></div>
+        <div class="triad-panel glass" id="accessPanel"></div>
+      </section>
+
+      <section class="section" style="padding-top:0;">
+        <div class="section-row"><div class="section-title">Communication Logs</div><div class="section-sub">Metadata only &middot; no message content accessed</div></div>
+        <div class="triad-panel glass" id="commsPanel"></div>
+      </section>
+
+      <section class="section" style="padding-top:0;">
+        <div class="domain-row" id="domainRow"></div>
+
+        <div class="section-row"><div class="section-title">Activity Pulse</div><div class="section-sub">6 signals &middot; correlated view</div></div>
+        <div class="pulse-panel glass" id="pulsePanel"></div>
+
+        <div class="ai-panel glass" id="aiPanel-u3"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<script>
+
+function goPage(name){
+  document.querySelectorAll('.page-wrap').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0);
+}
+function tick(){
+  var now=new Date();
+  var time=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var date=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+  document.querySelectorAll('.liveClock').forEach(function(el){ el.innerHTML = time + '<span class="date">' + date + '</span>'; });
+}
+tick(); setInterval(tick,1000);
+
+(function(){
+
+function seededRand(seed){let s=seed%2147483647; if(s<=0)s+=2147483646; return function(){s=s*16807%2147483647; return (s-1)/2147483646;};}
+function genTrend(seed,len,drift,vol,base){const r=seededRand(seed*97+13); let v=base; const out=[v]; for(let i=1;i<len;i++){v=v+drift+(r()-.5)*vol; out.push(v);} return out;}
+function sparkSVG(data,color,w=140,h=18){
+  const min=Math.min(...data), max=Math.max(...data), range=(max-min)||1, pad=2;
+  const pts=data.map((d,i)=>{const x=(i/(data.length-1))*(w-pad*2)+pad; const y=h-pad-((d-min)/range)*(h-pad*2); return [x,y];});
+  const line=pts.map(p=>p.join(',')).join(' ');
+  const area=`${pts[0][0]},${h} `+line+` ${pts[pts.length-1][0]},${h}`;
+  const gid='g'+Math.random().toString(36).slice(2,9);
+  const tip=pts[pts.length-1];
+  return `<svg class="mv-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity="0.3"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+  <polygon points="${area}" fill="url(#${gid})"/><polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="${tip[0]}" cy="${tip[1]}" r="2.2" fill="${color}" style="animation:tipPulse 1.8s ease-in-out infinite;"/></svg>`;
+}
+const TARGET = 85;
+function bandColor(score, delta){
+  if(score >= TARGET) return 'ok';
+  return delta < 0 ? 'crit' : 'watch';
+}
+const COLORS={ok:'#3fe0cb', crit:'#ef6b7c', watch:'#e8b84e', danger:'#ef6b7c', muted:'#8fa0b0'};
+const COLOR_HEX={teal:'#3fe0cb', warning:'#e8b84e', danger:'#ef6b7c', success:'#5fd39a'};
+
+/* ============================= DATA (from the updated model) ============================= */
+const domains = {
+  USER:{value:72, delta:-6, cells:[38,68,84,98], notes:[
+    'Privileged OT operators still authenticate without step-up MFA.',
+    '24 users now carry risk, up from 17 — 63 generating first-seen URL activity.',
+    'Zero-trust network access enforced for all remote sessions.',
+    'Identity perimeter fully covered — conditional access on all tenants.']},
+  ASSET:{value:69, delta:2, cells:[31,58,92,95], notes:[
+    '42 legacy OT devices past end-of-life cannot host an agent.',
+    '38 assets without DLP, down from 45 — the strongest improvement this week.',
+    'Asset inventory reconciled nightly against network discovery.',
+    'All managed assets sit behind the scrubbing perimeter.']},
+  NETWORK:{value:88, delta:2, cells:[72,86,94,100], notes:[
+    'Substation segmentation advancing; 3 sites still partially flat.',
+    'East-west inspection extended across the corporate estate.',
+    'Backbone at 62% utilisation; all 3 fibre links healthy.',
+    '0 critical perimeter alerts — DDoS scrubbing and firewall policy fully enforced.']},
+  APPLICATION:{value:76, delta:-6, cells:[52,70,84,98], notes:[
+    'SCADA/EMS app hardening at 52% — change windows are the constraint.',
+    'Runtime protection live on 6 monitored systems.',
+    '4 applications under active attack from 6 attacking IP addresses.',
+    'WAF in blocking mode — 1,240 blocks today.']},
+};
+Object.values(domains).forEach(d=> d.color = bandColor(d.value, d.delta));
+const layerNames = ['L1 · CORE','L2 · ENDPOINT','L3 · NETWORK','L4 · PERIMETER'];
+const layerAgg = {L1:45, L2:72, L3:85, L4:98};
+const layerColorOf = v => v>=85?'ok': v>=50?'watch':'crit';
+
+/* ============================= TIME-SLIDER: 12-week narrative history ============================= */
+const HIST_LEN = 12; // weekly points, index 11 = live/today
+const HISTORY = {
+  COMPOSITE: [81,80,78,74,70,73,78,83,82,81,80,76],
+  USER:      [88,85,82,76,70,68,74,80,85,82,78,72],
+  ASSET:     [58,60,63,60,56,58,62,66,70,68,67,69],
+  NETWORK:   [70,72,75,73,71,74,78,82,85,87,86,88],
+  APPLICATION:[90,88,85,80,74,70,76,83,88,85,82,76],
+};
+const TIMELINE_EVENTS = [
+  {idx:2, color:'watch', label:'DLP coverage gap first flagged'},
+  {idx:4, color:'crit', label:'OT/SCADA segment placed under active investigation'},
+  {idx:6, color:'ok', label:'Endpoint patch rollout completes — posture rebounds'},
+  {idx:7, color:'ok', label:'Best posture of the quarter'},
+];
+const THREATS_HISTORY = [195,205,215,240,270,250,225,205,215,225,232,214];
+const MTTC_HISTORY = [14,13,15,19,24,20,16,13,12,13,15,11];
+const PATCH_HISTORY = [10,12,14,13,11,14,18,22,25,24,22,31];
+let scrubT = HIST_LEN-1; // 11 = live (today)
+function lerp(arr,t){ const i0=Math.floor(t), i1=Math.min(HIST_LEN-1,i0+1), f=t-i0; return arr[i0] + (arr[i1]-arr[i0])*f; }
+function getVal(key){ return Math.round(lerp(HISTORY[key], scrubT)); }
+function getComposite(){ return Math.round(lerp(HISTORY.COMPOSITE, scrubT)); }
+function isLive(){ return scrubT >= HIST_LEN-1-0.02; }
+function dateAt(t){
+  const daysAgo = Math.round((HIST_LEN-1-t)*7);
+  const d = new Date(); d.setDate(d.getDate()-daysAgo);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+/* ============================= RADIAL VIEW ============================= */
+function polar(cx,cy,r,deg){const a=(deg-90)*Math.PI/180; return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)};}
+function arcPath(cx,cy,r,a0,a1){const s=polar(cx,cy,r,a1), e=polar(cx,cy,r,a0); const large=(a1-a0)<=180?0:1; return `M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 0 ${e.x} ${e.y}`;}
+const cx=220, cy=220;
+const domainGeo={ USER:{center:315,span:70}, ASSET:{center:45,span:70}, NETWORK:{center:135,span:70}, APPLICATION:{center:225,span:70} };
+const layerR={L1:93, L2:120, L3:148, L4:176};
+
+let svgParts = [];
+Object.entries(layerR).forEach(([key,r])=>{
+  svgParts.push(`<circle class="layer-ring" data-layer="${key}" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1" stroke-dasharray="1 6" opacity="0.8" pointer-events="stroke"/>`);
+  svgParts.push(`<circle data-layer-hit="${key}" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="transparent" stroke-width="14" pointer-events="stroke" style="cursor:pointer;"/>`);
+});
+let sweep = '<g id="radarGroup">';
+for(let i=0;i<18;i++){const ang=i*2.4, op=(i/18)*0.35; const p1=polar(cx,cy,26,ang), p2=polar(cx,cy,211,ang); sweep+=`<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#3fe0cb" stroke-width="1" opacity="${op}"/>`;}
+sweep += '</g>';
+svgParts.push(sweep);
+Object.entries(domains).forEach(([key,d])=>{
+  const geo = domainGeo[key];
+  const a0=geo.center-geo.span/2, a1=geo.center+geo.span/2;
+  svgParts.push(`<path class="domain-arc" data-domain="${key}" d="${arcPath(cx,cy,211,a0,a1)}" fill="none" stroke="${COLORS[d.color]}" stroke-width="4" stroke-linecap="round" opacity="0.95"/>`);
+  svgParts.push(`<path data-domain-hit="${key}" d="${arcPath(cx,cy,211,a0,a1)}" fill="none" stroke="transparent" stroke-width="22" pointer-events="stroke" style="cursor:pointer;"/>`);
+  const lp = polar(cx,cy,236,geo.center);
+  let anchor = 'middle'; if(lp.x < cx-15) anchor='end'; else if(lp.x > cx+15) anchor='start';
+  svgParts.push(`<text x="${lp.x}" y="${lp.y-3}" text-anchor="${anchor}" class="domain-label-name" fill="${COLORS[d.color]}" font-size="16">${key}</text>`);
+  svgParts.push(`<text x="${lp.x}" y="${lp.y+14}" text-anchor="${anchor}" class="domain-label-val" id="lv-${key}" fill="${COLORS[d.color]}" font-size="14">${d.value}/100</text>`);
+});
+svgParts.push(`<circle cx="${cx}" cy="${cy}" r="81" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>`);
+svgParts.push(`<g id="centerGroup"></g>`);
+document.getElementById('coreSvg').innerHTML = svgParts.join('');
+
+function centerComposite(){
+  const val = getComposite();
+  const sub = isLive() ? `<text x="${cx}" y="${cy+31}" text-anchor="middle" fill="#e8b84e" font-family="IBM Plex Mono" font-size="11.5" font-weight="600">&#9660; 4 pts this week</text>`
+    : `<text x="${cx}" y="${cy+31}" text-anchor="middle" fill="rgba(244,247,249,.5)" font-family="IBM Plex Mono" font-size="10.5" font-weight="600">AS OF ${dateAt(scrubT).toUpperCase()}</text>`;
+  return `<text x="${cx}" y="${cy-4}" text-anchor="middle" class="core-center-num" font-size="64">${val}</text>
+    <text x="${cx+30}" y="${cy-4}" text-anchor="start" class="core-center-unit" font-size="12">/100</text>
+    <text x="${cx}" y="${cy+18}" text-anchor="middle" class="core-center-label" font-size="10.5">DEFENCE POSTURE · TARGET 85</text>
+    ${sub}`;
+}
+function centerDomain(key){
+  const d = domains[key];
+  const val = getVal(key);
+  const sub = isLive() ? `<text x="${cx}" y="${cy+31}" text-anchor="middle" fill="${COLORS[d.color]}" font-family="IBM Plex Mono" font-size="10.5" font-weight="600">${d.delta<0?'&#9660;':'&#9650;'} ${Math.abs(d.delta)} this week</text>`
+    : `<text x="${cx}" y="${cy+31}" text-anchor="middle" fill="rgba(244,247,249,.5)" font-family="IBM Plex Mono" font-size="9.5" font-weight="600">AS OF ${dateAt(scrubT).toUpperCase()}</text>`;
+  return `<text x="${cx}" y="${cy-4}" text-anchor="middle" class="core-center-num" font-size="58" fill="${COLORS[d.color]}">${val}</text>
+    <text x="${cx+28}" y="${cy-4}" text-anchor="start" class="core-center-unit" font-size="10.5">/100</text>
+    <text x="${cx}" y="${cy+16}" text-anchor="middle" class="core-center-label" font-size="9.5">${key}</text>
+    ${sub}`;
+}
+function centerLayer(key){
+  const v = layerAgg[key]; const col = layerColorOf(v);
+  return `<text x="${cx}" y="${cy-4}" text-anchor="middle" class="core-center-num" font-size="58" fill="${COLORS[col]}">${v}%</text>
+    <text x="${cx}" y="${cy+16}" text-anchor="middle" class="core-center-label" font-size="9.5">CONTAINED</text>
+    <text x="${cx}" y="${cy+31}" text-anchor="middle" fill="${COLORS[col]}" font-family="Chakra Petch" font-weight="600" font-size="10.5">${layerNames[['L1','L2','L3','L4'].indexOf(key)]}</text>`;
+}
+document.getElementById('centerGroup').innerHTML = centerComposite();
+
+const domainMetrics = {
+  USER:[['Users with risk','24'],['New-URL activity','63'],['Prior week','17'],['Target','85']],
+  ASSET:[['Assets without DLP','38'],['Prior week','45'],['Legacy OT past EOL','42'],['Target','85']],
+  NETWORK:[['Critical alerts','0'],['Fibre links up','3 / 3'],['Backbone load','62%'],['Target','85']],
+  APPLICATION:[['Under active attack','4'],['Attacking IPs','6'],['Prior week','1'],['Target','85']],
+};
+function defaultDetail(){
+  document.getElementById('coreDetail').innerHTML = `
+    <div class="detail-hint">${isLive() ? 'Hover a ring for live detail' : 'Viewing history &middot; ' + dateAt(scrubT)}</div>
+    ${Object.entries(domains).map(([k,d])=>`<div class="detail-chip glass"><div class="dv" style="color:${COLORS[d.color]}">${getVal(k)}</div><div class="dl">${k}</div></div>`).join('')}`;
+}
+function domainDetail(key){
+  const d = domains[key];
+  if(!isLive()){
+    document.getElementById('coreDetail').innerHTML = `<div class="detail-heading" style="color:${COLORS[d.color]}">${key} RISK &middot; ${dateAt(scrubT)}</div>
+      <div class="detail-chip glass" style="min-width:270px;"><div class="dl" style="font-size:11px; line-height:1.4;">Score shown is historical. Detailed live metrics are only available at today's date &mdash; return to Live to see them.</div></div>`;
+    return;
+  }
+  document.getElementById('coreDetail').innerHTML = `<div class="detail-heading" style="color:${COLORS[d.color]}">${key} RISK &middot; LIVE</div>` +
+    domainMetrics[key].map(m=>`<div class="detail-chip glass"><div class="dv">${m[1]}</div><div class="dl">${m[0]}</div></div>`).join('');
+}
+function layerDetail(key){
+  const v = layerAgg[key]; const col = layerColorOf(v);
+  const idx = ['L1','L2','L3','L4'].indexOf(key);
+  document.getElementById('coreDetail').innerHTML = `<div class="detail-heading" style="color:${COLORS[col]}">${layerNames[idx]} &middot; ${v}% CONTAINED</div>
+    <div class="detail-chip glass" style="min-width:260px;"><div class="dl" style="font-size:11px; line-height:1.4;">Weakest across all four domains &mdash; the single highest-leverage layer to harden next.</div></div>`;
+}
+defaultDetail();
+
+const arcEls={}, arcHitEls={}, ringEls={}, ringHitEls={};
+document.querySelectorAll('.domain-arc').forEach(el=> arcEls[el.dataset.domain]=el);
+document.querySelectorAll('[data-domain-hit]').forEach(el=> arcHitEls[el.dataset.domainHit]=el);
+document.querySelectorAll('.layer-ring').forEach(el=> ringEls[el.dataset.layer]=el);
+document.querySelectorAll('[data-layer-hit]').forEach(el=> ringHitEls[el.dataset.layerHit]=el);
+function dimOthers(map, activeKey){ Object.entries(map).forEach(([k,el])=>{ if(k!==activeKey) el.classList.add('dim'); else el.classList.remove('dim'); }); }
+function clearDim(map){ Object.values(map).forEach(el=>el.classList.remove('dim')); }
+let hoveredDomain=null, hoveredLayer=null;
+Object.entries(arcHitEls).forEach(([key,hit])=>{
+  hit.addEventListener('mouseenter', ()=>{ hoveredDomain=key; hoveredLayer=null; dimOthers(arcEls,key); document.getElementById('centerGroup').innerHTML=centerDomain(key); domainDetail(key); });
+  hit.addEventListener('mouseleave', ()=>{ hoveredDomain=null; clearDim(arcEls); document.getElementById('centerGroup').innerHTML=centerComposite(); defaultDetail(); });
+});
+Object.entries(ringHitEls).forEach(([key,hit])=>{
+  hit.addEventListener('mouseenter', ()=>{ hoveredLayer=key; hoveredDomain=null; dimOthers(ringEls,key); const col=layerColorOf(layerAgg[key]); ringEls[key].setAttribute('stroke', COLORS[col]); ringEls[key].setAttribute('stroke-width','2.2'); ringEls[key].setAttribute('stroke-dasharray','1 3'); document.getElementById('centerGroup').innerHTML=centerLayer(key); layerDetail(key); });
+  hit.addEventListener('mouseleave', ()=>{ hoveredLayer=null; clearDim(ringEls); Object.values(ringEls).forEach(el=>{el.setAttribute('stroke','rgba(255,255,255,.14)'); el.setAttribute('stroke-width','1'); el.setAttribute('stroke-dasharray','1 6');}); document.getElementById('centerGroup').innerHTML=centerComposite(); defaultDetail(); });
+});
+function refreshScrubDisplay(){
+  Object.keys(domains).forEach(k=>{ const el=document.getElementById('lv-'+k); if(el) el.textContent = getVal(k)+'/100'; });
+  if(hoveredDomain){ document.getElementById('centerGroup').innerHTML=centerDomain(hoveredDomain); domainDetail(hoveredDomain); }
+  else if(hoveredLayer){ /* layer view unaffected by time */ }
+  else { document.getElementById('centerGroup').innerHTML=centerComposite(); defaultDetail(); }
+}
+
+/* ============================= GAUGES VIEW ============================= */
+function gaugeSVG(value, color){
+  const r=56, c=2*Math.PI*r, targetFrac = TARGET/100;
+  const tickAngle = -90 + 360*targetFrac;
+  const tick = polar(70,70,r, tickAngle+90);
+  const tick2 = polar(70,70,r+8, tickAngle+90);
+  return `<svg viewBox="0 0 140 140">
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="11"/>
+    <circle cx="70" cy="70" r="${r}" fill="none" stroke="${color}" stroke-width="11" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${c*(1-value/100)}" transform="rotate(-90 70 70)"/>
+    <line x1="${tick.x}" y1="${tick.y}" x2="${tick2.x}" y2="${tick2.y}" stroke="#f4f7f9" stroke-width="2" opacity="0.55"/>
+    <text x="70" y="66" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="30" fill="#f4f7f9">${value}</text>
+    <text x="70" y="86" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="rgba(244,247,249,.4)">/100</text>
+  </svg>`;
+}
+const LAYER_TAGS = ['L1','L2','L3','L4'];
+const gaugesView = document.getElementById('gaugesView');
+function renderGauges(){
+  gaugesView.innerHTML = '';
+  const live = isLive();
+  Object.entries(domains).forEach(([key,d])=>{
+    const val = getVal(key);
+    const weakIdx = d.cells.indexOf(Math.min(...d.cells));
+    const deltaLine = live
+      ? `<div class="gauge-delta" style="color:${COLORS[d.color]};">${d.delta<0?'&#9660;':'&#9650;'} ${Math.abs(d.delta)} this week</div>`
+      : `<div class="gauge-delta" style="color:var(--w-3); font-size:10px;">AS OF ${dateAt(scrubT).toUpperCase()}</div>`;
+    const tooltip = live
+      ? `<div class="gt-title">${key} &middot; by defence layer</div>
+         ${d.cells.map((v,i)=>`<div class="gt-row"><span class="gt-layer" style="color:${COLORS[layerColorOf(v)]};">${LAYER_TAGS[i]}</span><div class="gt-note"><span class="v">${v}%</span> &mdash; ${d.notes[i]}</div></div>`).join('')}`
+      : `<div class="gt-title">${key} &middot; by defence layer</div>
+         <div class="gt-note" style="font-style:italic;">Layer-level breakdown is only tracked live &mdash; return to Live to see today's detail.</div>`;
+    const weakLine = live
+      ? `<div class="gauge-weak"><b>${layerNames[weakIdx].split(' · ')[1]}</b> is the weakest layer at ${d.cells[weakIdx]}%</div>`
+      : `<div class="gauge-weak" style="color:var(--w-4);">Layer detail available live only</div>`;
+    const div = document.createElement('div'); div.className='gauge-card glass';
+    div.innerHTML = `${gaugeSVG(val, COLORS[d.color])}
+      <div class="gauge-name">${key}</div>
+      ${deltaLine}
+      ${weakLine}
+      <div class="gauge-tooltip">${tooltip}</div>`;
+    gaugesView.appendChild(div);
+  });
+}
+renderGauges();
+
+/* view toggle */
+document.querySelectorAll('.view-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    document.getElementById('radialView').classList.toggle('show', view==='radial');
+    document.getElementById('gaugesView').classList.toggle('active', view==='gauges');
+  });
+});
+
+/* ============================= KEY MOVEMENTS (right, centralized) — operational pulse + what's next, not a restatement of the ring ============================= */
+function catBars(items){
+  const max = Math.max(...items.map(i=>i[1]));
+  return `<div class="bd-row-set">${items.map(it=>{
+    const pct = it[1]/max*100;
+    return `<div class="bd-row"><span class="bd-label">${it[0]}</span><div class="bd-bar-bg"><div class="bd-bar-fill" style="width:${pct}%; background:#3fe0cb; opacity:${0.45+(pct/100)*0.55};"></div></div><span class="bd-val">${it[1]}%</span></div>`;
+  }).join('')}</div>`;
+}
+function forecastScale(activeIdx){
+  const labels = ['LOW','ELEVATED','HIGH'];
+  const cols = ['#5fd39a','#e8b84e','#ef6b7c'];
+  return `<div class="fc-scale">${labels.map((l,i)=>`<div class="fc-seg" style="background:${i===activeIdx?cols[i]+'2a':'rgba(255,255,255,.05)'}; color:${i===activeIdx?cols[i]:'var(--w-4)'}; border:1px solid ${i===activeIdx?cols[i]+'55':'transparent'};">${l}</div>`).join('')}</div>`;
+}
+const threatsSeries = genTrend(1, 14, -0.4, 3, 20);
+const mttcSeries = genTrend(3, 14, -0.3, 2, 15);
+const movementsList = document.getElementById('movementsList');
+let threatsVal=214, mttcVal=11, patchVal=31;
+function renderMovements(){
+  const live = isLive();
+  const tVal = live ? threatsVal : Math.round(lerp(THREATS_HISTORY, scrubT));
+  const tDelta = live ? '&#9660; 18' : ('AS OF '+dateAt(scrubT).toUpperCase());
+  const mVal = live ? mttcVal : Math.round(lerp(MTTC_HISTORY, scrubT));
+  const mDelta = live ? '&#9660; 4m' : ('AS OF '+dateAt(scrubT).toUpperCase());
+  const pVal = live ? patchVal : Math.round(lerp(PATCH_HISTORY, scrubT));
+  const pDelta = live ? '&#9650; 9' : ('AS OF '+dateAt(scrubT).toUpperCase());
+
+  movementsList.innerHTML = `
+    <div class="mv-card glass">
+      <div class="mv-top"><span class="mv-name">Active Threats</span><span class="mv-val" style="color:var(--w-1);">${tVal}</span><span class="mv-delta ${live?'good':'flat'}">${tDelta}</span></div>
+      ${sparkSVG(threatsSeries, COLORS.crit, 260, 20)}
+      ${live ? `<div class="mv-live"><span class="d"></span>Live count <b id="threatsLive">${tVal}</b></div>` : ''}
+    </div>
+    <div class="mv-card glass">
+      <div class="mv-top"><span class="mv-name">Mean Time to Contain</span><span class="mv-val" style="color:var(--w-1);">${mVal}m</span><span class="mv-delta ${live?'good':'flat'}">${mDelta}</span></div>
+      ${sparkSVG(mttcSeries, COLORS.ok, 260, 20)}
+    </div>
+    <div class="mv-card glass">
+      <div class="mv-top"><span class="mv-name">Patch Backlog Reduced</span><span class="mv-val" style="color:var(--w-1);">${pVal}%</span><span class="mv-delta ${live?'good':'flat'}">${pDelta}</span></div>
+      ${live
+        ? `<div class="mv-note">Endpoint cadence is closing the gap fastest &mdash; OT/SCADA remains the hardest category.</div>${catBars([['OT/SCADA',22],['Windows EPs',41],['Network gear',18],['Cloud workloads',19]])}`
+        : `<div class="mv-note" style="font-style:italic; color:var(--w-4);">Category breakdown (OT/SCADA, Windows, Network, Cloud) is only tracked live.</div>`}
+    </div>
+    <div class="mv-card glass">
+      <div class="mv-top"><span class="mv-name">Next 24h Forecast</span>${live ? `<span class="mv-val" style="color:${COLORS.watch}; font-size:19px;">ELEVATED</span>` : ''}</div>
+      ${live
+        ? `<div class="mv-note">Predictive model (92% confidence) flags <b style="color:var(--w-1);">Application</b> and <b style="color:var(--w-1);">User</b> as the highest-risk domains overnight.</div>${forecastScale(1)}`
+        : `<div class="mv-note" style="font-style:italic; color:var(--w-4);">Forecasts are a live-only feature &mdash; historical forecasts aren't tracked. Return to Live to see tonight's outlook.</div>`}
+    </div>`;
+}
+renderMovements();
+
+/* ============================= AI INSIGHTS (cross-cutting: Ops Risk + Compliance) ============================= */
+function insightRow(cls, html){
+  const paths = {bad:'<path d="M6 4v10M2 10l4 4 4-4"/>', good:'<path d="M6 4v10M2 8l4-4 4 4"/>', watch:'<circle cx="6" cy="10" r="1.2"/><path d="M6 3v5"/>'};
+  const strokes = {bad:'#ef6b7c', good:'#5fd39a', watch:'#e8b84e'};
+  return `<div class="insight-item"><div class="ins-arrow ${cls}"><svg viewBox="0 0 12 16" fill="none" stroke="${strokes[cls]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths[cls]}</svg></div><div class="ins-text">${html}</div></div>`;
+}
+document.getElementById('aiPanel-ov').innerHTML = `
+  <div class="ai-panel-head">
+    <div class="ai-panel-title"><div class="ai-orb"></div><span class="n1">AI Insights</span><span class="beta-tag">BETA</span></div>
+    <div class="ai-meta">on-prem &middot; Gemma 4 &middot; confidence 0.91</div>
+  </div>
+  <div>
+    <div class="ai-col-title red"><span>Risk Summary</span><span class="trend-badge mixed">Mixed</span></div>
+    <p>Enterprise posture is mixed this cycle &mdash; <b style="color:var(--w-1);">Operations Risk</b> fell to <b style="color:var(--w-1);">76/100</b> as Application and User regressed, while <b style="color:var(--w-1);">Compliance</b> climbed to <b style="color:var(--w-1);">81/100</b> on faster remediation. The common thread across every domain is <b style="color:var(--w-1);">L1 &middot; Core</b> &mdash; it's the weakest layer everywhere, and closing that one gap would lift both scores at once.</p>
+  </div>
+  <div>
+    <div class="ai-col-title amber">Key Observations</div>
+    <div class="insight-list">
+      ${insightRow('bad', '<b>Operations Risk</b> declined to 76/100, driven by Application (-6) and User (-6).')}
+      ${insightRow('good', '<b>Compliance</b> improved to 81/100 (+6) &mdash; remediation is currently outpacing new breaches.')}
+      ${insightRow('bad', '<b>L1 &middot; Core</b> is the weakest layer in all four domains &mdash; systemic, not isolated.')}
+      ${insightRow('watch', "Predictive model flags <b>Application</b> and <b>User</b> as elevated for the next 24h, consistent with this week's trend.")}
+    </div>
+  </div>
+  <div>
+    <div class="ai-col-title teal">Recommended Actions</div>
+    <div class="insight-list">
+      ${insightRow('good', 'Prioritise L1 &middot; Core hardening enterprise-wide &mdash; the one fix that lifts every domain at once.')}
+      ${insightRow('good', 'Brief leadership on the Application/User regression ahead of the predicted overnight elevation.')}
+      ${insightRow('good', "Sustain the Compliance remediation cadence currently outpacing Ops Risk's decline.")}
+    </div>
+  </div>`;
+
+/* ---- featured cards ---- */
+function toggleFC(id){
+  const map = {ops:['chevOps','listOps'], comp:['chevComp','listComp']};
+  const [chevId, listId] = map[id];
+  document.getElementById(chevId).classList.toggle('open');
+  document.getElementById(listId).classList.toggle('open');
+}
+function capsuleBars(id, values, color){
+  const w=128,h=96, bw=13, gap=6; const max=Math.max(...values); let bars='';
+  values.forEach((v,i)=>{ const bh=(v/max)*62; const x=i*(bw+gap)+4; const y=h-18-bh;
+    bars += `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="${bw/2}" fill="${color}" opacity="${0.4+(i/values.length)*0.55}"/>`;
+    bars += `<text x="${x+bw/2}" y="${y-5}" text-anchor="middle" font-family="IBM Plex Mono" font-size="7" fill="${color}" opacity="0.8">${v}</text>`;
+  });
+  document.getElementById(id).innerHTML = bars;
+}
+capsuleBars('fcOps', [80,78,74,69,78,80,76], '#e8b84e');
+capsuleBars('fcCompliance', [60,58,64,70,66,75,81], '#3fe0cb');
+
+/* ---- additional module tiles ---- */
+const upcoming = [
+  {name:'User 360', kpiVal:'3,102', kpiLbl:'active users', seed:20, status:'watch',
+   tooltip:'24 users flagged with elevated risk this week, up from 17.',
+   tooltip2:'63 users generated first-seen URL activity &mdash; the leading contributor to the increase.',
+   indicatorPct:78, indicatorColor:'teal', indicatorLbl:'Review coverage 78%'},
+  {name:'Asset 360', kpiVal:'18.4k', kpiLbl:'assets tracked', seed:21, status:'watch',
+   tooltip:'38 assets without DLP, down from 45 &mdash; the strongest improvement this week.',
+   tooltip2:'42 legacy OT devices are past end-of-life and cannot host an agent at all.',
+   indicatorPct:76, indicatorColor:'warning', indicatorLbl:'Patch coverage 76%'},
+  {name:'Network 360', kpiVal:'62%', kpiLbl:'backbone utilised', seed:22, status:'ok',
+   tooltip:'All 3 DEWA fibre links operational &mdash; 0 critical perimeter alerts.',
+   tooltip2:'Substation segmentation is advancing; 3 sites remain only partially flattened.',
+   indicatorPct:100, indicatorColor:'teal', indicatorLbl:'3/3 links up'},
+  {name:'Application 360', kpiVal:'6', kpiLbl:'systems monitored', seed:23, status:'watch',
+   tooltip:'4 applications currently under active attack from 6 attacking IPs.',
+   tooltip2:'WAF is in blocking mode &mdash; 1,240 blocks logged today.',
+   indicatorPct:33, indicatorColor:'danger', indicatorLbl:'4 of 6 under watch'},
+  {name:'Threat Intelligence', kpiVal:'1,248', kpiLbl:'active IOCs', seed:24, status:'up',
+   tooltip:'DDoS remains the leading vector this week (35%), followed by phishing at 20%.',
+   tooltip2:'41 IPs are showing increasing malicious behaviour at the perimeter firewall.',
+   indicatorPct:35, indicatorColor:'danger', indicatorLbl:'DDoS 35% of IOCs'},
+  {name:'Predictive Defence', kpiVal:'92%', kpiLbl:'forecast accuracy', seed:25, status:'ok',
+   tooltip:'Next-24h risk forecast: elevated on Application and User, stable elsewhere.',
+   tooltip2:'Model confidence has held steady at 92% for three weeks running.',
+   indicatorPct:92, indicatorColor:'teal', indicatorLbl:'Model confidence 92%'},
+  {name:'SOC Dashboard', kpiVal:'14', kpiLbl:'open cases', seed:26, status:'watch',
+   tooltip:'4 high-severity cases in queue &mdash; average time-to-assign is 6 minutes.',
+   tooltip2:'10 medium/low cases remain within SLA; none are currently overdue.',
+   indicatorPct:29, indicatorColor:'warning', indicatorLbl:'4 of 14 high severity'},
+];
+const rail = document.getElementById('moduleRail');
+upcoming.forEach(m=>{
+  const data = genTrend(m.seed, 14, m.status==='up'?0.3:m.status==='watch'?0.1:-0.1, 3, 30);
+  const tile = document.createElement('div'); tile.className='rail-tile glass';
+  tile.innerHTML = `
+    <div class="rail-tile-name">${m.name}</div>
+    <div class="rail-tile-kpi"><span class="v">${m.kpiVal}</span><span class="l">${m.kpiLbl}</span></div>
+    ${sparkSVG(data, COLORS[m.status]||COLORS.ok, 154, 20)}
+    <div class="rail-tooltip">
+      <div class="rail-tooltip-title">${m.name} &middot; snapshot</div>
+      <div class="rail-tooltip-line">${m.tooltip}</div>
+      <div class="rail-tooltip-line">${m.tooltip2}</div>
+      <div class="rail-tooltip-indicator">
+        <span class="rt-dot" style="background:${COLOR_HEX[m.indicatorColor]};"></span>
+        <div class="rt-bar-bg"><div class="rt-bar-fill" style="width:${m.indicatorPct}%; background:${COLOR_HEX[m.indicatorColor]};"></div></div>
+      </div>
+      <div style="font-size:9.5px; color:var(--w-3); margin-top:6px;">${m.indicatorLbl}</div>
+    </div>`;
+  rail.appendChild(tile);
+});
+
+/* ---- ambient tick ---- */
+function rand(min,max){ return Math.random()*(max-min)+min; }
+setInterval(()=>{
+  if(!isLive()) return;
+  threatsVal = Math.max(180, threatsVal + Math.round(rand(-2,2)));
+  renderMovements();
+}, 3200);
+
+/* ============================= TIME-SLIDER INTERACTION ============================= */
+(function(){
+  const track = document.getElementById('timelineTrack');
+  const handle = document.getElementById('tlHandle');
+  const fill = document.getElementById('tlFill');
+  const eventsWrap = document.getElementById('tlEvents');
+  const wrap = document.getElementById('timelineWrap');
+  const statusText = document.getElementById('timelineStatusText');
+  const caption = document.getElementById('timelineCaption');
+  const returnBtn = document.getElementById('tlReturnBtn');
+  const playBtn = document.getElementById('tlPlayBtn');
+  const playIcon = document.getElementById('tlPlayIcon');
+  const mvHeader = document.getElementById('mvHeader');
+
+  document.getElementById('tlDateStart').textContent = dateAt(0);
+  document.getElementById('tlDateEnd').textContent = 'TODAY';
+
+  TIMELINE_EVENTS.forEach(ev=>{
+    const pct = (ev.idx/(HIST_LEN-1))*100;
+    const dot = document.createElement('div');
+    dot.className='tl-event-dot';
+    dot.style.left = pct+'%';
+    dot.style.background = COLOR_HEX[ev.color] || COLORS[ev.color];
+    dot.innerHTML = `<div class="tl-event-tooltip">${dateAt(ev.idx)}<br><b style="color:var(--w-1);">${ev.label}</b></div>`;
+    dot.addEventListener('click', (e)=>{ e.stopPropagation(); setScrub(ev.idx, ev.label); });
+    eventsWrap.appendChild(dot);
+  });
+
+  function nearestEvent(t){
+    let best=null, bestDist=0.4;
+    TIMELINE_EVENTS.forEach(ev=>{ const dist=Math.abs(ev.idx-t); if(dist<bestDist){ bestDist=dist; best=ev; } });
+    return best;
+  }
+
+  function render(){
+    const pct = (scrubT/(HIST_LEN-1))*100;
+    handle.style.left = pct+'%';
+    fill.style.width = pct+'%';
+    const live = isLive();
+    wrap.classList.toggle('is-history', !live);
+    if(live){
+      statusText.textContent = 'LIVE · TODAY';
+      caption.textContent = 'Drag to rewind, or click a marker to jump to a notable moment';
+      mvHeader.textContent = 'Key Movements This Week';
+    } else {
+      statusText.textContent = 'VIEWING HISTORY · ' + dateAt(scrubT).toUpperCase();
+      const ev = nearestEvent(scrubT);
+      caption.textContent = ev ? ev.label : ('Posture as of ' + dateAt(scrubT));
+      mvHeader.textContent = 'Key Movements · ' + dateAt(scrubT);
+    }
+    refreshScrubDisplay();
+    renderGauges();
+    renderMovements();
+  }
+
+  function setScrub(t, label){
+    scrubT = Math.max(0, Math.min(HIST_LEN-1, t));
+    render();
+  }
+
+  let dragging = false;
+  function xToT(clientX){
+    const rect = track.getBoundingClientRect();
+    const frac = Math.max(0, Math.min(1, (clientX-rect.left)/rect.width));
+    return frac*(HIST_LEN-1);
+  }
+  handle.addEventListener('mousedown', (e)=>{ dragging=true; e.preventDefault(); });
+  track.addEventListener('mousedown', (e)=>{ if(e.target===handle) return; dragging=true; setScrub(xToT(e.clientX)); });
+  window.addEventListener('mousemove', (e)=>{ if(dragging) setScrub(xToT(e.clientX)); });
+  window.addEventListener('mouseup', ()=>{ dragging=false; });
+
+  returnBtn.addEventListener('click', ()=> setScrub(HIST_LEN-1));
+
+  let playing=false, playRAF=null;
+  playBtn.addEventListener('click', ()=>{
+    if(playing){ playing=false; cancelAnimationFrame(playRAF); playIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; return; }
+    playing=true;
+    playIcon.innerHTML='<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+    setScrub(0);
+    const duration = 8000, start = performance.now();
+    function step(now){
+      if(!playing) return;
+      const t = Math.min(1, (now-start)/duration);
+      setScrub(t*(HIST_LEN-1));
+      if(t<1){ playRAF = requestAnimationFrame(step); }
+      else { playing=false; playIcon.innerHTML='<path d="M8 5v14l11-7z"/>'; }
+    }
+    playRAF = requestAnimationFrame(step);
+  });
+
+  render();
+})();
+
+
+
+window.toggleFC = toggleFC;
+})();
+(function(){
+
+function seededRand(seed){let s=seed%2147483647; if(s<=0)s+=2147483646; return function(){s=s*16807%2147483647; return (s-1)/2147483646;};}
+function genTrend(seed,len,drift,vol,base){const r=seededRand(seed*97+13); let v=base; const out=[v]; for(let i=1;i<len;i++){v=v+drift+(r()-.5)*vol; out.push(v);} return out;}
+function sparkSVG(data,color,w=100,h=14){
+  const min=Math.min(...data), max=Math.max(...data), range=(max-min)||1, pad=1.5;
+  const pts=data.map((d,i)=>{const x=(i/(data.length-1))*(w-pad*2)+pad; const y=h-pad-((d-min)/range)*(h-pad*2); return [x,y];});
+  const line=pts.map(p=>p.join(',')).join(' ');
+  const gid='g'+Math.random().toString(36).slice(2,9);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity="0.28"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+  <polygon points="${pts[0][0]},${h} ${line} ${pts[pts.length-1][0]},${h}" fill="url(#${gid})"/>
+  <polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+const DANGER='#ef6b7c', SUCCESS='#5fd39a';
+
+/* ============================= RISK DOMAINS — each metric: [label, value, delta, isBad] ============================= */
+const domains = [
+  {name:'User Risk', badge:'CAUTION', badgeClass:'watch', score:74, metrics:[
+    ['Users with risk','412','+23',true], ['Admins accessing new assets','18','+4',true],
+    ['Users showing infection','6','+2',true], ['Users &rarr; new URL links','131','+18',true],
+    ['DLP txn per user vs baseline','2.4&times;','+0.3&times;',true]]},
+  {name:'Asset Risk', badge:'CRITICAL', badgeClass:'crit', score:58, metrics:[
+    ['Assets with risk','1,204','+86',true], ['Assets without DLP agents','388','+27',true],
+    ['Assets not having AV updates','92','-14',false], ['Assets showing infections','14','+3',true],
+    ['Assets with IOCs (hash/file)','7','+2',true]]},
+  {name:'Network Risk', badge:'CAUTION', badgeClass:'watch', score:79, metrics:[
+    ['IPs with risk','266','-19',false], ['IPs w/ increased malicious behaviour','41','+6',true],
+    ['IPs at perimeter fwall &middot; high conn','19','-4',false], ['IP categories trigger abnormal','8','-1',false],
+    ['IPs without asset tagging','54','+5',true]]},
+  {name:'Application Risk', badge:'CRITICAL', badgeClass:'crit', score:61, metrics:[
+    ['Apps w/ abnormal WAF signatures','11','+3',true], ['Apps under attack (block sig)','3','+1',true],
+    ['IPs actively attacking','27','+8',true], ['Repeated IPs attacking','9','-2',false],
+    ['Apps attempts for dest. app','63','+11',true]]},
+];
+const domainGrid = document.getElementById('domainGrid');
+domains.forEach((dom,di)=>{
+  const rows = dom.metrics.map((m,mi)=>{
+    const [label,val,delta,isBad] = m;
+    const color = isBad?DANGER:SUCCESS;
+    const arrow = delta.startsWith('-') ? '&#9660;' : '&#9650;';
+    const data = genTrend(di*10+mi, 8, isBad?0.4:-0.3, 2, 15);
+    return `<div class="metric-row">
+      <div class="metric-top"><span class="metric-lbl">${label}</span><div class="metric-right"><span class="metric-val">${val}</span><span class="trend ${isBad?'bad':'good'}">${arrow} ${delta}</span></div></div>
+      ${sparkSVG(data, color, 220, 14)}
+    </div>`;
+  }).join('');
+  const div = document.createElement('div');
+  div.className = 'domain-card glass';
+  div.innerHTML = `<div class="dc-head"><div><div class="dc-name">${dom.name}</div><div class="dc-score">${dom.score}<span style="color:var(--w-4); font-size:12px;">/100</span></div></div><span class="dc-badge ${dom.badgeClass}">${dom.badge}</span></div>${rows}`;
+  domainGrid.appendChild(div);
+});
+
+/* ============================= AI INSIGHTS ============================= */
+function insightRow(bad, html){
+  const cls = bad ? 'bad' : 'good';
+  const arrowPath = bad ? '<path d="M6 4v10M2 10l4 4 4-4"/>' : '<path d="M6 4v10M2 8l4-4 4 4"/>';
+  return `<div class="insight-item"><div class="ins-arrow ${cls}"><svg viewBox="0 0 12 16" fill="none" stroke="${bad?'#ef6b7c':'#5fd39a'}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${arrowPath}</svg></div><div class="ins-text">${html}</div></div>`;
+}
+document.getElementById('aiPanel-ops').innerHTML = `
+  <div class="ai-panel-head">
+    <div class="ai-panel-title"><div class="ai-orb"></div><span class="n1">AI Insights</span><span class="beta-tag">BETA</span></div>
+    <div class="ai-meta">on-prem &middot; Gemma 4 &middot; confidence 0.93</div>
+  </div>
+  <div>
+    <div class="ai-col-title red"><span>Risk Summary</span><span class="trend-badge declining">Declining</span></div>
+    <p>Operational risk posture sits at <b style="color:var(--w-1);">76/100</b>, nine points shy of the 85 target and down 4 this cycle. <b style="color:var(--w-1);">Asset</b> and <b style="color:var(--w-1);">Application</b> are the domains pulling the score down &mdash; both critical &mdash; while Network keeps improving. The single fastest-moving driver is DLP coverage: 388 assets are now exposed, up 27 in a week.</p>
+  </div>
+  <div>
+    <div class="ai-col-title amber">Key Observations</div>
+    <div class="insight-list">
+      ${insightRow(true, 'DLP coverage gap widened to <b>388</b> unprotected assets (+27) &mdash; the fastest-growing exposure this cycle.')}
+      ${insightRow(true, 'Users carrying risk climbed to <b>412</b> (+23) alongside a jump in new-URL activity (<b>131</b>, +18) &mdash; likely linked.')}
+      ${insightRow(false, 'Perimeter high-connection IPs eased to <b>19</b> (-4) and AV-update gaps closed to <b>92</b> (-14) &mdash; edge hardening is holding.')}
+      ${insightRow(true, 'Application-layer attack attempts rose to <b>63</b> (+11), with 3 apps now under active block-signature enforcement.')}
+    </div>
+  </div>
+  <div>
+    <div class="ai-col-title teal">Recommended Actions</div>
+    <div class="insight-list">
+      ${insightRow(false, 'Fast-track DLP agent deployment to the <b>388</b> unprotected assets, prioritising the 27 added this week.')}
+      ${insightRow(false, 'Investigate the correlated user/URL spike (<b>412</b> risky users, <b>131</b> new-URL events) for a common phishing source.')}
+      ${insightRow(false, 'Extend the perimeter-hardening approach that cut high-connection IPs by 4 to the Application attack surface.')}
+    </div>
+  </div>`;
+
+
+
+})();
+(function(){
+
+function seededRand(seed){let s=seed%2147483647; if(s<=0)s+=2147483646; return function(){s=s*16807%2147483647; return (s-1)/2147483646;};}
+function genTrend(seed,len,drift,vol,base){const r=seededRand(seed*97+13); let v=base; const out=[v]; for(let i=1;i<len;i++){v=Math.max(0,v+drift+(r()-.5)*vol); out.push(v);} return out;}
+function sparkSVG(data,color,w=140,h=20){
+  const min=Math.min(...data), max=Math.max(...data), range=(max-min)||1, pad=2;
+  const pts=data.map((d,i)=>{const x=(i/(data.length-1))*(w-pad*2)+pad; const y=h-pad-((d-min)/range)*(h-pad*2); return [x,y];});
+  const line=pts.map(p=>p.join(',')).join(' ');
+  const gid='g'+Math.random().toString(36).slice(2,9);
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="width:100%;height:${h}px;display:block;"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${color}" stop-opacity="0.3"/><stop offset="100%" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+  <polygon points="${pts[0][0]},${h} ${line} ${pts[pts.length-1][0]},${h}" fill="url(#${gid})"/>
+  <polyline points="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+const COLOR_HEX={teal:'#3fe0cb', warning:'#e8b84e', danger:'#ef6b7c', success:'#5fd39a', muted:'#8fa0b0'};
+
+function toggleIdDetail(){
+  document.getElementById('idMoreBtn').classList.toggle('open');
+  document.getElementById('idDetailGrid').classList.toggle('open');
+}
+
+/* ============================= TRANSACTIONAL ACTIONS ============================= */
+const ACTION_META = {
+  escalate: {title:'Escalate to SOC', sub:'This will open a case and notify the SOC on-call analyst.', label:'Escalated to SOC', detail:'Case #SOC-40213 opened &middot; assigned to Shift B'},
+  flag: {title:'Flag for HR Review', sub:'This will notify People Services and attach your note to the profile.', label:'Flagged for HR Review', detail:'Notification sent to People Services'},
+  revoke: {title:'Revoke Access', sub:'This will submit an access-revocation request to the IAM approval queue.', label:'Access Revocation Requested', detail:'Pending approval &middot; IAM queue'},
+};
+let pendingAction = null, pendingBtn = null;
+const ORIGINAL_BTN_LABEL = {escalate:'Escalate to SOC', flag:'Flag for HR Review', revoke:'Revoke Access'};
+
+function openActionModal(type, btn){
+  if(btn.classList.contains('done')) return;
+  pendingAction = type; pendingBtn = btn;
+  const meta = ACTION_META[type];
+  document.getElementById('modalTitle').textContent = meta.title;
+  document.getElementById('modalSub').textContent = meta.sub;
+  document.getElementById('modalComment').value = '';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeActionModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  pendingAction = null; pendingBtn = null;
+}
+function submitActionModal(){
+  if(!pendingAction) return;
+  const meta = ACTION_META[pendingAction];
+  const comment = document.getElementById('modalComment').value.trim();
+  pendingBtn.textContent = meta.label;
+  pendingBtn.classList.add('done');
+  const fb = document.getElementById('actionFeedback');
+  fb.innerHTML = meta.detail + (comment ? ` &middot; Note: "${comment}"` : '');
+  fb.classList.add('show');
+  closeActionModal();
+}
+function ackItem(id){
+  const el = document.getElementById(id);
+  el.textContent = 'Acknowledged';
+  el.classList.add('done');
+}
+function resetActions(){
+  ['escalate','flag','revoke'].forEach(type=>{
+    const idMap = {escalate:'btnEscalate', flag:'btnFlag', revoke:'btnRevoke'};
+    const btn = document.getElementById(idMap[type]);
+    btn.textContent = ORIGINAL_BTN_LABEL[type];
+    btn.classList.remove('done');
+  });
+  document.getElementById('actionFeedback').classList.remove('show');
+  document.getElementById('actionFeedback').textContent = '';
+  ['ackAccess','ackPhish'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){ el.textContent = 'Acknowledge'; el.classList.remove('done'); }
+  });
+}
+
+/* ============================= PRESENCE & DIGITAL CORRELATION ============================= */
+const presenceGrid = document.getElementById('presenceGrid');
+presenceGrid.innerHTML = `<div class="pd-scale"><span>100%</span><span>50%</span><span>0%</span></div>`;
+const badgeSeries = genTrend(11, 14, 0, 30, 60);
+const digitalSeries = genTrend(12, 14, 0, 25, 55);
+// force a deliberate mismatch on day 9: badge shows offsite (low), digital stays high
+badgeSeries[9] = 4; digitalSeries[9] = 88;
+const flaggedDays = [9];
+for(let i=0;i<14;i++){
+  const d = new Date(); d.setDate(d.getDate()-(13-i));
+  const label = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  const bH = Math.max(4, Math.min(100,badgeSeries[i])*1.55);
+  const dH = Math.max(4, Math.min(100,digitalSeries[i])*1.55);
+  const flagged = flaggedDays.includes(i);
+  const day = document.createElement('div'); day.className='presence-day';
+  day.innerHTML = `
+    ${flagged ? `<div class="pd-flag"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4M12 16h.01"/></svg></div>` : ''}
+    <div class="presence-tooltip ${flagged?'flagged':''}">
+      <b>${label}</b><br>
+      Badge activity: ${Math.round(badgeSeries[i])}%<br>
+      Digital activity: ${Math.round(digitalSeries[i])}%
+      ${flagged ? '<br><br><b style="color:var(--danger);">Flag:</b> badge shows offsite, but digital session activity stayed high &mdash; worth a manual check.' : ''}
+    </div>
+    <div class="pd-bars">
+      <div class="pd-bar badge" style="height:${bH}px; ${flagged?'background:var(--danger);':''}"></div>
+      <div class="pd-bar digital" style="height:${dH}px; ${flagged?'background:var(--danger);':''}"></div>
+    </div>
+    <div class="pd-label">${label.split(' ')[0]}</div>`;
+  presenceGrid.appendChild(day);
+}
+
+/* ============================= DIGITAL ACCESS PERMISSIONS ============================= */
+document.getElementById('accessPanel').innerHTML = `
+  <div>
+    <div class="triad-col-title">Access Groups</div>
+    <div class="chip-row">
+      <span class="access-chip">Transmission-Ops-Users</span>
+      <span class="access-chip">VPN-Remote-Access</span>
+      <span class="access-chip">SCADA-ReadOnly-Sub12</span>
+      <span class="access-chip">Contractors-External</span>
+      <span class="access-chip">SharePoint-Ops-Docs</span>
+    </div>
+  </div>
+  <div>
+    <div class="triad-col-title">Privilege Level</div>
+    <div class="priv-row"><span class="l">Admin Rights</span><span class="priv-badge limited">LIMITED &middot; VDI Admin</span></div>
+    <div class="priv-row"><span class="l">VPN Access Tier</span><span class="priv-badge full">FULL REMOTE</span></div>
+    <div class="priv-row"><span class="l">OT / SCADA Reach</span><span class="priv-badge limited">READ-ONLY &middot; Sub-12</span></div>
+    <div class="priv-row"><span class="l">EMS Historian</span><span class="priv-badge none">NO ACCESS</span></div>
+  </div>
+  <div>
+    <div class="triad-col-title">Recent Changes</div>
+    <div class="timeline-mini">
+      <div class="tm-row"><span class="tm-dot" style="background:var(--warning);"></span><div class="tm-body"><div class="t">Admin rights on Server-Access (VDI) last reviewed 102 days ago</div><div class="d">14 MAY 2026</div><span class="tm-flag">REVIEW OVERDUE</span><br><span class="ack-btn" id="ackAccess" onclick="ackItem('ackAccess')">Acknowledge</span></div></div>
+      <div class="tm-row"><span class="tm-dot" style="background:var(--teal);"></span><div class="tm-body"><div class="t">VPN tier upgraded to Full Remote Access</div><div class="d">24 AUG 2026</div></div></div>
+      <div class="tm-row"><span class="tm-dot" style="background:var(--teal);"></span><div class="tm-body"><div class="t">Added to VPN-Remote-Access group</div><div class="d">16 AUG 2026</div></div></div>
+    </div>
+  </div>`;
+
+/* ============================= COMMUNICATION LOGS ============================= */
+const emailSeries = genTrend(21, 14, 0.1, 5, 18);
+document.getElementById('commsPanel').innerHTML = `
+  <div>
+    <div class="triad-col-title">Email Activity &middot; 30D</div>
+    <div class="email-stat-row">
+      <div class="email-stat"><div class="v">412</div><div class="l">Sent</div></div>
+      <div class="email-stat"><div class="v">386</div><div class="l">Received</div></div>
+      <div class="email-stat" style="color:var(--warning);"><div class="v" style="color:var(--warning);">1</div><div class="l">External Flagged</div></div>
+    </div>
+    ${sparkSVG(emailSeries, COLOR_HEX.teal, 220, 40)}
+  </div>
+  <div>
+    <div class="triad-col-title">Top Correspondents</div>
+    <div class="corr-row"><span class="l"><span class="corr-dot" style="background:var(--success);"></span>R. Al Mansoori (Manager)</span><span class="r">86 msgs</span></div>
+    <div class="corr-row"><span class="l"><span class="corr-dot" style="background:var(--success);"></span>Transmission-Ops-Team</span><span class="r">64 msgs</span></div>
+    <div class="corr-row"><span class="l"><span class="corr-dot" style="background:var(--success);"></span>SAP-Support-Internal</span><span class="r">31 msgs</span></div>
+    <div class="corr-row"><span class="l"><span class="corr-dot" style="background:var(--warning);"></span>unverified-vendor.com</span><span class="r">7 msgs &middot; flagged</span></div>
+  </div>
+  <div>
+    <div class="triad-col-title">Flagged Events</div>
+    <div class="timeline-mini">
+      <div class="tm-row"><span class="tm-dot" style="background:var(--danger);"></span><div class="tm-body"><div class="t">Clicked link in email from unverified-vendor.com &mdash; blocked by DLP, no data left the endpoint</div><div class="d">21 AUG 2026</div><br><span class="ack-btn" id="ackPhish" onclick="ackItem('ackPhish')">Acknowledge</span></div></div>
+      <div class="tm-row"><span class="tm-dot" style="background:var(--warning);"></span><div class="tm-body"><div class="t">3 after-hours external emails this month (usual baseline: 0-1)</div><div class="d">ROLLING 30D</div></div></div>
+    </div>
+  </div>`;
+
+/* ============================= DOMAIN SUMMARY CARDS ============================= */
+const domainRow = document.getElementById('domainRow');
+const domainData = [
+  {name:'Assets Summary', count:4, icon:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/>', items:[
+    ['LAPTOP-01 (Windows)','Active'],['VDI-SESSION-12','Active'],['MOBILE-ANDROID','Active'],['SERVER-ACCESS','Active']]},
+  {name:'Network Summary', count:2, icon:'<circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M7 12h6M13 12l4-4.5M13 12l4 4.5"/>', items:[
+    ['Current IP','10.42.6.118'],['VPN Status','Connected'],['Last Activity','Today 10:35 AM'],['Geo Location','Al Garhoud, DXB']]},
+  {name:'Applications Summary', count:6, icon:'<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 8.5h17"/>', items:[
+    ['SAP ERP','Active'],['Acrobat','Active'],['Microsoft 365','Active'],['SharePoint Online','Active']]},
+];
+domainData.forEach(d=>{
+  const card = document.createElement('div'); card.className='dom-card glass';
+  card.innerHTML = `<div class="dom-head"><div class="dom-title"><div class="dom-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">${d.icon}</svg></div>${d.name}</div><div class="dom-count">${d.count}</div></div>
+    ${d.items.map(it=>`<div class="dom-row-item"><span class="l"><span class="dom-dot"></span>${it[0]}</span><span class="r">${it[1]}</span></div>`).join('')}
+    <div class="dom-view-all">View all &rarr;</div>`;
+  domainRow.appendChild(card);
+});
+
+/* ============================= ACTIVITY PULSE (unified, correlated) ============================= */
+const pulseData = [
+  {name:'Blocked URLs', val:192, delta:'+12%', color:'teal', seed:1, drift:0.6},
+  {name:'User SOC Alerts', val:3, delta:'+1', color:'warning', seed:2, drift:0.15},
+  {name:'Phishing Emails', val:2, delta:'-1', color:'danger', seed:3, drift:-0.1},
+  {name:'VPN Attempts', val:5, delta:'&harr; 0', color:'teal', seed:4, drift:0.05},
+  {name:'DLP Events', val:4, delta:'+2', color:'success', seed:5, drift:0.2},
+  {name:'Failed Logins', val:1, delta:'-2', color:'muted', seed:6, drift:-0.15},
+];
+const pulsePanel = document.getElementById('pulsePanel');
+pulseData.forEach(p=>{
+  const data = genTrend(p.seed, 14, p.drift, Math.max(1.5, p.val*0.9), Math.max(1, p.val*0.7));
+  const lane = document.createElement('div'); lane.className='pulse-lane';
+  lane.innerHTML = `<span class="pulse-dot" style="background:${COLOR_HEX[p.color]};"></span>
+    <span class="pulse-name">${p.name}</span>
+    <span class="pulse-val" style="color:${COLOR_HEX[p.color]};">${p.val}</span>
+    <div class="pulse-track">${sparkSVG(data, COLOR_HEX[p.color], 400, 22)}</div>
+    <span class="pulse-delta">${p.delta}</span>`;
+  pulsePanel.appendChild(lane);
+});
+
+/* ============================= AI INSIGHTS (personalized: Ask Maddhu) ============================= */
+function insightRow(cls, html){
+  const paths = {bad:'<path d="M6 4v10M2 10l4 4 4-4"/>', good:'<path d="M6 4v10M2 8l4-4 4 4"/>', watch:'<circle cx="6" cy="10" r="1.2"/><path d="M6 3v5"/>'};
+  const strokes = {bad:'#ef6b7c', good:'#5fd39a', watch:'#e8b84e'};
+  return `<div class="insight-item"><div class="ins-arrow ${cls}"><svg viewBox="0 0 12 16" fill="none" stroke="${strokes[cls]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths[cls]}</svg></div><div class="ins-text">${html}</div></div>`;
+}
+document.getElementById('aiPanel-u3').innerHTML = `
+  <div class="ai-panel-head">
+    <div class="ai-panel-title"><div class="ai-orb"></div><span class="n1">AI Insights</span><span class="beta-tag">BETA</span></div>
+    <div class="ai-meta">on-prem &middot; Gemma 4 &middot; confidence 0.95</div>
+  </div>
+  <div>
+    <div class="ai-col-title red"><span>Risk Summary</span><span class="trend-badge low">Low Risk</span></div>
+    <p>User risk score is <b style="color:var(--w-1);">low (8%)</b> and has declined 3% over the past seven days, while confidence has risen to <b style="color:var(--w-1);">72%</b>. No critical behavioural deviation was detected across endpoint, network, or application activity this cycle. The only open items are administrative: an overdue access review on VDI admin rights, and a low-volume external contact worth a light check. As an external contractor with no defined end date on file, this account still warrants standard offboarding oversight.</p>
+  </div>
+  <div>
+    <div class="ai-col-title amber">Key Observations</div>
+    <div class="insight-list">
+      ${insightRow('good', 'Failed logins (1) and phishing clicks (2) both trended down this week &mdash; no pattern of compromise.')}
+      ${insightRow('good', 'All four assets and six applications remain within normal usage baselines.')}
+      ${insightRow('watch', '192 blocked URLs (+12%) &mdash; elevated web filtering activity worth a light review.')}
+      ${insightRow('bad', 'Day 9 shows a badge/digital mismatch &mdash; offsite badge status with continued high digital activity.')}
+      ${insightRow('watch', 'Admin rights on Server-Access (VDI) are 102 days past their review window &mdash; the only access-permission flag on file.')}
+      ${insightRow('watch', '3 after-hours emails to an unverified external vendor this month, against a baseline of 0-1.')}
+    </div>
+  </div>
+  <div>
+    <div class="ai-col-title teal">Recommended Actions</div>
+    <div class="insight-list">
+      ${insightRow('good', 'Review the 192 blocked-URL events to confirm repeated risky browsing, not a one-off spike.')}
+      ${insightRow('good', 'Manually verify the Day 9 badge/digital mismatch with the site access log.')}
+      ${insightRow('good', 'Confirm a last-working-date is on file given the external contractor status.')}
+      ${insightRow('good', 'Complete the overdue access review on VDI admin rights &mdash; the single open permissions item.')}
+    </div>
+  </div>
+  <div>
+    <div class="ai-col-title teal">Ask Khalid&rsquo;s Profile</div>
+    <div class="ask-box"><input placeholder="Has this user travelled recently?"/><div class="ask-send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>
+    <div class="ask-suggestions"><span class="ask-chip">Explain Day 9 mismatch</span><span class="ask-chip">Login history</span><span class="ask-chip">Compare to peers</span></div>
+  </div>`;
+
+
+
+window.toggleIdDetail = toggleIdDetail;
+window.openActionModal = openActionModal;
+window.closeActionModal = closeActionModal;
+window.submitActionModal = submitActionModal;
+window.resetActions = resetActions;
+window.ackItem = ackItem;
+})();
+</script>
+</body>
+</html>
