@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Strategy Mosaic vs Power BI · Competitive Intelligence Hub</title>
+<style>
+:root{
+  --orange:#FA660F; --orange-light:rgba(250,102,15,.08); --orange-border:rgba(250,102,15,.28);
+  --comp:#E8A020; --comp-deep:#B27400; --comp-light:rgba(232,160,32,.09); --comp-border:rgba(232,160,32,.35);
+  --black:#0a0a0a; --dark:#1a1a1a; --grey-text:#4a4a5a; --grey-muted:#6a6a7a; --grey-faint:#9a9aaa;
+  --border:#d8d8e8; --border-soft:#ebebf5; --bg:#fff; --bg-section:#f7f7fb;
+  --green:#0a7a52; --green-light:rgba(10,122,82,.07); --amber:#a05800; --amber-light:rgba(160,88,0,.07);
+  --red:#b02020; --red-light:rgba(176,32,32,.06); --blue:#1848c8; --purple:#5e35b1;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --radius:8px; --radius-lg:12px;
+  --font:'Segoe UI',-apple-system,system-ui,sans-serif;
+  --font-mono:'Cascadia Code','SF Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;scroll-padding-top:120px}
+body{font-family:var(--font);background:var(--bg);color:var(--dark);min-height:100vh}
+strong{font-weight:700;color:var(--black)}
+
+/* ── Hub header (same as Hub shell) ── */
+.hub-header{position:sticky;top:0;z-index:300;height:48px;background:#0a0a0a;display:flex;align-items:center;padding:0 24px;gap:16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.hub-logo img{height:20px;width:auto;display:block;filter:brightness(0) invert(1)}
+.hub-tagline{font-size:12px;color:rgba(255,255,255,.4);font-family:var(--font-mono);letter-spacing:.06em}
+.hub-badge{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);font-family:var(--font-mono);display:flex;align-items:center;gap:8px}
+.hub-badge .live{width:7px;height:7px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 3px rgba(46,204,113,.18)}
+
+/* ── Section pill strip ── */
+.tab-strip{position:sticky;top:48px;z-index:290;height:52px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tab-strip::-webkit-scrollbar{display:none}
+.tab-group-label{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#b0b0c0;font-family:var(--font-mono);display:flex;align-items:center;gap:7px;padding:0 10px 0 6px;white-space:nowrap;flex-shrink:0}
+.tab-group-label::before{content:'';width:3px;height:14px;background:var(--comp);border-radius:2px}
+.tab{display:flex;align-items:center;gap:7px;padding:5px 13px;border:1px solid transparent;border-radius:7px;background:transparent;cursor:pointer;font-size:12.5px;font-weight:600;color:#7a7a8a;font-family:var(--font);white-space:nowrap;transition:all .14s;flex-shrink:0;text-decoration:none}
+.tab:hover{color:var(--dark);background:#f4f4f8;border-color:var(--border)}
+.tab.active{color:#0a0a0a;background:#fff;border-color:#d0d0e0;box-shadow:0 1px 5px rgba(0,0,0,.09)}
+.tab-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0}
+.tab.active .tab-dot{background:var(--orange);box-shadow:0 0 0 3px rgba(250,102,15,.14)}
+
+/* ── Hero ── */
+.hero{padding:52px 64px 44px;border-bottom:1px solid var(--border);background:
+  radial-gradient(900px 300px at 100% 0%,rgba(232,160,32,.07),transparent 60%),
+  radial-gradient(700px 300px at 0% 100%,rgba(250,102,15,.06),transparent 60%),#fff}
+.hero-inner{max-width:1260px;margin:0 auto;display:grid;grid-template-columns:1.35fr 1fr;gap:48px;align-items:center}
+.hero-kicker{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin-bottom:14px}
+.hero h1{font-size:44px;line-height:1.08;font-weight:800;letter-spacing:-.03em;color:var(--black)}
+.hero h1 .vs{color:var(--grey-faint);font-weight:600}
+.hero h1 .pbi{color:var(--comp-deep)}
+.hero p.lede{font-size:18px;line-height:1.65;color:var(--grey-text);margin-top:18px;max-width:640px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--grey-muted)}
+.chip.o{border-color:var(--orange-border);color:var(--orange);background:var(--orange-light)}
+.chip.y{border-color:var(--comp-border);color:var(--comp-deep);background:var(--comp-light)}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hstat{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 18px 16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.hstat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--comp)}
+.hstat.o::before{background:var(--orange)}
+.hstat-v{font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--black)}
+.hstat-l{font-size:12.5px;color:var(--grey-text);line-height:1.45;margin-top:4px}
+.hstat-s{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-faint);margin-top:8px}
+
+/* ── Sections (Hub parity) ── */
+.main{max-width:1260px;margin:0 auto;padding:0 0 80px}
+.section-zone{padding:48px 64px;border-top:1px solid var(--border)}
+.section-zone.alt{background:var(--bg-section)}
+.section-zone[data-theme="orange"]{border-left:4px solid var(--orange)}
+.section-zone[data-theme="comp"]{border-left:4px solid var(--comp)}
+.section-zone[data-theme="green"]{border-left:4px solid var(--green)}
+.section-zone[data-theme="amber"]{border-left:4px solid var(--amber)}
+.section-zone[data-theme="purple"]{border-left:4px solid var(--purple)}
+.section-zone[data-theme="blue"]{border-left:4px solid var(--blue)}
+.section-zone[data-theme="red"]{border-left:4px solid var(--red)}
+.section-label{font-size:14.3px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--black);margin-bottom:20px;display:flex;align-items:center;gap:16px;font-family:var(--font-mono)}
+.section-label .sl-counter{font-size:11px;color:var(--orange)}
+.section-label .sl-accent{width:4px;height:22px;background:var(--orange);border-radius:2px}
+.section-label::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,var(--border),transparent)}
+.intro{font-size:16.5px;color:var(--grey-text);margin-bottom:24px;line-height:1.7;max-width:900px}
+.intro em{color:var(--dark);font-style:italic}
+
+/* Snapshot */
+.snapshot{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.snap-card{background:var(--bg-section);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 22px;transition:transform .22s,box-shadow .22s,border-color .22s;border-left:3px solid transparent}
+.snap-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.1);border-left-color:var(--orange)}
+.snap-label{font-size:11.5px;color:var(--grey-muted);margin-bottom:6px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em}
+.snap-value{font-size:20px;font-weight:800;color:var(--black);letter-spacing:-.02em;line-height:1.25}
+.snap-sub{margin-top:10px}
+ul.b{margin:0;padding:0 0 0 16px;list-style:disc}
+ul.b li{font-size:14px;line-height:1.55;color:var(--grey-text);margin-bottom:6px}
+ul.b li:last-child{margin-bottom:0}
+
+/* Timeline */
+.tl-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.tl-col{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 22px 10px;box-shadow:var(--shadow-sm)}
+.tl-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.tl-head .sw{width:10px;height:10px;border-radius:3px}
+.tl-item{display:grid;grid-template-columns:86px 1fr;gap:14px;padding:0 0 16px;position:relative}
+.tl-date{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--grey-muted);padding-top:2px}
+.tl-body{border-left:2px solid var(--border-soft);padding-left:14px;position:relative}
+.tl-body::before{content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--comp)}
+.tl-col.s .tl-body::before{border-color:var(--orange)}
+.tl-title{font-size:15px;font-weight:700;color:var(--black);line-height:1.35}
+.tl-text{font-size:13.5px;color:var(--grey-text);line-height:1.5;margin-top:3px}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:2px}
+.tag.ga{background:var(--green-light);color:var(--green)}
+.tag.pv{background:var(--amber-light);color:var(--amber)}
+.tag.px{background:var(--red-light);color:var(--red)}
+
+/* Overlap */
+.overlap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.overlap-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:box-shadow .2s,transform .2s}
+.overlap-item:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.overlap-eq{width:24px;height:24px;border-radius:50%;background:var(--amber-light);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.point-text{font-size:15.5px;color:var(--dark);line-height:1.6}
+
+/* Cost: licensing ladder */
+.ladder{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-sm)}
+.rung{padding:18px 16px 16px;border-right:1px solid var(--border-soft);position:relative}
+.rung:last-child{border-right:none}
+.rung-step{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--grey-faint);text-transform:uppercase}
+.rung-name{font-size:15.5px;font-weight:800;color:var(--black);margin-top:6px;line-height:1.25}
+.rung-price{font-size:22px;font-weight:800;color:var(--comp-deep);margin-top:8px;letter-spacing:-.02em}
+.rung-price small{font-size:11.5px;font-weight:600;color:var(--grey-muted);letter-spacing:0}
+.rung-note{font-size:12.5px;color:var(--grey-text);line-height:1.45;margin-top:8px}
+.rung.hot{background:linear-gradient(180deg,#fffaf0,#fff)}
+.rung.hot::after{content:'VIEWER CLIFF';position:absolute;top:10px;right:10px;font-family:var(--font-mono);font-size:8.5px;font-weight:800;letter-spacing:.1em;color:#fff;background:var(--comp-deep);padding:2px 6px;border-radius:3px}
+.ladder-bar{height:6px;background:linear-gradient(90deg,#f7e2b4,var(--comp),var(--comp-deep))}
+
+.gotcha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.gotcha{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;border-top:3px solid var(--comp)}
+.gotcha h4{font-size:15.5px;font-weight:800;color:var(--black);margin-bottom:8px;display:flex;gap:9px;align-items:center}
+.gotcha h4 .ic{width:26px;height:26px;border-radius:7px;background:var(--comp-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gotcha h4 .ic svg{width:15px;height:15px;stroke:var(--comp-deep)}
+.gotcha p{font-size:14px;line-height:1.58;color:var(--grey-text)}
+
+.strat-price{margin-top:22px;display:grid;grid-template-columns:1fr 2fr;gap:0;border:1px solid var(--orange-border);border-radius:var(--radius-lg);overflow:hidden;background:#fff}
+.sp-left{background:linear-gradient(180deg,#fff4ec,#fff);padding:22px 24px;border-right:1px solid var(--orange-border)}
+.sp-kicker{font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
+.sp-big{font-size:34px;font-weight:800;letter-spacing:-.03em;color:var(--black);margin-top:6px}
+.sp-big small{font-size:13px;color:var(--grey-muted);font-weight:600;letter-spacing:0}
+.sp-left p{font-size:13.5px;color:var(--grey-text);margin-top:6px;line-height:1.5}
+.sp-right{padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;align-content:center}
+.sp-row{display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.5;color:var(--dark)}
+.sp-row .ck{color:var(--orange);font-weight:800;flex-shrink:0}
+
+/* Calculator */
+.calc{margin-top:26px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.calc-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--border-soft);background:var(--bg-section);gap:12px;flex-wrap:wrap}
+.calc-title{font-size:16px;font-weight:800;color:var(--black)}
+.calc-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--grey-muted);letter-spacing:.06em;text-transform:uppercase}
+.calc-body{display:grid;grid-template-columns:360px 1fr;gap:0}
+.calc-in{padding:20px 22px;border-right:1px solid var(--border-soft);display:flex;flex-direction:column;gap:16px}
+.fld label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--dark);margin-bottom:7px}
+.fld label span{font-family:var(--font-mono);color:var(--orange)}
+.fld input[type=range]{width:100%;accent-color:var(--orange)}
+.fld select,.fld input[type=number]{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:var(--font);font-size:13.5px;background:#fff;color:var(--dark)}
+.seg{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.seg button{flex:1;white-space:nowrap;padding:7px 8px;font-size:12px;font-weight:700;border:none;background:#fff;color:var(--grey-muted);cursor:pointer;font-family:var(--font)}
+.seg button.on{background:var(--dark);color:#fff}
+.tog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dark);cursor:pointer;line-height:1.35}
+.tog input{accent-color:var(--orange);width:16px;height:16px;flex-shrink:0}
+.fld .hint{font-size:11.5px;color:var(--grey-muted);margin-top:5px;line-height:1.4}
+.calc-out{padding:20px 24px}
+.out-row{display:grid;grid-template-columns:120px 1fr 130px;gap:14px;align-items:center;margin-bottom:14px}
+.out-name{font-size:13px;font-weight:800;font-family:var(--font-mono);letter-spacing:.04em}
+.out-name.p{color:var(--comp-deep)} .out-name.s{color:var(--orange)}
+.out-bar{height:30px;background:var(--bg-section);border-radius:6px;overflow:hidden;position:relative;border:1px solid var(--border-soft)}
+.out-fill{height:100%;display:flex;transition:width .35s ease}
+.seg-a{background:var(--comp)} .seg-b{background:#f3c768} .seg-c{background:var(--comp-deep)}
+.seg-s{background:var(--orange)}
+.out-val{font-size:20px;font-weight:800;text-align:right;letter-spacing:-.02em;color:var(--black)}
+.out-val small{display:block;font-size:10.5px;font-weight:600;color:var(--grey-muted);letter-spacing:0;font-family:var(--font-mono)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:4px 0 16px 134px;font-size:11.5px;color:var(--grey-muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.verdict{border-radius:var(--radius);padding:14px 16px;font-size:14.5px;line-height:1.55;background:var(--orange-light);border:1px solid var(--orange-border);color:var(--dark)}
+.verdict b{color:var(--orange)}
+.break{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bk{background:var(--bg-section);border:1px solid var(--border-soft);border-radius:7px;padding:10px 12px}
+.bk-l{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-muted)}
+.bk-v{font-size:15px;font-weight:800;color:var(--black);margin-top:3px}
+.calc-foot{padding:12px 22px;border-top:1px solid var(--border-soft);font-size:11.5px;color:var(--grey-muted);line-height:1.5;background:#fcfcfe}
+
+/* Win cards (Hub parity) */
+.win-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.win-card{background:linear-gradient(180deg,#fff,#fff8f2);border:1px solid var(--orange-border);border-radius:var(--radius-lg);padding:22px 24px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.win-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.win-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--orange),#ff9a5c)}
+.win-num{font-size:11px;color:var(--orange);font-family:var(--font-mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.win-card-title{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--black);margin-bottom:14px;line-height:1.3}
+.win-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.win-mini{background:#fff;border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px 15px}
+.win-mini-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-mono);margin-bottom:8px}
+.win-mini-label.mosaic{color:var(--orange)} .win-mini-label.comp{color:var(--comp-deep)}
+.win-why{background:rgba(250,102,15,.08);border:1px solid var(--orange-border);border-radius:var(--radius);padding:13px 15px}
+.win-why-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-mono);color:var(--orange);margin-bottom:5px}
+.win-why-text{font-size:14.5px;line-height:1.62;color:var(--dark)}
+
+/* Coexist diagram */
+.coexist{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center}
+.cx-diag{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-sm)}
+.cx-layer{border-radius:9px;padding:12px 14px;margin-bottom:10px;position:relative}
+.cx-layer:last-child{margin-bottom:0}
+.cx-cap{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.cx-row{display:flex;flex-wrap:wrap;gap:6px}
+.cx-pill{font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:6px;background:#fff;border:1px solid var(--border)}
+.cx-consume{background:var(--bg-section);border:1px solid var(--border)}
+.cx-consume .cx-cap{color:var(--grey-muted)}
+.cx-consume .cx-pill.pbi{border-color:var(--comp-border);background:var(--comp-light);color:var(--comp-deep)}
+.cx-mosaic{background:linear-gradient(135deg,#fff4ec,#fff);border:1.5px solid var(--orange)}
+.cx-mosaic .cx-cap{color:var(--orange)}
+.cx-mosaic .cx-pill{border-color:var(--orange-border)}
+.cx-src{background:#fff;border:1px dashed var(--border)}
+.cx-src .cx-cap{color:var(--grey-muted)}
+.cx-arrow{text-align:center;color:var(--grey-faint);font-size:14px;margin:-4px 0 6px;letter-spacing:.3em}
+.cx-points{display:flex;flex-direction:column;gap:12px}
+.cx-pt{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.cx-n{width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cx-pt p{font-size:14.5px;line-height:1.55;color:var(--dark)}
+
+/* Head-to-head (Hub parity) */
+.hth-tools{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.hth-tools .seg{width:auto}
+.hth-tools .seg button{padding:7px 14px}
+.hth-count{font-family:var(--font-mono);font-size:11px;color:var(--grey-muted);margin-left:auto}
+.hth-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:auto}
+.hth-table{width:100%;border-collapse:collapse;min-width:900px}
+.hth-table thead{background:var(--bg-section)}
+.hth-table thead th{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-muted);padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:var(--font-mono)}
+.hth-table thead th.col-d{color:var(--comp-deep)} .hth-table thead th.col-m{color:var(--orange)}
+.hth-table tbody tr{border-bottom:1px solid var(--border-soft);transition:background .15s}
+.hth-table tbody tr:last-child{border-bottom:none}
+.hth-table tbody tr:hover{background:var(--bg-section)}
+.hth-table td{padding:14px 18px;vertical-align:top;font-size:14.5px;line-height:1.58}
+.td-dim{font-size:11px;font-weight:700;color:var(--grey-muted);letter-spacing:.07em;text-transform:uppercase;width:14%;font-family:var(--font-mono)}
+.td-d,.td-m{width:36%;color:var(--dark)}
+.td-edge{width:14%;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.mosaic-win td.td-m{background:rgba(250,102,15,.05);box-shadow:inset 3px 0 0 rgba(250,102,15,.3)}
+.comp-win td.td-d{background:var(--comp-light);box-shadow:inset 3px 0 0 var(--comp)}
+.edge{display:inline-block;padding:3px 8px;border-radius:4px}
+.edge.m{background:var(--orange-light);color:var(--orange)}
+.edge.c{background:var(--comp-light);color:var(--comp-deep)}
+.edge.p{background:#f0f0f6;color:var(--grey-muted)}
+
+/* Objections */
+.obj-list{display:flex;flex-direction:column;gap:10px}
+.obj{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.obj summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;gap:14px;align-items:center;font-size:16px;font-weight:700;color:var(--black)}
+.obj summary::-webkit-details-marker{display:none}
+.obj summary .q{font-family:var(--font-mono);font-size:10.5px;font-weight:800;color:var(--comp-deep);background:var(--comp-light);padding:3px 7px;border-radius:4px;flex-shrink:0}
+.obj summary .chev{margin-left:auto;transition:transform .2s;color:var(--grey-faint)}
+.obj[open] summary .chev{transform:rotate(90deg)}
+.obj[open] summary{border-bottom:1px solid var(--border-soft)}
+.obj-body{padding:16px 20px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.obj-k{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.obj-k.t{color:var(--grey-muted)} .obj-k.r{color:var(--orange)}
+.obj-body p{font-size:14.5px;line-height:1.6;color:var(--dark)}
+
+/* Sources */
+.src-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 28px}
+.src{font-size:12.5px;line-height:1.5;color:var(--grey-text);padding:6px 0;border-bottom:1px dashed var(--border-soft)}
+.src a{color:var(--blue);text-decoration:none;font-weight:600}
+.src a:hover{text-decoration:underline}
+.src .d{font-family:var(--font-mono);font-size:10.5px;color:var(--grey-faint);margin-left:4px}
+.disclaim{margin-top:18px;font-size:12px;color:var(--grey-muted);line-height:1.6;background:var(--bg-section);border:1px solid var(--border-soft);border-radius:var(--radius);padding:12px 14px}
+
+/* Utilities */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--orange),#ff9a5c);z-index:9999;width:0}
+#back-to-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(250,102,15,.35);opacity:0;transform:translateY(12px) scale(.85);transition:opacity .25s,transform .25s;z-index:999;display:flex;align-items:center;justify-content:center}
+#back-to-top.visible{opacity:1;transform:none}
+#back-to-top svg{width:18px;height:18px}
+.reveal{opacity:1}
+
+@media(max-width:1100px){
+  .hero-inner{grid-template-columns:1fr}
+  .snapshot,.gotcha-grid{grid-template-columns:1fr 1fr}
+  .overlap-grid{grid-template-columns:1fr 1fr}
+  .ladder{grid-template-columns:repeat(3,1fr)}
+  .rung:nth-child(3){border-right:none}
+  .rung:nth-child(-n+3){border-bottom:1px solid var(--border-soft)}
+  .calc-body{grid-template-columns:1fr}
+  .calc-in{border-right:none;border-bottom:1px solid var(--border-soft)}
+  .coexist{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .hub-tagline{display:none}
+  .hub-logo img{flex-shrink:0}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .hero{padding:36px 22px}
+  .hero h1{font-size:32px}
+  .section-zone{padding:36px 22px}
+  .snapshot,.overlap-grid,.win-grid,.win-mini-grid,.tl-wrap,.gotcha-grid,.src-grid,.obj-body,.break,.sp-right{grid-template-columns:1fr}
+  .strat-price{grid-template-columns:1fr}
+  .sp-left{border-right:none;border-bottom:1px solid var(--orange-border)}
+  .ladder{grid-template-columns:1fr 1fr}
+  .out-row{grid-template-columns:80px 1fr 100px}
+  .legend{margin-left:0}
+}
+@media print{.hub-header,.tab-strip,#back-to-top,#progress-bar{display:none}.section-zone{break-inside:avoid}}
+
+/* Internal banner + disclaimer */
+.int-banner{position:sticky;top:100px;z-index:280;background:#fff6ec;border-bottom:1px solid var(--orange-border);color:#8a3a00;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:6px 16px}
+.int-banner b{color:var(--red)}
+.disclaimer{max-width:1260px;margin:0 auto 60px;padding:0 64px}
+.disc-box{border:1.5px solid var(--red);border-radius:var(--radius-lg);background:linear-gradient(180deg,#fff7f7,#fff);padding:22px 26px;position:relative}
+.disc-tag{display:inline-block;font-family:var(--font-mono);font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--red);padding:4px 10px;border-radius:4px;margin-bottom:12px}
+.disc-box h3{font-size:17px;font-weight:800;color:var(--black);margin-bottom:10px}
+.disc-box ul{padding-left:18px}
+.disc-box li{font-size:13.5px;line-height:1.6;color:var(--grey-text);margin-bottom:5px}
+@media print{body::before{content:'RESTRICTED · NOT FOR CUSTOMER DISTRIBUTION';position:fixed;top:45%;left:0;right:0;text-align:center;font:800 42px var(--font);color:rgba(176,32,32,.12);transform:rotate(-24deg);z-index:9999}}
+
+/* Deployment choice */
+.dep-wrap{display:grid;grid-template-columns:1fr 2fr;gap:18px;align-items:stretch}
+.dep-pbi{background:#fff;border:1px solid var(--comp-border);border-radius:var(--radius-lg);padding:22px;border-top:3px solid var(--comp)}
+.dep-pbi .k{font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--comp-deep);margin-bottom:10px}
+.dep-pbi h4{font-size:18px;font-weight:800;color:var(--black);margin-bottom:12px;line-height:1.3}
+.dep-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dep{background:#fff;border:1px solid var(--orange-border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.dep:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.dep::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--orange),#ff9a5c)}
+.dep.hero{background:linear-gradient(135deg,#fff4ec,#fff);border:1.5px solid var(--orange)}
+.dep-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dep-ic{width:34px;height:34px;border-radius:9px;background:var(--orange-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dep-ic svg{width:18px;height:18px;stroke:var(--orange)}
+.dep-name{font-size:16px;font-weight:800;color:var(--black);line-height:1.2}
+.dep-sub{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.dep p{font-size:14px;line-height:1.55;color:var(--grey-text)}
+.dep-strip{margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ds{background:var(--bg-section);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.ds b{display:block;font-size:14.5px;color:var(--black);margin-bottom:4px}
+.ds span{font-size:13px;color:var(--grey-text);line-height:1.5}
+@media(max-width:1100px){.dep-wrap{grid-template-columns:1fr}.dep-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.dep-grid,.dep-strip{grid-template-columns:1fr}.disclaimer{padding:0 22px}.int-banner{top:100px;font-size:9px}}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<button aria-label="Back to top" id="back-to-top"><svg fill="none" viewBox="0 0 18 18"><path d="M9 14V4M4 9l5-5 5 5" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg></button>
+
+<div class="hub-header">
+  <div class="hub-logo"><img alt="Strategy" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Strategy_logo_%282025%29.svg/3840px-Strategy_logo_%282025%29.svg.png"/></div>
+  <div class="hub-tagline">Competitive Intelligence Hub · vs Power BI</div>
+</div>
+
+<nav class="tab-strip" aria-label="Sections">
+  <div class="tab-group-label">vs Power BI</div>
+  <a class="tab active" href="#s0"><span class="tab-dot"></span>At a glance</a>
+  <a class="tab" href="#s2"><span class="tab-dot"></span>Real overlap</a>
+  <a class="tab" href="#s3"><span class="tab-dot"></span>Cost &amp; licensing</a>
+  <a class="tab" href="#sd"><span class="tab-dot"></span>Deployment choice</a>
+  <a class="tab" href="#s4"><span class="tab-dot"></span>How we win</a>
+  <a class="tab" href="#s6"><span class="tab-dot"></span>Head-to-head</a>
+</nav>
+<div class="int-banner"><b>Restricted</b> · For reference only · Not an official Strategy document · Do not share with customers</div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-kicker">Sales Engineering · Competitive Battlecard · MEA</div>
+      <h1>Strategy Mosaic <span class="vs">vs</span> <span class="pbi">Microsoft Power BI</span></h1>
+      <p class="lede">Power BI is the default, and the seat looks cheap. Power BI is strong, widely adopted and deeply integrated with Microsoft. The conversation to win sits in the <strong>stack</strong> underneath it: Fabric capacity, Copilot compute, viewer licensing, and business semantics optimised for one ecosystem. Mosaic's answer is governed semantics as an independent layer, reusable across data platforms, BI tools, applications and AI.</p>
+      <div class="hero-meta">
+        <span class="chip o">Universal Semantic Layer</span>
+        <span class="chip o">Multi-LLM · multi-BI · agent-ready</span>
+        <span class="chip o">Reduces single-ecosystem dependency</span>
+        <span class="chip o">Your cloud · your data centre</span>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-v">35M+</div><div class="hstat-l">Power BI monthly active users. Respect the install base.</div><div class="hstat-s">Power BI</div></div>
+      <div class="hstat"><div class="hstat-v">F2+</div><div class="hstat-l">Copilot needs paid Fabric capacity. Pro/PPU alone won't unlock it.</div><div class="hstat-s">Power BI</div></div>
+      <div class="hstat"><div class="hstat-v">F64</div><div class="hstat-l">Free-viewer threshold. Below it, internal viewers need Pro or PPU.</div><div class="hstat-s">Power BI</div></div>
+      <div class="hstat o"><div class="hstat-v">1</div><div class="hstat-l">Governed definition, reusable across supported BI tools, apps and AI.</div><div class="hstat-s">Strategy Mosaic</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+<!-- 01 AT A GLANCE -->
+<section class="section-zone" id="s0" data-theme="comp" style="border-top:none">
+  <div class="section-label"><span class="sl-counter">01</span><span class="sl-accent"></span><span>Power BI at a glance</span></div>
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-label">Core identity</div>
+      <div class="snap-value">Microsoft's BI &amp; semantic-modelling experience</div>
+      <div class="snap-sub"><ul class="b">
+        <li>A product in its own right, deeply integrated with Fabric: semantic models, OneLake, Copilot and Fabric IQ.</li>
+        <li>35M+ monthly active users.</li>
+        <li>Pro is bundled in Microsoft 365 E5, which is why many enterprises treat it as "free".</li>
+      </ul></div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-label">Analyst position</div>
+      <div class="snap-value">Gartner Leader · 19th year</div>
+      <div class="snap-sub"><ul class="b">
+        <li>Microsoft is a Leader in the 2026 Gartner MQ for ABI Platforms for the 19th consecutive year.</li>
+        <li>Strategy is a Visionary in the same MQ. Strategy sees this as aligned with its focus on governed semantics and AI-ready analytics.</li>
+      </ul></div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-label">AI posture</div>
+      <div class="snap-value">Copilot + Fabric IQ</div>
+      <div class="snap-sub"><ul class="b">
+        <li>Copilot needs paid F2+ or P1+ capacity. Trial capacity doesn't qualify. Usage consumes capacity units.</li>
+        <li>Microsoft announced Fabric IQ as generally available at Build 2026, but Microsoft Learn still labels the workload as preview. Ontology remains in preview.</li>
+        <li>Copilot runs on Microsoft-managed Azure OpenAI models. You can't bring your own model to Copilot.</li>
+      </ul></div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-label">Architectural reality</div>
+      <div class="snap-value">Capacity-metered, Microsoft-cloud-centric</div>
+      <div class="snap-sub"><ul class="b">
+        <li>Fabric workloads, Copilot included, consume capacity units from the assigned capacity. Sustained demand can lead to throttling or require scaling.</li>
+        <li>Semantic-model memory limits apply per SKU. F64 allows 25 GB.</li>
+        <li>Analytical measures are expressed in DAX, and models are managed through TMDL.</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 OVERLAP -->
+<section class="section-zone alt" id="s2" data-theme="amber">
+  <div class="section-label"><span class="sl-counter">02</span><span class="sl-accent"></span><span>Where they genuinely overlap · acknowledge this</span></div>
+  <p class="intro">Don't pitch against Power BI's dashboards. That argument is lost before it starts. Concede the visible layer, then move the conversation to <em>what sits underneath: who owns the definitions, what AI costs at scale, and whether the logic survives the next platform decision.</em></p>
+  <div class="overlap-grid">
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text"><strong>Self-service dashboards.</strong> Power BI Desktop is free and familiar, and most analysts are already trained on it. Strategy matches this with Library and AI-generated dashboards, but it is not our wedge.</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text"><strong>Governed semantic models.</strong> Both now pitch the semantic layer as the AI grounding layer: Fabric IQ over Power BI models, and Mosaic over 200+ sources.</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text"><strong>Conversational AI.</strong> Copilot and Fabric data agents on one side. Strategy Agents, Explorer and Auto Dashboards on the other.</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text"><strong>MCP.</strong> Both expose semantic models to external agents. Both are still maturing here: Microsoft's Power BI and Fabric IQ MCP servers are in preview, and so is Mosaic MCP.</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text"><strong>Paginated / enterprise reporting.</strong> Power BI has paginated reports. Strategy has pixel-perfect reporting plus bursting and subscriptions at scale.</div></div>
+    <div class="overlap-item"><div class="overlap-eq">≈</div><div class="point-text"><strong>Embedding.</strong> Power BI Embedded runs on capacity. Strategy has embedded analytics plus HyperIntelligence, which surfaces insight cards inside supported web apps and email.</div></div>
+  </div>
+</section>
+
+<!-- 04 COST -->
+<section class="section-zone" id="s3" data-theme="comp">
+  <div class="section-label"><span class="sl-counter">03</span><span class="sl-accent"></span><span>Power BI cost &amp; licensing · the $14 myth</span></div>
+  <p class="intro">Microsoft sells a seat, but enterprise AI and scale require capacity. Walk the buyer up this ladder before comparing list prices. Illustrative US list prices; region and agreement change the numbers.</p>
+
+  <div class="ladder">
+    <div class="rung"><div class="rung-step">Step 1</div><div class="rung-name">Free / Desktop</div><div class="rung-price">$0</div><div class="rung-note">Free for local authoring. Governed sharing through the Power BI service needs a licence.</div></div>
+    <div class="rung"><div class="rung-step">Step 2</div><div class="rung-name">Pro</div><div class="rung-price">$14<small>/user/mo</small></div><div class="rung-note">Needed to publish, and for internal viewers below F64. Included in M365 E5 ($60).</div></div>
+    <div class="rung"><div class="rung-step">Step 3</div><div class="rung-name">Premium Per User</div><div class="rung-price">$24<small>/user/mo</small></div><div class="rung-note">Larger models and 48 refreshes/day. Every consumer of PPU content also needs PPU. <strong>No Copilot.</strong></div></div>
+    <div class="rung"><div class="rung-step">Step 4</div><div class="rung-name">Fabric F2 – F32</div><div class="rung-price">$263–$4,205<small>/mo PAYG</small></div><div class="rung-note">Unlocks Copilot and Fabric. <strong>Internal viewers still need Pro.</strong></div></div>
+    <div class="rung hot"><div class="rung-step">Step 5</div><div class="rung-name">Fabric F64</div><div class="rung-price">$8,410<small>/mo PAYG</small></div><div class="rung-note">Lower with a 1-year reservation. Free internal viewers start here. Semantic-model memory limit is 25 GB.</div></div>
+    <div class="rung"><div class="rung-step">Step 6</div><div class="rung-name">M365 Copilot add-on</div><div class="rung-price">$30<small>/user/mo</small></div><div class="rung-note">A separate SKU for Copilot across M365 apps. It is not Power BI capacity.</div></div>
+  </div>
+  <div class="ladder-bar"></div>
+
+  <div class="gotcha-grid">
+    <div class="gotcha"><h4><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>Copilot is metered compute</h4><p>Copilot consumes capacity units from the <strong>same capacity</strong> that runs refreshes and reports. Sustained AI demand becomes a capacity-planning question, potentially meaning throttling or a larger SKU.</p></div>
+    <div class="gotcha"><h4><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>Free-viewer threshold: F64+</h4><p>On F2 through F32, internal report viewers still need Pro. The exception is App-Owns-Data embedding for external users. Large internal audiences either license every viewer or move to F64.</p></div>
+    <div class="gotcha"><h4><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg></span>MEA data boundary</h4><p>Per Microsoft Learn, where the tenant or capacity is <strong>outside the US or EU data boundary</strong>, the cross-geography processing setting Copilot relies on is <strong>disabled by default</strong> and may need tenant-admin enablement. That is a residency conversation for regulated GCC accounts.</p></div>
+    <div class="gotcha"><h4><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></span>Memory caps by SKU</h4><p>Semantic-model memory limits per SKU: F32 allows 10 GB, F64 25 GB, F128 50 GB. For import models, memory becomes a sizing factor alongside user count. Model optimisation or other storage modes are the alternatives.</p></div>
+    <div class="gotcha"><h4><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>Reserve or pause, not both</h4><p>Reservations lower the rate but bill continuously. Pay-as-you-go can pause, but at a higher hourly rate. Either way, BI now needs capacity monitoring and FinOps discipline.</p></div>
+    <div class="gotcha"><h4><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>The line items keep coming</h4><p>OneLake storage, separate M365 Copilot SKUs, Purview/compliance licensing and E5 renewals are each priced separately from Power BI itself.</p></div>
+  </div>
+  <div class="gotcha" style="margin-top:14px;border-top:none;border-left:4px solid var(--red);background:linear-gradient(90deg,rgba(176,32,32,.04),#fff)"><h4><span class="ic" style="background:var(--red-light)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke:var(--red)"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></span>Q&amp;A retires in February 2027. Copilot is the successor, and Copilot requires capacity.</h4><p>Microsoft is retiring Power BI Q&amp;A, which was included with Pro. Existing Q&amp;A visuals in reports, dashboards, mobile and embedded will show an error. Microsoft recommends Copilot as the successor, and Copilot needs qualifying paid Fabric or Premium capacity. Microsoft states it <strong>currently has no plans for a Copilot replacement for embedded (PaaS) Q&amp;A</strong>. Pro-only customers using natural-language questions today face a capacity decision.</p></div>
+</section>
+
+<!-- 04 DEPLOYMENT CHOICE -->
+<section class="section-zone alt" id="sd" data-theme="orange">
+  <div class="section-label"><span class="sl-counter">04</span><span class="sl-accent"></span><span>Your region, your cloud, your data centre</span></div>
+  <p class="intro">This is the play for regulated, sovereign and public-sector accounts across MEA. Power BI's full capability, Copilot and Fabric included, is delivered as Microsoft cloud SaaS. Strategy can run where the customer decides: in Strategy's managed cloud, in the customer's own cloud account, or on <em>Kubernetes inside the customer's own data centre</em>.</p>
+  <div class="dep-wrap">
+    <div class="dep-pbi">
+      <div class="k">Power BI deployment model</div>
+      <h4>Microsoft cloud SaaS, with a narrower on-prem option</h4>
+      <ul class="b">
+        <li>The Power BI service, Fabric, Copilot and Fabric IQ are Microsoft-operated SaaS in Microsoft's cloud.</li>
+        <li>Power BI Report Server is the on-prem route. It supports a subset of Power BI features, and Copilot and Fabric workloads are service-only.</li>
+        <li>Outside the US/EU boundary, Copilot's cross-geo processing setting is off by default and may need admin enablement.</li>
+        <li>Capacity, updates and the operating environment are Microsoft's to run.</li>
+      </ul>
+    </div>
+    <div class="dep-grid">
+      <div class="dep hero">
+        <div class="dep-top"><span class="dep-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg></span><div><div class="dep-sub">Customer Managed Cloud · on-prem</div><div class="dep-name">Your own data centre</div></div></div>
+        <p>CMC deploys the full Strategy platform on the customer's own <strong>on-prem Kubernetes</strong> (Red Hat-certified), under the customer's ingress and egress rules. Automation runs locally, <strong>without connectivity back to external services</strong>.</p>
+      </div>
+      <div class="dep hero">
+        <div class="dep-top"><span class="dep-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M7 18a4 4 0 010-8 6 6 0 0111.5 1.5A3.5 3.5 0 0118 18H7z"/></svg></span><div><div class="dep-sub">Customer Managed Cloud · public cloud</div><div class="dep-name">Your own cloud account</div></div></div>
+        <p>Runs in the customer's own <strong>AWS, Azure or GCP</strong> account, in the region they choose. The customer controls system and network isolation, and usage can count toward existing cloud commitments.</p>
+      </div>
+      <div class="dep">
+        <div class="dep-top"><span class="dep-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div><div class="dep-sub">Strategy-managed</div><div class="dep-name">Managed Cloud Enterprise</div></div></div>
+        <p>Fully managed by Strategy on AWS, Azure, GCP or STACKIT, with multi-environment high availability and a dedicated customer success team.</p>
+      </div>
+      <div class="dep">
+        <div class="dep-top"><span class="dep-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/></svg></span><div><div class="dep-sub">Model endpoint choice</div><div class="dep-name">Your AI, your boundary</div></div></div>
+        <p>BYOE model endpoints, plus open-source and offline model options. The customer decides where AI runs, alongside where the platform runs.</p>
+      </div>
+    </div>
+  </div>
+  <div class="dep-strip">
+    <div class="ds"><b>Data custody</b><span>Data, metadata and caches stay in infrastructure the customer owns.</span></div>
+    <div class="ds"><b>Network isolation</b><span>Customer-defined ingress and egress rules, with restricted-egress operation on-prem.</span></div>
+    <div class="ds"><b>Same platform</b><span>The full Strategy platform, not a reduced on-prem edition. Confirm module availability per release.</span></div>
+    <div class="ds"><b>Cloud commits</b><span>Deployments in the customer's own cloud can draw down existing hyperscaler commitments.</span></div>
+  </div>
+  <div class="win-why" style="margin-top:16px"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"If your regulator requires analytics and AI to run inside your own data centre, what's the Power BI answer beyond Report Server, and what capability do you give up?"</div></div>
+</section>
+
+<!-- 04 HOW WE WIN -->
+<section class="section-zone" id="s4" data-theme="purple">
+  <div class="section-label"><span class="sl-counter">05</span><span class="sl-accent"></span><span>How Strategy wins · 6 differentiators</span></div>
+  <p class="intro">We don't compete on Microsoft ecosystem fit. We compete on what the buyer inherits after year one: business semantics independent of any single ecosystem, choice in AI models and deployment, observability across the tools that consume those semantics, and long-standing depth in governed enterprise reporting and distribution.</p>
+  <div class="win-grid">
+
+    <div class="win-card">
+      <div class="win-num">01 / Semantic independence</div>
+      <div class="win-card-title">One open, portable definition vs DAX inside a Fabric workspace</div>
+      <div class="win-mini-grid">
+        <div class="win-mini"><div class="win-mini-label comp">Power BI</div><ul class="b">
+          <li>Measures are expressed in DAX and managed in Fabric/Power BI workspaces.</li>
+          <li>Best consumed inside Microsoft: Power BI, Excel, Copilot.</li>
+          <li>Moving away can mean translating DAX, metadata and model semantics into the target platform.</li>
+        </ul></div>
+        <div class="win-mini"><div class="win-mini-label mosaic">Strategy</div><ul class="b">
+          <li>Mosaic is a Universal Semantic Layer over 200+ sources, with no forced move to OneLake.</li>
+          <li>Mosaic imports and exports Apache Ossie (Incubating, formerly OSI) YAML. Models can move across Ossie-compatible tools, subject to documented conversion limitations.</li>
+          <li>Security policies are centralised and enforced across supported consumption paths.</li>
+        </ul></div>
+      </div>
+      <div class="win-why"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"If you add a second BI tool, a Databricks agent, or a new cloud next year, where does your 'Net Revenue' definition live, and who rewrites it?"</div></div>
+    </div>
+
+    <div class="win-card">
+      <div class="win-num">02 / Every tool, one truth</div>
+      <div class="win-card-title">Reusable across Power BI, Tableau, Excel and agents vs optimised for Microsoft experiences</div>
+      <div class="win-mini-grid">
+        <div class="win-mini"><div class="win-mini-label comp">Power BI</div><ul class="b">
+          <li>Semantic models are optimised for Power BI and Microsoft consumers.</li>
+          <li>Interoperability exists via XMLA and APIs, but cross-BI semantic serving isn't the primary design goal.</li>
+        </ul></div>
+        <div class="win-mini"><div class="win-mini-label mosaic">Strategy</div><ul class="b">
+          <li>One governed Mosaic model can serve Power BI, Tableau, Excel, custom apps and Strategy Agents.</li>
+          <li>It can sit <strong>underneath</strong> Power BI. Users keep their reports and the definitions become governed.</li>
+        </ul></div>
+      </div>
+      <div class="win-why"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"How many versions of 'Active Customer' exist across your Power BI workspaces, Excel files and other tools today, and which one would your CFO sign?"</div></div>
+    </div>
+
+    <div class="win-card">
+      <div class="win-num">03 / AI freedom</div>
+      <div class="win-card-title">Model choice and open agent access vs Microsoft-managed Copilot models</div>
+      <div class="win-mini-grid">
+        <div class="win-mini"><div class="win-mini-label comp">Power BI</div><ul class="b">
+          <li>Copilot runs on Microsoft-managed Azure OpenAI models, with no bring-your-own model for Copilot.</li>
+          <li>Power BI and Fabric IQ MCP servers are in preview, and require tenant-admin enablement.</li>
+          <li>Legacy Q&amp;A retires Feb 2027. Copilot, which needs capacity, is the successor.</li>
+        </ul></div>
+        <div class="win-mini"><div class="win-mini-label mosaic">Strategy</div><ul class="b">
+          <li>Azure OpenAI, BYOE Gemini, and open-source/offline models.</li>
+          <li>MCP integration connects governed agents and Mosaic models to compatible AI clients. Mosaic MCP is in preview.</li>
+          <li>AI is grounded on certified objects, and AI Sync re-validates it when models change.</li>
+        </ul></div>
+      </div>
+      <div class="win-why"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"If your group standardises on a different model provider next year, can your BI copilot follow, or does it stay on Microsoft's choice?"</div></div>
+    </div>
+
+    <div class="win-card">
+      <div class="win-num">04 / Sovereignty &amp; deployment</div>
+      <div class="win-card-title">Your cloud, your region, your model endpoint vs Microsoft cloud SaaS</div>
+      <div class="win-mini-grid">
+        <div class="win-mini"><div class="win-mini-label comp">Power BI</div><ul class="b">
+          <li>Microsoft cloud SaaS. The on-prem Report Server has a narrower feature set.</li>
+          <li>Outside the US/EU boundary, Copilot's cross-geo processing setting is off by default and may need admin enablement.</li>
+        </ul></div>
+        <div class="win-mini"><div class="win-mini-label mosaic">Strategy</div><ul class="b">
+          <li>Managed cloud, or the customer's own AWS, Azure, GCP or STACKIT tenancy, or on-prem.</li>
+          <li>Choose the model endpoint and region. Offline models are available for strict residency.</li>
+        </ul></div>
+      </div>
+      <div class="win-why"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"Where the AI service isn't available locally, which cross-geo processing settings would need enabling, and what does that mean for your residency requirements?"</div></div>
+    </div>
+
+    <div class="win-card">
+      <div class="win-num">05 / Governance you can see</div>
+      <div class="win-card-title">Runtime visibility across the tools consuming your semantics, Power BI included</div>
+      <div class="win-mini-grid">
+        <div class="win-mini"><div class="win-mini-label comp">Power BI</div><ul class="b">
+          <li>Admin monitoring, Capacity Metrics and Purview cover the Microsoft estate.</li>
+          <li>Purview catalogues broadly, but runtime semantic-consumption visibility centres on Microsoft workloads.</li>
+        </ul></div>
+        <div class="win-mini"><div class="win-mini-label mosaic">Strategy</div><ul class="b">
+          <li>Mosaic Sentinel covers Risk, Audit &amp; Compliance, Usage, Cost Intelligence and Query Performance.</li>
+          <li>The Sep 2026 release captures query performance for Mosaic access <strong>from Power BI</strong>, Tableau, Strategy Agents and MCP clients.</li>
+        </ul></div>
+      </div>
+      <div class="win-why"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"Show me one view of who hit your Revenue metric last month, from a dashboard, from Tableau and from an AI agent, with how long each query took."</div></div>
+    </div>
+
+    <div class="win-card">
+      <div class="win-num">06 / Enterprise delivery at scale</div>
+      <div class="win-card-title">Different heritage: broad self-service vs deep governed enterprise distribution</div>
+      <div class="win-mini-grid">
+        <div class="win-mini"><div class="win-mini-label comp">Power BI</div><ul class="b">
+          <li>Excellent, broadly adopted self-service BI. Paginated reports are a separate report type.</li>
+          <li>At scale, capacity sizing (memory limits, refresh load, concurrency) becomes an ongoing task.</li>
+        </ul></div>
+        <div class="win-mini"><div class="win-mini-label mosaic">Strategy</div><ul class="b">
+          <li>Pixel-perfect reporting, bursting and multi-schedule subscriptions, plus native mobile apps.</li>
+          <li>HyperIntelligence surfaces governed insight cards in supported web apps and email, without custom integration.</li>
+          <li>Test Center regression-tests SQL, data, PDF and performance before changes go live.</li>
+        </ul></div>
+      </div>
+      <div class="win-why"><div class="win-why-label">The ask that lands</div><div class="win-why-text">"How do you deliver 5,000 personalised statements every month, and prove nothing changed after the last upgrade?"</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 07 HEAD TO HEAD -->
+<section class="section-zone alt" id="s6" data-theme="orange">
+  <div class="section-label"><span class="sl-counter">06</span><span class="sl-accent"></span><span>Head-to-head</span></div>
+  <div class="hth-tools">
+    <div class="seg" id="hthSeg"><button data-f="all" class="on">All</button><button data-f="m">Strategy edge</button><button data-f="c">Power BI edge</button><button data-f="p">Parity</button></div>
+  </div>
+  <div class="hth-wrap">
+    <table class="hth-table">
+      <thead><tr><th>Dimension</th><th class="col-d">Microsoft Power BI</th><th class="col-m">Strategy Mosaic / BI</th><th>Edge</th></tr></thead>
+      <tbody id="hthBody">
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Semantic layer</td><td class="td-d">Power BI semantic models (DAX/TMDL) inside Fabric workspaces.</td><td class="td-m">Mosaic Universal Semantic Layer: certified, reusable objects over 200+ sources.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Portability</td><td class="td-d">DAX measures and TMDL metadata. XMLA provides access. Migrating means translating semantics.</td><td class="td-m">Apache Ossie (Incubating) YAML import/export, subject to documented conversion limitations.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Multi-BI serving</td><td class="td-d">Optimised for Power BI, Excel, Copilot and Fabric agents.</td><td class="td-m">One governed model reusable across Power BI, Tableau, Excel, apps and Strategy Agents.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Data access</td><td class="td-d">Direct Lake and Fabric IQ capabilities centre on OneLake.</td><td class="td-m">Live, in-memory or hybrid across 200+ sources. No migration to a single lake required.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">LLM choice</td><td class="td-d">Copilot uses Microsoft-managed Azure OpenAI models. No bring-your-own model for Copilot.</td><td class="td-m">Azure OpenAI, BYOE Gemini, and open-source/offline models.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr data-e="p"><td class="td-dim">MCP / agent access</td><td class="td-d">Power BI MCP servers are in preview. Microsoft prefers the Fabric IQ MCP path, also in preview.</td><td class="td-m">MCP integration for Strategy Agents. Mosaic MCP is in preview, resolving to governed metrics rather than raw schemas.</td><td class="td-edge"><span class="edge p">Parity</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Cost of AI</td><td class="td-d">Copilot needs paid capacity and consumes shared CUs.</td><td class="td-m">Strategy's published pricing states there are no extra charges for AI. Third-party LLM or infrastructure costs may vary by deployment and agreement.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">AI data residency</td><td class="td-d">Outside the US/EU boundary, Copilot is off by default until an admin permits cross-region processing.</td><td class="td-m">Choose the endpoint and region. Offline models are available.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Governance &amp; observability</td><td class="td-d">Admin monitoring, Capacity Metrics and Purview, scoped to the Microsoft estate.</td><td class="td-m">Mosaic Sentinel: risk, audit, usage, cost and query performance, including access from Power BI and Tableau.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Enterprise reporting</td><td class="td-d">Paginated reports and subscriptions.</td><td class="td-m">Pixel-perfect reporting, bursting, multi-schedule subscriptions and native mobile.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Embedded / in-app</td><td class="td-d">Power BI Embedded on capacity. App-Owns-Data external users need no Power BI licence.</td><td class="td-m">Embedded analytics plus HyperIntelligence insight cards in supported web apps and email.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Scale</td><td class="td-d">Model memory caps per SKU, refresh limits, and throttling when capacity is saturated.</td><td class="td-m">No charges tied to data volume or refresh frequency. Multi-pass SQL, caches and cubes route queries.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Deployment</td><td class="td-d">Microsoft cloud SaaS. On-prem Report Server has a narrower feature set.</td><td class="td-m">Strategy-managed cloud, Customer Managed Cloud in the customer's own AWS, Azure or GCP account, or on-prem Kubernetes in their own data centre.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Change safety</td><td class="td-d">Deployment pipelines and Git integration.</td><td class="td-m">Test Center: baseline vs comparison of SQL, data, PDF and performance across environments.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Natural-language access</td><td class="td-d">Q&amp;A (included with Pro) retires Feb 2027. Copilot requires capacity. No embedded Q&amp;A replacement currently planned.</td><td class="td-m">Agents, Auto Answers and Explorer. Published pricing states no extra charges for AI.</td><td class="td-edge"><span class="edge m">Strategy</span></td></tr>
+        <tr data-e="p"><td class="td-dim">Conversational BI</td><td class="td-d">Copilot and Fabric data agents. Quality depends on each model being prepared for AI.</td><td class="td-m">Strategy Agents, Auto Answers and Explorer, grounded on certified Mosaic objects.</td><td class="td-edge"><span class="edge p">Parity</span></td></tr>
+        <tr class="comp-win" data-e="c"><td class="td-dim">Self-service &amp; skills</td><td class="td-d">Market-leading self-service authoring and the largest skills pool, with 35M+ monthly users.</td><td class="td-m">Library and AI-assisted authoring, with a smaller talent pool.</td><td class="td-edge"><span class="edge c">Power BI</span></td></tr>
+        <tr class="comp-win" data-e="c"><td class="td-dim">Ecosystem fit</td><td class="td-d">Native in Teams, Excel and M365. Pro is bundled in E5.</td><td class="td-m">Integrates with Microsoft (Power BI, Excel, Copilot Studio via MCP), without being bundled.</td><td class="td-edge"><span class="edge c">Power BI</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<div class="disclaimer">
+  <div class="disc-box">
+    <span class="disc-tag">Disclaimer</span>
+    <p style="font-size:13.5px;line-height:1.65;color:var(--grey-text)">This is an internal competitive assessment for general understanding and reference only. It is not an official Strategy document and must not be shared with customers. Product details, availability and pricing change frequently, so validate against current vendor documentation before relying on any point. All trademarks belong to their respective owners.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ── progress, back-to-top, active section pill
+  var bar=document.getElementById('progress-bar'), btt=document.getElementById('back-to-top');
+  var tabs=[].slice.call(document.querySelectorAll('.tab-strip .tab'));
+  var secs=tabs.map(function(t){return document.querySelector(t.getAttribute('href'));});
+  function onScroll(){
+    var h=document.documentElement, st=h.scrollTop||document.body.scrollTop, max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?st/max*100:0)+'%';
+    btt.classList.toggle('visible',st>600);
+    var idx=0; secs.forEach(function(s,i){ if(s && s.getBoundingClientRect().top<160) idx=i; });
+    tabs.forEach(function(t,i){ t.classList.toggle('active',i===idx); });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+
+  function segBind(id,cb){var s=document.getElementById(id);if(!s)return;[].slice.call(s.querySelectorAll('button')).forEach(function(b){b.addEventListener('click',function(){[].slice.call(s.querySelectorAll('button')).forEach(function(x){x.classList.remove('on');});b.classList.add('on');cb(b);});});}
+  // ── head-to-head filter
+  var rows=[].slice.call(document.querySelectorAll('#hthBody tr'));
+  function filt(f){
+    var n=0; rows.forEach(function(r){ var show=(f==='all'||r.dataset.e===f); r.style.display=show?'':'none'; if(show)n++; });
+    var m=rows.filter(function(r){return r.dataset.e==='m';}).length, c=rows.filter(function(r){return r.dataset.e==='c';}).length, p=rows.length-m-c;
+  }
+  segBind('hthSeg',function(b){filt(b.dataset.f);}); filt('all');
+
+})();
+</script>
+</body>
+</html>
