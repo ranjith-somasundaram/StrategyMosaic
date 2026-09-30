@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Strategy Mosaic and Kyvos · Semantic Layer Evaluation Guide</title>
+<style>
+:root{
+  --orange:#FA660F; --orange-light:rgba(250,102,15,.08); --orange-border:rgba(250,102,15,.28);
+  --comp:#3b6fb6; --comp-deep:#23518f; --comp-light:rgba(59,111,182,.08); --comp-border:rgba(59,111,182,.32);
+  --black:#0a0a0a; --dark:#1a1a1a; --grey-text:#4a4a5a; --grey-muted:#6a6a7a; --grey-faint:#9a9aaa;
+  --border:#d8d8e8; --border-soft:#ebebf5; --bg:#fff; --bg-section:#f7f7fb;
+  --green:#0a7a52; --green-light:rgba(10,122,82,.07); --amber:#a05800; --amber-light:rgba(160,88,0,.07);
+  --red:#b02020; --red-light:rgba(176,32,32,.06); --blue:#1848c8; --purple:#5e35b1;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --radius:8px; --radius-lg:12px;
+  --font:'Segoe UI',-apple-system,system-ui,sans-serif;
+  --font-mono:'Cascadia Code','SF Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;scroll-padding-top:120px}
+body{font-family:var(--font);background:var(--bg);color:var(--dark);min-height:100vh}
+strong{font-weight:700;color:var(--black)}
+
+/* ── Hub header (same as Hub shell) ── */
+.hub-header{position:sticky;top:0;z-index:300;height:48px;background:#0a0a0a;display:flex;align-items:center;padding:0 24px;gap:16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.hub-logo img{height:24px;width:auto;display:block}
+.hub-tagline{font-size:12px;color:rgba(255,255,255,.4);font-family:var(--font-mono);letter-spacing:.06em}
+.hub-badge{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);font-family:var(--font-mono);display:flex;align-items:center;gap:8px}
+.hub-badge .live{width:7px;height:7px;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 3px rgba(46,204,113,.18)}
+
+/* ── Section pill strip ── */
+.tab-strip{position:sticky;top:48px;z-index:290;height:52px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tab-strip::-webkit-scrollbar{display:none}
+.tab-group-label{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#b0b0c0;font-family:var(--font-mono);display:flex;align-items:center;gap:7px;padding:0 10px 0 6px;white-space:nowrap;flex-shrink:0}
+.tab-group-label::before{content:'';width:3px;height:14px;background:var(--comp);border-radius:2px}
+.tab{display:flex;align-items:center;gap:7px;padding:5px 13px;border:1px solid transparent;border-radius:7px;background:transparent;cursor:pointer;font-size:12.5px;font-weight:600;color:#7a7a8a;font-family:var(--font);white-space:nowrap;transition:all .14s;flex-shrink:0;text-decoration:none}
+.tab:hover{color:var(--dark);background:#f4f4f8;border-color:var(--border)}
+.tab.active{color:#0a0a0a;background:#fff;border-color:#d0d0e0;box-shadow:0 1px 5px rgba(0,0,0,.09)}
+.tab-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0}
+.tab.active .tab-dot{background:var(--orange);box-shadow:0 0 0 3px rgba(250,102,15,.14)}
+
+/* ── Hero ── */
+.hero{padding:52px 64px 44px;border-bottom:1px solid var(--border);background:
+  radial-gradient(900px 300px at 100% 0%,rgba(232,160,32,.07),transparent 60%),
+  radial-gradient(700px 300px at 0% 100%,rgba(250,102,15,.06),transparent 60%),#fff}
+.hero-inner{max-width:1260px;margin:0 auto;display:grid;grid-template-columns:1.35fr 1fr;gap:48px;align-items:center}
+.hero-kicker{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);margin-bottom:14px}
+.hero h1{font-size:44px;line-height:1.08;font-weight:800;letter-spacing:-.03em;color:var(--black)}
+.hero h1 .vs{color:var(--grey-faint);font-weight:600}
+.hero h1 .pbi{color:var(--comp-deep)}
+.hero p.lede{font-size:18px;line-height:1.65;color:var(--grey-text);margin-top:18px;max-width:640px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{font-family:var(--font-mono);font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--grey-muted)}
+.chip.o{border-color:var(--orange-border);color:var(--orange);background:var(--orange-light)}
+.chip.y{border-color:var(--comp-border);color:var(--comp-deep);background:var(--comp-light)}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hstat{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 18px 16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.hstat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--comp)}
+.hstat.o::before{background:var(--orange)}
+.hstat-v{font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--black)}
+.hstat-l{font-size:12.5px;color:var(--grey-text);line-height:1.45;margin-top:4px}
+.hstat-s{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-faint);margin-top:8px}
+
+/* ── Sections (Hub parity) ── */
+.main{max-width:1260px;margin:0 auto;padding:0 0 80px}
+.section-zone{padding:48px 64px;border-top:1px solid var(--border)}
+.section-zone.alt{background:var(--bg-section)}
+.section-zone[data-theme="orange"]{border-left:4px solid var(--orange)}
+.section-zone[data-theme="comp"]{border-left:4px solid var(--comp)}
+.section-zone[data-theme="green"]{border-left:4px solid var(--green)}
+.section-zone[data-theme="amber"]{border-left:4px solid var(--amber)}
+.section-zone[data-theme="purple"]{border-left:4px solid var(--purple)}
+.section-zone[data-theme="blue"]{border-left:4px solid var(--blue)}
+.section-zone[data-theme="red"]{border-left:4px solid var(--red)}
+.section-label{font-size:14.3px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--black);margin-bottom:20px;display:flex;align-items:center;gap:16px;font-family:var(--font-mono)}
+.section-label .sl-counter{font-size:11px;color:var(--orange)}
+.section-label .sl-accent{width:4px;height:22px;background:var(--orange);border-radius:2px}
+.section-label::after{content:'';flex:1;height:1.5px;background:linear-gradient(90deg,var(--border),transparent)}
+.intro{font-size:16.5px;color:var(--grey-text);margin-bottom:24px;line-height:1.7;max-width:900px}
+.intro em{color:var(--dark);font-style:italic}
+
+/* Snapshot */
+.snapshot{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.snap-card{background:var(--bg-section);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 22px;transition:transform .22s,box-shadow .22s,border-color .22s;border-left:3px solid transparent}
+.snap-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.1);border-left-color:var(--orange)}
+.snap-label{font-size:11.5px;color:var(--grey-muted);margin-bottom:6px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em}
+.snap-value{font-size:20px;font-weight:800;color:var(--black);letter-spacing:-.02em;line-height:1.25}
+.snap-sub{margin-top:10px}
+ul.b{margin:0;padding:0 0 0 16px;list-style:disc}
+ul.b li{font-size:14px;line-height:1.55;color:var(--grey-text);margin-bottom:6px}
+ul.b li:last-child{margin-bottom:0}
+
+/* Timeline */
+.tl-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.tl-col{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 22px 10px;box-shadow:var(--shadow-sm)}
+.tl-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.tl-head .sw{width:10px;height:10px;border-radius:3px}
+.tl-item{display:grid;grid-template-columns:86px 1fr;gap:14px;padding:0 0 16px;position:relative}
+.tl-date{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--grey-muted);padding-top:2px}
+.tl-body{border-left:2px solid var(--border-soft);padding-left:14px;position:relative}
+.tl-body::before{content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid var(--comp)}
+.tl-col.s .tl-body::before{border-color:var(--orange)}
+.tl-title{font-size:15px;font-weight:700;color:var(--black);line-height:1.35}
+.tl-text{font-size:13.5px;color:var(--grey-text);line-height:1.5;margin-top:3px}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:2px}
+.tag.ga{background:var(--green-light);color:var(--green)}
+.tag.pv{background:var(--amber-light);color:var(--amber)}
+.tag.px{background:var(--red-light);color:var(--red)}
+
+/* Overlap */
+.overlap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.overlap-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;gap:12px;align-items:flex-start;transition:box-shadow .2s,transform .2s}
+.overlap-item:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.overlap-eq{width:24px;height:24px;border-radius:50%;background:var(--amber-light);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.point-text{font-size:15.5px;color:var(--dark);line-height:1.6}
+
+/* Cost: licensing ladder */
+.ladder{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-sm)}
+.rung{padding:18px 16px 16px;border-right:1px solid var(--border-soft);position:relative}
+.rung:last-child{border-right:none}
+.rung-step{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--grey-faint);text-transform:uppercase}
+.rung-name{font-size:15.5px;font-weight:800;color:var(--black);margin-top:6px;line-height:1.25}
+.rung-price{font-size:22px;font-weight:800;color:var(--comp-deep);margin-top:8px;letter-spacing:-.02em}
+.rung-price small{font-size:11.5px;font-weight:600;color:var(--grey-muted);letter-spacing:0}
+.rung-note{font-size:12.5px;color:var(--grey-text);line-height:1.45;margin-top:8px}
+.rung.hot{background:linear-gradient(180deg,#fffaf0,#fff)}
+.rung.hot::after{content:'VIEWER CLIFF';position:absolute;top:10px;right:10px;font-family:var(--font-mono);font-size:8.5px;font-weight:800;letter-spacing:.1em;color:#fff;background:var(--comp-deep);padding:2px 6px;border-radius:3px}
+.ladder-bar{height:6px;background:linear-gradient(90deg,#f7e2b4,var(--comp),var(--comp-deep))}
+
+.gotcha-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.gotcha{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;border-top:3px solid var(--comp)}
+.gotcha h4{font-size:15.5px;font-weight:800;color:var(--black);margin-bottom:8px;display:flex;gap:9px;align-items:center}
+.gotcha h4 .ic{width:26px;height:26px;border-radius:7px;background:var(--comp-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gotcha h4 .ic svg{width:15px;height:15px;stroke:var(--comp-deep)}
+.gotcha p{font-size:14px;line-height:1.58;color:var(--grey-text)}
+
+.strat-price{margin-top:22px;display:grid;grid-template-columns:1fr 2fr;gap:0;border:1px solid var(--orange-border);border-radius:var(--radius-lg);overflow:hidden;background:#fff}
+.sp-left{background:linear-gradient(180deg,#fff4ec,#fff);padding:22px 24px;border-right:1px solid var(--orange-border)}
+.sp-kicker{font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
+.sp-big{font-size:34px;font-weight:800;letter-spacing:-.03em;color:var(--black);margin-top:6px}
+.sp-big small{font-size:13px;color:var(--grey-muted);font-weight:600;letter-spacing:0}
+.sp-left p{font-size:13.5px;color:var(--grey-text);margin-top:6px;line-height:1.5}
+.sp-right{padding:20px 24px;display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;align-content:center}
+.sp-row{display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.5;color:var(--dark)}
+.sp-row .ck{color:var(--orange);font-weight:800;flex-shrink:0}
+
+/* Calculator */
+.calc{margin-top:26px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.calc-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--border-soft);background:var(--bg-section);gap:12px;flex-wrap:wrap}
+.calc-title{font-size:16px;font-weight:800;color:var(--black)}
+.calc-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--grey-muted);letter-spacing:.06em;text-transform:uppercase}
+.calc-body{display:grid;grid-template-columns:360px 1fr;gap:0}
+.calc-in{padding:20px 22px;border-right:1px solid var(--border-soft);display:flex;flex-direction:column;gap:16px}
+.fld label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--dark);margin-bottom:7px}
+.fld label span{font-family:var(--font-mono);color:var(--orange)}
+.fld input[type=range]{width:100%;accent-color:var(--orange)}
+.fld select,.fld input[type=number]{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-family:var(--font);font-size:13.5px;background:#fff;color:var(--dark)}
+.seg{display:flex;border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.seg button{flex:1;white-space:nowrap;padding:7px 8px;font-size:12px;font-weight:700;border:none;background:#fff;color:var(--grey-muted);cursor:pointer;font-family:var(--font)}
+.seg button.on{background:var(--dark);color:#fff}
+.tog{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dark);cursor:pointer;line-height:1.35}
+.tog input{accent-color:var(--orange);width:16px;height:16px;flex-shrink:0}
+.fld .hint{font-size:11.5px;color:var(--grey-muted);margin-top:5px;line-height:1.4}
+.calc-out{padding:20px 24px}
+.out-row{display:grid;grid-template-columns:120px 1fr 130px;gap:14px;align-items:center;margin-bottom:14px}
+.out-name{font-size:13px;font-weight:800;font-family:var(--font-mono);letter-spacing:.04em}
+.out-name.p{color:var(--comp-deep)} .out-name.s{color:var(--orange)}
+.out-bar{height:30px;background:var(--bg-section);border-radius:6px;overflow:hidden;position:relative;border:1px solid var(--border-soft)}
+.out-fill{height:100%;display:flex;transition:width .35s ease}
+.seg-a{background:var(--comp)} .seg-b{background:#f3c768} .seg-c{background:var(--comp-deep)}
+.seg-s{background:var(--orange)}
+.out-val{font-size:20px;font-weight:800;text-align:right;letter-spacing:-.02em;color:var(--black)}
+.out-val small{display:block;font-size:10.5px;font-weight:600;color:var(--grey-muted);letter-spacing:0;font-family:var(--font-mono)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:4px 0 16px 134px;font-size:11.5px;color:var(--grey-muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.verdict{border-radius:var(--radius);padding:14px 16px;font-size:14.5px;line-height:1.55;background:var(--orange-light);border:1px solid var(--orange-border);color:var(--dark)}
+.verdict b{color:var(--orange)}
+.break{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bk{background:var(--bg-section);border:1px solid var(--border-soft);border-radius:7px;padding:10px 12px}
+.bk-l{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--grey-muted)}
+.bk-v{font-size:15px;font-weight:800;color:var(--black);margin-top:3px}
+.calc-foot{padding:12px 22px;border-top:1px solid var(--border-soft);font-size:11.5px;color:var(--grey-muted);line-height:1.5;background:#fcfcfe}
+
+/* Win cards (Hub parity) */
+.win-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.win-card{background:linear-gradient(180deg,#fff,#fff8f2);border:1px solid var(--orange-border);border-radius:var(--radius-lg);padding:22px 24px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.win-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.win-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--orange),#ff9a5c)}
+.win-num{font-size:11px;color:var(--orange);font-family:var(--font-mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.win-card-title{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--black);margin-bottom:14px;line-height:1.3}
+.win-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.win-mini{background:#fff;border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px 15px}
+.win-mini-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-mono);margin-bottom:8px}
+.win-mini-label.mosaic{color:var(--orange)} .win-mini-label.comp{color:var(--comp-deep)}
+.win-why{background:rgba(250,102,15,.08);border:1px solid var(--orange-border);border-radius:var(--radius);padding:13px 15px}
+.win-why-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-mono);color:var(--orange);margin-bottom:5px}
+.win-why-text{font-size:14.5px;line-height:1.62;color:var(--dark)}
+
+/* Coexist diagram */
+.coexist{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:center}
+.cx-diag{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-sm)}
+.cx-layer{border-radius:9px;padding:12px 14px;margin-bottom:10px;position:relative}
+.cx-layer:last-child{margin-bottom:0}
+.cx-cap{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.cx-row{display:flex;flex-wrap:wrap;gap:6px}
+.cx-pill{font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:6px;background:#fff;border:1px solid var(--border)}
+.cx-consume{background:var(--bg-section);border:1px solid var(--border)}
+.cx-consume .cx-cap{color:var(--grey-muted)}
+.cx-consume .cx-pill.pbi{border-color:var(--comp-border);background:var(--comp-light);color:var(--comp-deep)}
+.cx-mosaic{background:linear-gradient(135deg,#fff4ec,#fff);border:1.5px solid var(--orange)}
+.cx-mosaic .cx-cap{color:var(--orange)}
+.cx-mosaic .cx-pill{border-color:var(--orange-border)}
+.cx-src{background:#fff;border:1px dashed var(--border)}
+.cx-src .cx-cap{color:var(--grey-muted)}
+.cx-arrow{text-align:center;color:var(--grey-faint);font-size:14px;margin:-4px 0 6px;letter-spacing:.3em}
+.cx-points{display:flex;flex-direction:column;gap:12px}
+.cx-pt{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.cx-n{width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cx-pt p{font-size:14.5px;line-height:1.55;color:var(--dark)}
+
+/* Head-to-head (Hub parity) */
+.hth-tools{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.hth-tools .seg{width:auto}
+.hth-tools .seg button{padding:7px 14px}
+.hth-count{font-family:var(--font-mono);font-size:11px;color:var(--grey-muted);margin-left:auto}
+.hth-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:auto}
+.hth-table{width:100%;border-collapse:collapse;min-width:900px}
+.hth-table thead{background:var(--bg-section)}
+.hth-table thead th{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-muted);padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:var(--font-mono)}
+.hth-table thead th.col-d{color:var(--comp-deep)} .hth-table thead th.col-m{color:var(--orange)}
+.hth-table tbody tr{border-bottom:1px solid var(--border-soft);transition:background .15s}
+.hth-table tbody tr:last-child{border-bottom:none}
+.hth-table tbody tr:hover{background:var(--bg-section)}
+.hth-table td{padding:14px 18px;vertical-align:top;font-size:14.5px;line-height:1.58}
+.td-dim{font-size:11px;font-weight:700;color:var(--grey-muted);letter-spacing:.07em;text-transform:uppercase;width:14%;font-family:var(--font-mono)}
+.td-d,.td-m{width:36%;color:var(--dark)}
+.td-edge{width:14%;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.mosaic-win td.td-m{background:rgba(250,102,15,.05);box-shadow:inset 3px 0 0 rgba(250,102,15,.3)}
+.comp-win td.td-d{background:var(--comp-light);box-shadow:inset 3px 0 0 var(--comp)}
+.edge{display:inline-block;padding:3px 8px;border-radius:4px}
+.edge.m{background:var(--orange-light);color:var(--orange)}
+.edge.c{background:var(--comp-light);color:var(--comp-deep)}
+.edge.a{background:#eef3fb;color:#23518f}
+.edge.p{background:#f0f0f6;color:var(--grey-muted)}
+
+/* Objections */
+.obj-list{display:flex;flex-direction:column;gap:10px}
+.obj{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.obj summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;gap:14px;align-items:center;font-size:16px;font-weight:700;color:var(--black)}
+.obj summary::-webkit-details-marker{display:none}
+.obj summary .q{font-family:var(--font-mono);font-size:10.5px;font-weight:800;color:var(--comp-deep);background:var(--comp-light);padding:3px 7px;border-radius:4px;flex-shrink:0}
+.obj summary .chev{margin-left:auto;transition:transform .2s;color:var(--grey-faint)}
+.obj[open] summary .chev{transform:rotate(90deg)}
+.obj[open] summary{border-bottom:1px solid var(--border-soft)}
+.obj-body{padding:16px 20px 18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.obj-k{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.obj-k.t{color:var(--grey-muted)} .obj-k.r{color:var(--orange)}
+.obj-body p{font-size:14.5px;line-height:1.6;color:var(--dark)}
+
+/* Sources */
+.src-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 28px}
+.src{font-size:12.5px;line-height:1.5;color:var(--grey-text);padding:6px 0;border-bottom:1px dashed var(--border-soft)}
+.src a{color:var(--blue);text-decoration:none;font-weight:600}
+.src a:hover{text-decoration:underline}
+.src .d{font-family:var(--font-mono);font-size:10.5px;color:var(--grey-faint);margin-left:4px}
+.disclaim{margin-top:18px;font-size:12px;color:var(--grey-muted);line-height:1.6;background:var(--bg-section);border:1px solid var(--border-soft);border-radius:var(--radius);padding:12px 14px}
+
+/* Utilities */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--orange),#ff9a5c);z-index:9999;width:0}
+#back-to-top{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:var(--orange);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(250,102,15,.35);opacity:0;transform:translateY(12px) scale(.85);transition:opacity .25s,transform .25s;z-index:999;display:flex;align-items:center;justify-content:center}
+#back-to-top.visible{opacity:1;transform:none}
+#back-to-top svg{width:18px;height:18px}
+.reveal{opacity:1}
+
+@media(max-width:1100px){
+  .hero-inner{grid-template-columns:1fr}
+  .snapshot,.gotcha-grid{grid-template-columns:1fr 1fr}
+  .overlap-grid{grid-template-columns:1fr 1fr}
+  .ladder{grid-template-columns:repeat(3,1fr)}
+  .rung:nth-child(3){border-right:none}
+  .rung:nth-child(-n+3){border-bottom:1px solid var(--border-soft)}
+  .calc-body{grid-template-columns:1fr}
+  .calc-in{border-right:none;border-bottom:1px solid var(--border-soft)}
+  .coexist{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .hub-tagline{display:none}
+  .hub-logo img{flex-shrink:0}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .hero{padding:36px 22px}
+  .hero h1{font-size:32px}
+  .section-zone{padding:36px 22px}
+  .snapshot,.overlap-grid,.win-grid,.win-mini-grid,.tl-wrap,.gotcha-grid,.src-grid,.obj-body,.break,.sp-right{grid-template-columns:1fr}
+  .strat-price{grid-template-columns:1fr}
+  .sp-left{border-right:none;border-bottom:1px solid var(--orange-border)}
+  .ladder{grid-template-columns:1fr 1fr}
+  .out-row{grid-template-columns:80px 1fr 100px}
+  .legend{margin-left:0}
+}
+@media print{.hub-header,.tab-strip,#back-to-top,#progress-bar{display:none}.section-zone{break-inside:avoid}}
+
+/* Internal banner + disclaimer */
+.int-banner{position:sticky;top:100px;z-index:280;background:#fff6ec;border-bottom:1px solid var(--orange-border);color:#8a3a00;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:6px 16px}
+.int-banner b{color:var(--red)}
+.disclaimer{max-width:1260px;margin:0 auto 60px;padding:0 64px}
+.disc-box{border:1.5px solid var(--red);border-radius:var(--radius-lg);background:linear-gradient(180deg,#fff7f7,#fff);padding:22px 26px;position:relative}
+.disc-tag{display:inline-block;font-family:var(--font-mono);font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--red);padding:4px 10px;border-radius:4px;margin-bottom:12px}
+.disc-box h3{font-size:17px;font-weight:800;color:var(--black);margin-bottom:10px}
+.disc-box ul{padding-left:18px}
+.disc-box li{font-size:13.5px;line-height:1.6;color:var(--grey-text);margin-bottom:5px}
+@media print{body::before{content:'RESTRICTED · NOT FOR CUSTOMER DISTRIBUTION';position:fixed;top:45%;left:0;right:0;text-align:center;font:800 42px var(--font);color:rgba(176,32,32,.12);transform:rotate(-24deg);z-index:9999}}
+
+/* Deployment choice */
+.dep-wrap{display:grid;grid-template-columns:1fr 2fr;gap:18px;align-items:stretch}
+.dep-pbi{background:#fff;border:1px solid var(--comp-border);border-radius:var(--radius-lg);padding:22px;border-top:3px solid var(--comp)}
+.dep-pbi .k{font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--comp-deep);margin-bottom:10px}
+.dep-pbi h4{font-size:18px;font-weight:800;color:var(--black);margin-bottom:12px;line-height:1.3}
+.dep-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dep{background:#fff;border:1px solid var(--orange-border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.dep:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.dep::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--orange),#ff9a5c)}
+.dep.hero{background:linear-gradient(135deg,#fff4ec,#fff);border:1.5px solid var(--orange)}
+.dep-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dep-ic{width:34px;height:34px;border-radius:9px;background:var(--orange-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dep-ic svg{width:18px;height:18px;stroke:var(--orange)}
+.dep-name{font-size:16px;font-weight:800;color:var(--black);line-height:1.2}
+.dep-sub{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.dep p{font-size:14px;line-height:1.55;color:var(--grey-text)}
+.dep-strip{margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ds{background:var(--bg-section);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.ds b{display:block;font-size:14.5px;color:var(--black);margin-bottom:4px}
+.ds span{font-size:13px;color:var(--grey-text);line-height:1.5}
+@media(max-width:1100px){.dep-wrap{grid-template-columns:1fr}.dep-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.dep-grid,.dep-strip{grid-template-columns:1fr}.disclaimer{padding:0 22px}.int-banner{top:100px;font-size:9px}}
+
+/* Kyvos page additions */
+.crit-list{display:flex;flex-direction:column;gap:12px}
+.crit{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.crit-head{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;padding:18px 22px 12px}
+.crit-n{width:34px;height:34px;border-radius:9px;background:var(--orange-light);color:var(--orange);font-family:var(--font-mono);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.crit-t{font-size:17px;font-weight:800;color:var(--black);line-height:1.3}
+.crit-why{font-size:14px;color:var(--grey-text);line-height:1.55;margin-top:4px}
+.crit-body{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border-soft)}
+.cb{padding:14px 18px;border-right:1px solid var(--border-soft);font-size:14px;line-height:1.55;color:var(--dark)}
+.cb:last-child{border-right:none}
+.cb-k{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.cb.q{background:var(--bg-section)} .cb.q .cb-k{color:var(--grey-muted)}
+.cb.k .cb-k{color:var(--comp-deep)}
+.cb.m{background:rgba(250,102,15,.04)} .cb.m .cb-k{color:var(--orange)}
+.fact-list{display:flex;flex-direction:column;gap:10px}
+.fact{display:grid;grid-template-columns:1fr 1.4fr;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.fact-claim{padding:16px 20px;background:var(--comp-light);border-right:1px solid var(--comp-border)}
+.fact-claim .k{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--comp-deep);margin-bottom:6px}
+.fact-claim p{font-size:15px;font-weight:700;color:var(--black);line-height:1.45}
+.fact-resp{padding:16px 20px}
+.fact-resp .k{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.fact-resp p{font-size:14.5px;line-height:1.6;color:var(--dark)}
+.paths{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.path{border-radius:var(--radius-lg);padding:22px 24px;background:#fff;border:1px solid var(--border)}
+.path.a{border:1.5px solid var(--orange);background:linear-gradient(135deg,#fff4ec,#fff)}
+.path-tag{display:inline-block;font-family:var(--font-mono);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:10px}
+.path.a .path-tag{background:var(--orange);color:#fff}
+.path.b .path-tag{background:#eef0f6;color:var(--grey-muted)}
+.path h4{font-size:18px;font-weight:800;color:var(--black);margin-bottom:10px;line-height:1.3}
+.poc{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.poc-c{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;border-top:3px solid var(--orange)}
+.poc-c b{display:block;font-size:15px;color:var(--black);margin-bottom:6px}
+.poc-c p{font-size:13.5px;color:var(--grey-text);line-height:1.55}
+.ack{background:var(--comp-light);border:1px solid var(--comp-border);border-radius:var(--radius-lg);padding:16px 20px;margin-top:16px}
+.ack b{color:var(--comp-deep)}
+.ack p{font-size:14.5px;line-height:1.6;color:var(--dark)}
+.foot{max-width:1260px;margin:0 auto 50px;padding:0 64px;font-size:12px;color:var(--grey-muted);line-height:1.6}
+@media(max-width:1100px){.crit-body{grid-template-columns:1fr}.cb{border-right:none;border-bottom:1px solid var(--border-soft)}.paths,.fact{grid-template-columns:1fr}.fact-claim{border-right:none;border-bottom:1px solid var(--comp-border)}.poc{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.poc{grid-template-columns:1fr}.foot{padding:0 22px}}
+.oneliner{margin-top:20px;border-left:4px solid var(--orange);padding:10px 0 10px 16px;font-size:17px;line-height:1.55;color:var(--black);font-weight:600}
+.oneliner span{color:var(--comp-deep)} .oneliner b{color:var(--orange)}
+.roi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.roi-c{background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;position:relative;overflow:hidden}
+.roi-c::before{content:'';position:absolute;left:0;top:0;right:0;height:3px;background:var(--comp)}
+.roi-c.m::before{background:var(--orange)}
+.roi-lvl{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--grey-muted)}
+.roi-t{font-size:17px;font-weight:800;color:var(--black);margin:6px 0 8px}
+.roi-c p{font-size:14px;line-height:1.55;color:var(--grey-text)}
+.roi-fit{margin-top:12px;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;display:inline-block;padding:3px 8px;border-radius:4px;background:var(--comp-light);color:var(--comp-deep)}
+.roi-c.m .roi-fit{background:var(--orange-light);color:var(--orange)}
+.principle{margin-top:16px;background:var(--orange-light);border:1px solid var(--orange-border);color:var(--black);border-radius:var(--radius-lg);padding:18px 22px;font-size:16px;line-height:1.55}
+.principle b{color:var(--orange);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:6px}
+@media(max-width:1100px){.roi{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<button aria-label="Back to top" id="back-to-top"><svg fill="none" viewBox="0 0 18 18"><path d="M9 14V4M4 9l5-5 5 5" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/></svg></button>
+
+<div class="hub-header">
+  <div class="hub-logo"><img alt="Strategy" src="data:image/png;base64,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"/></div>
+  <div class="hub-tagline">Semantic Layer Evaluation Guide</div>
+</div>
+
+<nav class="tab-strip" aria-label="Sections">
+  <div class="tab-group-label">Mosaic vs Kyvos</div>
+  <a class="tab active" href="#s0"><span class="tab-dot"></span>At a glance</a>
+  <a class="tab" href="#s2"><span class="tab-dot"></span>Side by side</a>
+  <a class="tab" href="#s3"><span class="tab-dot"></span>Setting the record straight</a>
+  <a class="tab" href="#sc"><span class="tab-dot"></span>Claims we must not make</a>
+  <a class="tab" href="#sv"><span class="tab-dot"></span>Where value comes from</a>
+  <a class="tab" href="#s4"><span class="tab-dot"></span>Two paths</a>
+  <a class="tab" href="#s6"><span class="tab-dot"></span>Sources</a>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-kicker">Semantic layer for AI &amp; BI · Evaluation guide</div>
+      <h1>Strategy Mosaic <span class="vs">and</span> <span class="pbi" style="color:var(--comp-deep)">Kyvos</span></h1>
+      <p class="lede">Both vendors now describe themselves as a semantic layer for AI and BI. They start from different places. <strong>Kyvos</strong> is built around pre-computing aggregates so queries return fast at very large scale. <strong>Mosaic</strong> is a governed semantic layer inside a complete analytics and AI platform, running live against your sources or in-memory, model by model. For programmes that must run in their own environment with their own LLM, that difference shapes everything that follows.</p>
+      <div class="oneliner"><span>Kyvos optimises analytical execution at scale.</span> <b>Strategy Mosaic provides a governed semantic foundation across BI and AI.</b></div>
+      <div class="hero-meta">
+        <span class="chip o">Live or in-memory, per model</span>
+        <span class="chip o">Semantic layer + BI + AI in one platform</span>
+        <span class="chip o">Your data centre · your LLM</span>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-v">Pre-compute</div><div class="hstat-l">Kyvos primarily builds aggregates ahead of query time and serves analytical queries from them.</div><div class="hstat-s">Kyvos</div></div>
+      <div class="hstat o"><div class="hstat-v">Hybrid</div><div class="hstat-l">Mosaic runs each model live or in-memory, and Sentinel recommends when to switch.</div><div class="hstat-s">Strategy Mosaic</div></div>
+      <div class="hstat"><div class="hstat-v">Per core-hour</div><div class="hstat-l">Kyvos's published pricing is compute-metered, or an annual on-prem subscription.</div><div class="hstat-s">Kyvos</div></div>
+      <div class="hstat o"><div class="hstat-v">Per user</div><div class="hstat-l">Strategy's published pricing states no extra charges for AI.</div><div class="hstat-s">Strategy</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+<!-- 01 AT A GLANCE -->
+<section class="section-zone" id="s0" data-theme="orange" style="border-top:none">
+  <div class="section-label"><span class="sl-counter">01</span><span class="sl-accent"></span><span>At a glance</span></div>
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-label">Kyvos · core design</div>
+      <div class="snap-value">Performance-first semantic layer</div>
+      <div class="snap-sub"><ul class="b">
+        <li>AI-driven "smart aggregation" recommends and builds aggregates from query history, then refreshes them incrementally as data changes.</li>
+        <li>Serves SQL, MDX and DAX to BI tools and Excel.</li>
+        <li>Kyvos reports sub-second analytics on billion-row workloads with thousands of users.</li>
+      </ul></div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-label">Kyvos · AI</div>
+      <div class="snap-value">AI Space, Dialogs, MCP</div>
+      <div class="snap-sub"><ul class="b">
+        <li>AI Space scopes context and tools per use case, and agents connect over MCP.</li>
+        <li>Dialogs is its analytics agent, available in Teams and Slack, with model routing.</li>
+        <li>Business Knowledge Graphs are announced as "coming soon".</li>
+      </ul></div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-label">Mosaic · core design</div>
+      <div class="snap-value">Governed semantic layer in a full platform</div>
+      <div class="snap-sub"><ul class="b">
+        <li>One certified model over 200+ data sources, served to Strategy BI, Power BI, Tableau, Excel, apps and agents.</li>
+        <li>Each model runs live, in-memory or both, and Sentinel recommends when to switch.</li>
+        <li>Dashboards, pixel-perfect reporting, mobile and embedding are part of the same platform.</li>
+      </ul></div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-label">Mosaic · control</div>
+      <div class="snap-value">Sovereign by design</div>
+      <div class="snap-sub"><ul class="b">
+        <li>Customer Managed Cloud runs the full platform on your own Kubernetes, on-prem or in your cloud account.</li>
+        <li>Bring your own LLM, including open-source and offline models.</li>
+        <li>Mosaic Sentinel covers audit, risk, usage, cost and query performance.</li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="ack"><p><b>Where Kyvos is genuinely strong.</b> Sub-second analytics over billions of rows at high concurrency is Kyvos's heritage, and it is a credible choice for migrating large legacy OLAP cubes (such as SSAS) to the cloud. If raw aggregate query speed on a very large existing data lake is the single deciding criterion, test it head-to-head.</p></div>
+</section>
+
+<!-- 03 SIDE BY SIDE -->
+<section class="section-zone alt" id="s2" data-theme="orange">
+  <div class="section-label"><span class="sl-counter">02</span><span class="sl-accent"></span><span>Side by side</span></div>
+  <div class="hth-tools">
+    <div class="seg" id="hthSeg"><button data-f="all" class="on">All</button><button data-f="m">Mosaic differentiator</button><button data-f="c">Kyvos differentiator</button><button data-f="a">Different architecture</button><button data-f="p">Shared capability</button></div>
+  </div>
+  <div class="hth-wrap">
+    <table class="hth-table">
+      <thead><tr><th>Dimension</th><th class="col-d">Kyvos</th><th class="col-m">Strategy Mosaic</th><th>Note</th></tr></thead>
+      <tbody id="hthBody">
+        <tr data-e="a"><td class="td-dim">Execution model</td><td class="td-d">Primarily pre-computed aggregates, refreshed incrementally, with raw-data querying also supported.</td><td class="td-m">Live, in-memory or hybrid, chosen per model, with Sentinel recommendations on when to switch.</td><td class="td-edge"><span class="edge a">Different architecture</span></td></tr>
+        <tr class="comp-win" data-e="c"><td class="td-dim">Extreme-scale OLAP</td><td class="td-d">Core heritage. Kyvos reports sub-second analytics on billions of rows, high concurrency, and legacy OLAP (e.g. SSAS) migration.</td><td class="td-m">Live queries at warehouse scale plus in-memory acceleration. Validate on your largest workload.</td><td class="td-edge"><span class="edge c">Kyvos differentiator</span></td></tr>
+        <tr data-e="p"><td class="td-dim">Semantic model</td><td class="td-d">Metrics, hierarchies and calculations in one semantic model, served to many tools.</td><td class="td-m">Certified, reusable objects over 200+ data sources, served to many tools.</td><td class="td-edge"><span class="edge p">Shared capability</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">End-user BI</td><td class="td-d">Own browser-based visualisation, a reporting service and the Dialogs agent, plus integration with major BI tools.</td><td class="td-m">Broader integrated BI in Strategy BI: dashboards, pixel-perfect reports, bursting, subscriptions, native mobile, embedding, HyperIntelligence.</td><td class="td-edge"><span class="edge m">Mosaic differentiator</span></td></tr>
+        <tr data-e="a"><td class="td-dim">On-prem deployment</td><td class="td-d">On-premises option. Documented certification on Cloudera CDH/CDP clusters.</td><td class="td-m">Customer Managed Cloud on your own on-prem Kubernetes cluster, under your network rules.</td><td class="td-edge"><span class="edge a">Different architecture</span></td></tr>
+        <tr data-e="p"><td class="td-dim">Cloud deployment</td><td class="td-d">Your AWS, Azure or GCP account via marketplace, or a managed service.</td><td class="td-m">Your AWS, Azure or GCP account (CMC), or Strategy-managed on AWS, Azure, GCP or STACKIT.</td><td class="td-edge"><span class="edge p">Shared capability</span></td></tr>
+        <tr data-e="p"><td class="td-dim">LLM choice</td><td class="td-d">Model routing and stated model flexibility.</td><td class="td-m">Azure OpenAI, BYOE Gemini, open-source and offline models.</td><td class="td-edge"><span class="edge p">Shared capability</span></td></tr>
+        <tr data-e="p"><td class="td-dim">Agent access (MCP)</td><td class="td-d">AI Space exposes scoped context and tools over MCP. Dialogs can be called by other agents.</td><td class="td-m">MCP integration for Strategy Agents. Mosaic MCP is in preview.</td><td class="td-edge"><span class="edge p">Shared capability</span></td></tr>
+        <tr data-e="p"><td class="td-dim">Security</td><td class="td-d">Row-, column- and metric-level security, lineage, audit. SOC 2 Type II, ISO 27001.</td><td class="td-m">Row and object security defined once in Mosaic and enforced for supported consumers.</td><td class="td-edge"><span class="edge p">Shared capability</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Usage &amp; cost observability</td><td class="td-d">Access logging and audit trails.</td><td class="td-m">Sentinel: usage, risk, cost per model for Snowflake and Databricks, and query performance by client tool.</td><td class="td-edge"><span class="edge m">Mosaic differentiator</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Open format</td><td class="td-d">Joined the Apache Ossie ecosystem (Aug 2026).</td><td class="td-m">Ossie YAML import/export shipped (Jul 2026), subject to documented conversion limitations.</td><td class="td-edge"><span class="edge m">Mosaic differentiator</span></td></tr>
+        <tr class="mosaic-win" data-e="m"><td class="td-dim">Change testing</td><td class="td-d">Versioning within AI Space governance.</td><td class="td-m">Test Center regression-tests SQL, data, PDF output and performance.</td><td class="td-edge"><span class="edge m">Mosaic differentiator</span></td></tr>
+        <tr data-e="p"><td class="td-dim">Excel &amp; MDX</td><td class="td-d">Live Excel via a built-in MDX connector. SQL, MDX and DAX interfaces.</td><td class="td-m">Excel add-in and Mosaic serving to Excel and Power BI.</td><td class="td-edge"><span class="edge p">Shared capability</span></td></tr>
+        <tr data-e="a"><td class="td-dim">Pricing model</td><td class="td-d">Compute-metered per core-hour, or annual on-prem subscription.</td><td class="td-m">Per user, with no extra charges for AI per published pricing.</td><td class="td-edge"><span class="edge a">Different architecture</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 04 RECORD STRAIGHT -->
+<section class="section-zone" id="s3" data-theme="red">
+  <div class="section-label"><span class="sl-counter">03</span><span class="sl-accent"></span><span>Setting the record straight</span></div>
+  <p class="intro">Kyvos publishes a "Kyvos vs Strategy" comparison. It describes Strategy as an in-memory BI tool, which does not reflect Mosaic. Here is each claim with the current facts.</p>
+  <div class="fact-list">
+    <div class="fact"><div class="fact-claim"><div class="k">Kyvos says</div><p>"Strategy is a widely used BI tool known for its in-memory aggregation capabilities."</p></div><div class="fact-resp"><div class="k">Current Strategy capabilities</div><p>Strategy is a BI platform <strong>and</strong> the Mosaic Universal Semantic Layer. Mosaic models can run live against the source, in-memory, or both, and Sentinel recommends when to switch. In-memory is an option, not the architecture.</p></div></div>
+    <div class="fact"><div class="fact-claim"><div class="k">Kyvos says</div><p>Strategy data size is "Limited".</p></div><div class="fact-resp"><div class="k">Current Strategy capabilities</div><p>In live mode, Mosaic queries your warehouse or lakehouse directly, so data size follows your data platform rather than Strategy's memory. In-memory is used where it helps.</p></div></div>
+    <div class="fact"><div class="fact-claim"><div class="k">Kyvos says</div><p>Strategy user concurrency is "Low", with "failover secondary servers" for HA.</p></div><div class="fact-resp"><div class="k">Current Strategy capabilities</div><p>Concurrency is a sizing question, not a product label. Strategy runs as clustered services and supports highly available production environments. The fair answer is a concurrency test on your own workload.</p></div></div>
+    <div class="fact"><div class="fact-claim"><div class="k">Kyvos says</div><p>Strategy incremental refresh has a "1M row capacity" and "No" indexing.</p></div><div class="fact-resp"><div class="k">Current Strategy capabilities</div><p>The comparison cites no product version, documentation or test. Ask Kyvos for the source, and Strategy will validate it against the release you would deploy. Live-mode models don't depend on refresh at all.</p></div></div>
+  </div>
+</section>
+
+<!-- 05 CLAIMS -->
+<section class="section-zone alt" id="sc" data-theme="amber">
+  <div class="section-label"><span class="sl-counter">04</span><span class="sl-accent"></span><span>Claims we must not make</span></div>
+  <p class="intro">Each of these claims circulates in comparisons of the two products. Each is wrong or indefensible as of September 2026.</p>
+  <div class="hth-wrap">
+    <table class="hth-table" style="min-width:760px">
+      <thead><tr><th>Don't say</th><th class="col-d">Why it's wrong</th><th class="col-m">Say instead</th></tr></thead>
+      <tbody>
+        <tr><td class="td-d"><strong>"Kyvos has no governance."</strong></td><td class="td-d">Row-, column- and metric-level security, lineage, audit trails, SOC 2 Type II, ISO 27001, HIPAA.</td><td class="td-m">"Both secure the model. Sentinel adds usage, cost and performance visibility across every tool."</td></tr>
+        <tr><td class="td-d"><strong>"Kyvos can't run on-prem."</strong></td><td class="td-d">It has an on-prem option and documented Cloudera CDH/CDP certification.</td><td class="td-m">"CMC runs our full platform on your own on-prem Kubernetes cluster."</td></tr>
+        <tr><td class="td-d"><strong>"Kyvos is locked to one LLM."</strong></td><td class="td-d">It markets model routing and model flexibility.</td><td class="td-m">"Both support multiple models. Ask which features work with an offline, self-hosted model."</td></tr>
+        <tr><td class="td-d"><strong>"Kyvos just has an AI Copilot."</strong></td><td class="td-d">Outdated. It now has AI Space (MCP), the Dialogs agent in Teams and Slack, and knowledge graphs coming soon.</td><td class="td-m">Describe their current AI accurately, then shift to grounding and governance.</td></tr>
+        <tr><td class="td-d"><strong>"Mosaic has no cubes to maintain."</strong></td><td class="td-d">Mosaic has in-memory models that refresh.</td><td class="td-m">"You choose live or in-memory per model. Kyvos is built around pre-computed aggregates."</td></tr>
+        <tr><td class="td-d"><strong>"Mosaic MCP is GA."</strong></td><td class="td-d">Strategy's own July 2026 material says preview.</td><td class="td-m">"MCP integration for Strategy Agents. Mosaic MCP is in preview."</td></tr>
+        <tr><td class="td-d"><strong>"Only Strategy is open."</strong></td><td class="td-d">Kyvos joined Apache Ossie in August 2026.</td><td class="td-m">"We've shipped Ossie import/export since July 2026. Ask Kyvos what they support today."</td></tr>
+        <tr><td class="td-d"><strong>"559% ROI vs 150%", "military-grade security", scorecards</strong></td><td class="td-d">Unsourced numbers and self-weighted scores. One question from a CFO undoes them.</td><td class="td-m">Use the three levels of value. Build numbers only from the customer's own inputs.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 05 VALUE -->
+<section class="section-zone" id="sv" data-theme="purple">
+  <div class="section-label"><span class="sl-counter">05</span><span class="sl-accent"></span><span>Where the value comes from</span></div>
+  <p class="intro">The two platforms are designed to create value in different places. The question for each customer is which of these value pools is largest in their programme.</p>
+  <div class="roi">
+    <div class="roi-c"><div class="roi-lvl">Level 1</div><div class="roi-t">Infrastructure value</div><p>Faster queries and lower warehouse compute, through pre-aggregation, caching and query acceleration. Largest where very large data volumes meet heavy, repetitive query load.</p><span class="roi-fit">Kyvos's core design</span></div>
+    <div class="roi-c m"><div class="roi-lvl">Level 2</div><div class="roi-t">Platform value</div><p>Semantic layer, dashboards, reporting, mobile, embedded analytics and AI agents on one platform, with centralised security and audit, instead of several products to integrate and run.</p><span class="roi-fit">Strategy's core design</span></div>
+    <div class="roi-c m"><div class="roi-lvl">Level 3</div><div class="roi-t">Enterprise value</div><p>Both define KPIs once and reuse them. The difference is reach: governed KPIs delivered through reports, mobile, embedded apps and AI agents on the same platform, with less duplicated logic and manual reporting.</p><span class="roi-fit">Strategy's broader reach</span></div>
+  </div>
+  <div class="principle"><b>Decision principle</b>Don't pay for extreme-scale acceleration if the real challenge is KPI complexity, governance and enterprise-wide adoption. If acceleration is the challenge, test it on your largest workload.</div>
+</section>
+
+<!-- 06 TWO PATHS -->
+<section class="section-zone alt" id="s4" data-theme="green">
+  <div class="section-label"><span class="sl-counter">06</span><span class="sl-accent"></span><span>Two paths</span></div>
+  <div class="paths">
+    <div class="path b">
+      <span class="path-tag">Path A · Architecture option</span>
+      <h4>Consolidated Strategy architecture</h4>
+      <ul class="b">
+        <li>One platform for the semantic layer, dashboards, reporting, mobile and AI agents, with centralised security and audit.</li>
+        <li>Runs on Customer Managed Cloud in your own environment, with your own LLM.</li>
+        <li>Live for freshness, in-memory for speed, chosen model by model.</li>
+        <li>Sentinel shows usage, cost and performance from day one.</li>
+      </ul>
+    </div>
+    <div class="path b">
+      <span class="path-tag">Path B · Architecture option</span>
+      <h4>Strategy with an existing Kyvos layer</h4>
+      <ul class="b">
+        <li>Kyvos lists Strategy as a supported BI tool and connects to it live.</li>
+        <li>Kyvos keeps accelerating very large aggregate workloads. Strategy BI delivers dashboards, reporting, mobile and AI to users.</li>
+        <li>A possible coexistence architecture: Mosaic governs the definitions that sit outside Kyvos, with the option to consolidate later.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 07 SOURCES -->
+<section class="section-zone" id="s6" data-theme="blue">
+  <div class="section-label"><span class="sl-counter">07</span><span class="sl-accent"></span><span>Sources</span></div>
+  <div class="src-grid">
+    <div class="src"><a href="https://www.kyvosinsights.com/semantic-layer/bi-performance/" target="_blank" rel="noopener">Kyvos: BI performance (pre-compute, no pushdown)</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/product/ai-powered-smart-aggregation-technology/" target="_blank" rel="noopener">Kyvos: AI-powered smart aggregation</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/semantic-layer/ai-space/" target="_blank" rel="noopener">Kyvos: AI Space</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/semantic-layer/business-analytics-agent/" target="_blank" rel="noopener">Kyvos: Dialogs business analytics agent</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/semantic-layer/governance-at-scale/" target="_blank" rel="noopener">Kyvos: Governance at scale</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/pricing/" target="_blank" rel="noopener">Kyvos: Plans &amp; pricing</a></div>
+    <div class="src"><a href="https://docs.support.kyvosinsights.com/wiki/spaces/KD20267/pages/1308525479/Kyvos+2026.4.x-+Supported+environments+and+applications" target="_blank" rel="noopener">Kyvos docs: 2026.4.x supported environments</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/newsroom/press-release/kyvos-joins-apache-ossie-ecosystem-bringing-speed-and-context-to-enterprise-ai/" target="_blank" rel="noopener">Kyvos: joins Apache Ossie ecosystem (12 Aug 2026)</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/resources/product-comparisons/kyvos-vs-strategy-in-depth-comparison/" target="_blank" rel="noopener">Kyvos: "Kyvos vs Strategy" comparison</a></div>
+    <div class="src"><a href="https://www.kyvosinsights.com/semantic-layer/bi-performance/strategy/" target="_blank" rel="noopener">Kyvos: Kyvos + Strategy</a></div>
+    <div class="src"><a href="https://software.strategy.com/universal-semantic-layer/mosaic" target="_blank" rel="noopener">Strategy: Mosaic Universal Semantic Layer</a></div>
+    <div class="src"><a href="https://software.strategy.com/whats-new/ai-powered-cost-intelligence-for-data-platforms" target="_blank" rel="noopener">Strategy: Sentinel Cost Intelligence (live vs in-memory)</a></div>
+    <div class="src"><a href="https://software.strategy.com/blog/september-2026-conversational-analytics-deeper-query-visibility-and-safer-analytics-changes" target="_blank" rel="noopener">Strategy: September 2026 release (Sentinel query performance, Test Center)</a></div>
+    <div class="src"><a href="https://software.strategy.com/whats-new/import-and-export-mosaic-models-as-apache-ossie-yaml" target="_blank" rel="noopener">Strategy: Apache Ossie YAML import/export</a></div>
+    <div class="src"><a href="https://software.strategy.com/integrations/regulated-industries" target="_blank" rel="noopener">Strategy: Regulated industries &amp; Customer Managed Cloud</a></div>
+    <div class="src"><a href="https://software.strategy.com/pricing" target="_blank" rel="noopener">Strategy: Plans &amp; pricing</a></div>
+  </div>
+</section>
+
+</div>
+
+<div class="foot">Prepared by Strategy based on publicly available information as of September 2026. Product capabilities, availability and pricing change frequently; please validate against current vendor documentation. Kyvos is a trademark of Kyvos Insights. All other trademarks belong to their respective owners.</div>
+<script>
+(function(){
+  var bar=document.getElementById('progress-bar'),btt=document.getElementById('back-to-top');
+  var tabs=[].slice.call(document.querySelectorAll('.tab-strip .tab'));
+  var secs=tabs.map(function(t){return document.querySelector(t.getAttribute('href'));});
+  function onScroll(){var h=document.documentElement,st=h.scrollTop||document.body.scrollTop,max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?st/max*100:0)+'%';btt.classList.toggle('visible',st>600);
+    var idx=0;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top<160)idx=i;});
+    tabs.forEach(function(t,i){t.classList.toggle('active',i===idx);});}
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+  btt.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  var rows=[].slice.call(document.querySelectorAll('#hthBody tr'));
+  var seg=document.getElementById('hthSeg');
+  [].slice.call(seg.querySelectorAll('button')).forEach(function(b){b.addEventListener('click',function(){
+    [].slice.call(seg.querySelectorAll('button')).forEach(function(x){x.classList.remove('on');});b.classList.add('on');
+    rows.forEach(function(r){r.style.display=(b.dataset.f==='all'||r.dataset.e===b.dataset.f)?'':'none';});});});
+})();
+</script>
+</body>
+</html>
